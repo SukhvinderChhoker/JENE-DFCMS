@@ -18,6 +18,7 @@ Thumbs.db
 *.bak
 *.tmp
 *.orig
-foreman-backend/data/
-foreman-backend/uploads/
-foreman-frontend/.angular/
+hwt-backend/data/
+hwt-backend/uploads/
+hwt-frontend/.angular/
+hwt-frontend/dist/
