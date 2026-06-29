@@ -1,0 +1,1816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JENE-DFCMS User Manual</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #1a237e;
+      --navy-dark: #0d1259;
+      --navy-light: #283593;
+      --orange: #ff6f00;
+      --orange-light: #ffa040;
+      --orange-dark: #c43e00;
+      --gray-50: #f8f9fa;
+      --gray-100: #f1f3f5;
+      --gray-200: #e9ecef;
+      --gray-300: #dee2e6;
+      --gray-400: #ced4da;
+      --gray-500: #adb5bd;
+      --gray-600: #868e96;
+      --gray-700: #495057;
+      --gray-800: #343a40;
+      --gray-900: #212529;
+      --white: #ffffff;
+      --success: #2e7d32;
+      --warning: #ed6c02;
+      --danger: #d32f2f;
+      --info: #0288d1;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--gray-800);
+      background: var(--gray-50);
+    }
+
+    /* Cover Page */
+    .cover-page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 50%, #0a0f3a 100%);
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cover-page::before {
+      content: '';
+      position: absolute;
+      top: -200px;
+      right: -200px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(255,111,0,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .cover-page::after {
+      content: '';
+      position: absolute;
+      bottom: -100px;
+      left: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(255,111,0,0.1) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .cover-header {
+      padding: 40px 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cover-logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .cover-logo-icon {
+      width: 52px;
+      height: 52px;
+      background: var(--orange);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--white);
+      box-shadow: 0 4px 20px rgba(255,111,0,0.4);
+    }
+
+    .cover-logo-text {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .cover-logo-text span {
+      color: var(--orange);
+    }
+
+    .cover-version {
+      padding: 6px 16px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .cover-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 60px 60px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cover-subtitle {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      color: var(--orange);
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+
+    .cover-title {
+      font-size: 56px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 8px;
+      letter-spacing: -1.5px;
+    }
+
+    .cover-full-title {
+      font-size: 22px;
+      color: var(--gray-400);
+      margin-bottom: 40px;
+      font-weight: 400;
+    }
+
+    .cover-description {
+      font-size: 17px;
+      color: var(--gray-300);
+      max-width: 600px;
+      line-height: 1.8;
+      margin-bottom: 50px;
+    }
+
+    .cover-meta {
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .cover-meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .cover-meta-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--gray-500);
+      font-weight: 600;
+    }
+
+    .cover-meta-value {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--white);
+    }
+
+    .cover-footer {
+      padding: 30px 60px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cover-footer-text {
+      font-size: 13px;
+      color: var(--gray-500);
+    }
+
+    .cover-footer-text a {
+      color: var(--orange);
+      text-decoration: none;
+    }
+
+    .cover-orange-bar {
+      height: 4px;
+      background: linear-gradient(90deg, var(--orange), var(--orange-light));
+      width: 120px;
+      border-radius: 2px;
+      margin-top: 8px;
+    }
+
+    /* Main Content */
+    .manual-content {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 50px 40px;
+      background: var(--white);
+      min-height: 100vh;
+      box-shadow: 0 0 60px rgba(0,0,0,0.06);
+    }
+
+    /* Table of Contents */
+    .toc {
+      page-break-after: always;
+      padding-bottom: 40px;
+    }
+
+    .toc-title {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .toc-subtitle {
+      font-size: 15px;
+      color: var(--gray-500);
+      margin-bottom: 36px;
+    }
+
+    .toc-divider {
+      height: 3px;
+      background: linear-gradient(90deg, var(--orange), transparent);
+      width: 80px;
+      border-radius: 2px;
+      margin-bottom: 36px;
+    }
+
+    .toc-list {
+      list-style: none;
+      counter-reset: toc-counter;
+    }
+
+    .toc-list li {
+      counter-increment: toc-counter;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--gray-100);
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .toc-list li::before {
+      content: counter(toc-counter, decimal-leading-zero);
+      font-weight: 700;
+      color: var(--orange);
+      font-size: 14px;
+      min-width: 28px;
+    }
+
+    .toc-list li a {
+      text-decoration: none;
+      color: var(--gray-800);
+      font-weight: 500;
+      font-size: 15px;
+      transition: color 0.2s;
+    }
+
+    .toc-list li a:hover {
+      color: var(--navy);
+    }
+
+    .toc-section-num {
+      color: var(--gray-400);
+      font-size: 13px;
+      font-weight: 400;
+      margin-left: auto;
+    }
+
+    .toc-sub {
+      list-style: none;
+      padding-left: 40px;
+      margin-top: 0;
+    }
+
+    .toc-sub li {
+      padding: 6px 0;
+      border-bottom: none;
+    }
+
+    .toc-sub li::before {
+      content: none;
+    }
+
+    .toc-sub li a {
+      font-weight: 400;
+      font-size: 14px;
+      color: var(--gray-600);
+    }
+
+    /* Chapters */
+    .chapter {
+      page-break-before: always;
+      padding-top: 20px;
+      padding-bottom: 60px;
+    }
+
+    .chapter:first-of-type {
+      page-break-before: avoid;
+    }
+
+    .chapter-number {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--orange);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .chapter-title {
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 6px;
+      letter-spacing: -0.8px;
+      line-height: 1.2;
+    }
+
+    .chapter-desc {
+      font-size: 15px;
+      color: var(--gray-500);
+      margin-bottom: 36px;
+      max-width: 600px;
+    }
+
+    .chapter-divider {
+      height: 3px;
+      background: linear-gradient(90deg, var(--orange), transparent);
+      width: 60px;
+      border-radius: 2px;
+      margin-bottom: 36px;
+    }
+
+    h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-top: 40px;
+      margin-bottom: 16px;
+      letter-spacing: -0.3px;
+    }
+
+    h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--navy-light);
+      margin-top: 30px;
+      margin-bottom: 12px;
+    }
+
+    h4 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-top: 20px;
+      margin-bottom: 8px;
+    }
+
+    p {
+      margin-bottom: 14px;
+      color: var(--gray-700);
+    }
+
+    /* Lists */
+    ol, ul {
+      margin-bottom: 16px;
+      padding-left: 24px;
+    }
+
+    ol li, ul li {
+      margin-bottom: 8px;
+      color: var(--gray-700);
+    }
+
+    ol li::marker {
+      color: var(--orange);
+      font-weight: 700;
+    }
+
+    /* Code */
+    code {
+      background: var(--gray-100);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      color: var(--navy);
+      border: 1px solid var(--gray-200);
+    }
+
+    pre {
+      background: var(--navy-dark);
+      color: #e0e0e0;
+      padding: 20px 24px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.6;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      color: inherit;
+      font-size: inherit;
+    }
+
+    /* Tables */
+    .table-wrapper {
+      overflow-x: auto;
+      margin-bottom: 24px;
+      border-radius: 10px;
+      border: 1px solid var(--gray-200);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    thead th {
+      background: var(--navy);
+      color: var(--white);
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    tbody td {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--gray-100);
+      color: var(--gray-700);
+    }
+
+    tbody tr:hover {
+      background: var(--gray-50);
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .role-badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .role-admin { background: #ede7f6; color: #4527a0; }
+    .role-cm { background: #e3f2fd; color: #1565c0; }
+    .role-inv { background: #e8f5e9; color: #2e7d32; }
+    .role-qa { background: #fff3e0; color: #e65100; }
+    .role-req { background: #fce4ec; color: #c62828; }
+    .role-auth { background: #f3e5f5; color: #7b1fa2; }
+
+    .check { color: var(--success); font-weight: 700; }
+    .cross { color: var(--gray-400); }
+    .partial { color: var(--warning); font-weight: 600; }
+
+    /* Callout boxes */
+    .callout {
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border-left: 4px solid;
+      font-size: 14px;
+    }
+
+    .callout-title {
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .callout-tip {
+      background: #e8f5e9;
+      border-color: var(--success);
+    }
+
+    .callout-tip .callout-title { color: var(--success); }
+
+    .callout-note {
+      background: #e3f2fd;
+      border-color: var(--info);
+    }
+
+    .callout-note .callout-title { color: var(--info); }
+
+    .callout-warning {
+      background: #fff3e0;
+      border-color: var(--warning);
+    }
+
+    .callout-warning .callout-title { color: var(--warning); }
+
+    .callout-danger {
+      background: #ffebee;
+      border-color: var(--danger);
+    }
+
+    .callout-danger .callout-title { color: var(--danger); }
+
+    .callout-keyboard {
+      background: var(--gray-100);
+      border-color: var(--navy);
+    }
+
+    .callout-keyboard .callout-title { color: var(--navy); }
+
+    kbd {
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 12px;
+      font-family: 'SF Mono', 'Consolas', monospace;
+      background: var(--white);
+      border: 1px solid var(--gray-300);
+      border-radius: 4px;
+      box-shadow: 0 2px 0 var(--gray-300);
+      color: var(--gray-700);
+    }
+
+    /* Steps */
+    .steps {
+      counter-reset: step-counter;
+      list-style: none;
+      padding-left: 0;
+      margin-bottom: 24px;
+    }
+
+    .steps li {
+      counter-increment: step-counter;
+      padding: 12px 16px 12px 52px;
+      position: relative;
+      margin-bottom: 4px;
+      border-radius: 6px;
+      background: var(--white);
+      border: 1px solid var(--gray-100);
+    }
+
+    .steps li::before {
+      content: counter(step-counter);
+      position: absolute;
+      left: 14px;
+      top: 12px;
+      width: 26px;
+      height: 26px;
+      background: var(--orange);
+      color: var(--white);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .steps li::marker {
+      content: none;
+    }
+
+    /* Screen description boxes */
+    .screen-desc {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+    }
+
+    .screen-desc-title {
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .screen-desc-title::before {
+      content: '🖥';
+      font-size: 16px;
+    }
+
+    /* Navigation bar description */
+    .nav-bar {
+      display: flex;
+      gap: 0;
+      background: var(--navy);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 12px rgba(26,35,126,0.3);
+    }
+
+    .nav-item {
+      padding: 12px 24px;
+      color: var(--gray-300);
+      font-size: 13px;
+      font-weight: 500;
+      border-right: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .nav-item.active {
+      background: var(--orange);
+      color: var(--white);
+    }
+
+    /* Workflow diagram */
+    .workflow {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .workflow-step {
+      padding: 10px 20px;
+      background: var(--navy);
+      color: var(--white);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+      min-width: 100px;
+    }
+
+    .workflow-arrow {
+      font-size: 20px;
+      color: var(--orange);
+      padding: 0 8px;
+      font-weight: 700;
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .badge-new { background: #e3f2fd; color: #1565c0; }
+    .badge-progress { background: #fff3e0; color: #e65100; }
+    .badge-review { background: #f3e5f5; color: #7b1fa2; }
+    .badge-complete { background: #e8f5e9; color: #2e7d32; }
+    .badge-closed { background: var(--gray-200); color: var(--gray-600); }
+
+    /* Footer */
+    .manual-footer {
+      margin-top: 60px;
+      padding-top: 30px;
+      border-top: 2px solid var(--gray-200);
+      text-align: center;
+      color: var(--gray-500);
+      font-size: 13px;
+    }
+
+    .manual-footer a {
+      color: var(--navy);
+      text-decoration: none;
+    }
+
+    /* Print styles */
+    @media print {
+      body {
+        background: white;
+        font-size: 11pt;
+        color: #000;
+      }
+
+      .cover-page {
+        min-height: auto;
+        page-break-after: always;
+      }
+
+      .manual-content {
+        padding: 0;
+        box-shadow: none;
+        max-width: 100%;
+      }
+
+      .chapter {
+        page-break-before: always;
+        padding-top: 0;
+      }
+
+      .callout {
+        border: 1px solid #ccc;
+        break-inside: avoid;
+      }
+
+      .nav-bar, .workflow {
+        break-inside: avoid;
+      }
+
+      .steps li {
+        break-inside: avoid;
+      }
+
+      pre {
+        break-inside: avoid;
+        background: #f0f0f0 !important;
+        color: #000 !important;
+      }
+
+      .cover-header, .cover-footer {
+        display: none;
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .cover-header { padding: 20px 24px; }
+      .cover-content { padding: 0 24px 40px; }
+      .cover-title { font-size: 36px; }
+      .cover-full-title { font-size: 18px; }
+      .manual-content { padding: 30px 20px; }
+      .chapter-title { font-size: 28px; }
+      .toc-title { font-size: 26px; }
+      .cover-meta { gap: 20px; }
+      .workflow { gap: 4px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== COVER PAGE ===== -->
+  <div class="cover-page">
+    <div class="cover-header">
+      <div class="cover-logo">
+        <div class="cover-logo-icon">J</div>
+        <div class="cover-logo-text">JENE<span>-DFCMS</span></div>
+      </div>
+      <div class="cover-version">v2.0 &mdash; User Manual</div>
+    </div>
+
+    <div class="cover-content">
+      <div class="cover-subtitle">Digital Forensic Case Management System</div>
+      <h1 class="cover-title">User Manual</h1>
+      <p class="cover-full-title">Comprehensive Guide for Investigators, Case Managers, QA, and Administrators</p>
+      <p class="cover-description">
+        JENE-DFCMS is a centralized platform for managing digital forensic investigations &mdash;
+        from case creation and evidence tracking to task assignment and reporting.
+        This manual walks you through every feature, screen, and workflow in the system.
+      </p>
+      <div class="cover-meta">
+        <div class="cover-meta-item">
+          <span class="cover-meta-label">Author</span>
+          <span class="cover-meta-value">Sukhvinder Chhoker</span>
+        </div>
+        <div class="cover-meta-item">
+          <span class="cover-meta-label">Version</span>
+          <span class="cover-meta-value">2.0</span>
+        </div>
+        <div class="cover-meta-item">
+          <span class="cover-meta-label">Last Updated</span>
+          <span class="cover-meta-value">June 2026</span>
+        </div>
+        <div class="cover-meta-item">
+          <span class="cover-meta-label">Classification</span>
+          <span class="cover-meta-value">Internal Use</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cover-footer">
+      <div>
+        <div class="cover-footer-text">JENE-DFCMS &mdash; Digital Forensic Case Management System</div>
+        <div class="cover-orange-bar"></div>
+      </div>
+      <div class="cover-footer-text">Confidential &amp; Proprietary</div>
+    </div>
+  </div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <div class="manual-content">
+
+    <!-- TABLE OF CONTENTS -->
+    <div class="toc" id="toc">
+      <h1 class="toc-title">Table of Contents</h1>
+      <p class="toc-subtitle">Complete guide to using JENE-DFCMS</p>
+      <div class="toc-divider"></div>
+
+      <ol class="toc-list">
+        <li><a href="#ch1">Getting Started</a> <span class="toc-section-num">Ch 1</span></li>
+        <li><a href="#ch2">Dashboard</a> <span class="toc-section-num">Ch 2</span></li>
+        <li><a href="#ch3">Case Management</a> <span class="toc-section-num">Ch 3</span></li>
+        <li><a href="#ch4">Task Management</a> <span class="toc-section-num">Ch 4</span></li>
+        <li><a href="#ch5">Evidence Management</a> <span class="toc-section-num">Ch 5</span></li>
+        <li><a href="#ch6">User Management</a> <span class="toc-section-num">Ch 6</span></li>
+        <li><a href="#ch7">Reports and Analytics</a> <span class="toc-section-num">Ch 7</span></li>
+        <li><a href="#appendix-a">Appendix A: Role Permissions Matrix</a> <span class="toc-section-num">A</span></li>
+        <li><a href="#appendix-b">Appendix B: System Settings</a> <span class="toc-section-num">B</span></li>
+      </ol>
+    </div>
+
+    <!-- ===== CHAPTER 1: GETTING STARTED ===== -->
+    <div class="chapter" id="ch1">
+      <div class="chapter-number">Chapter 01</div>
+      <h1 class="chapter-title">Getting Started</h1>
+      <p class="chapter-desc">Access the system, log in for the first time, and orient yourself with the interface.</p>
+      <div class="chapter-divider"></div>
+
+      <h2>1.1 System Requirements</h2>
+      <p>JENE-DFCMS is a web-based application. Ensure the following before proceeding:</p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Requirement</th><th>Minimum</th><th>Recommended</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Browser</td><td>Chrome 90+, Firefox 88+, Edge 90+, Safari 14+</td><td>Chrome (latest)</td></tr>
+            <tr><td>Resolution</td><td>1024 &times; 768</td><td>1920 &times; 1080</td></tr>
+            <tr><td>Internet</td><td>Stable connection to internal network</td><td>Broadband / LAN</td></tr>
+            <tr><td>JavaScript</td><td>Enabled</td><td>Enabled</td></tr>
+            <tr><td>Backend</td><td>http://localhost:8080</td><td>Same machine or LAN server</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-tip">
+        <div class="callout-title">💡 Tip</div>
+        For the best experience, use Google Chrome in full-screen mode (<kbd>F11</kbd>). The application is optimized for modern browsers.
+      </div>
+
+      <h2>1.2 Accessing the Application</h2>
+      <p>Open your browser and navigate to:</p>
+      <pre><code>http://localhost:4200</code></pre>
+      <p>The login page will appear with the JENE-DFCMS branding — a navy blue background with the system logo and credential fields.</p>
+
+      <div class="screen-desc">
+        <div class="screen-desc-title">Login Screen</div>
+        <p>The login page displays the JENE-DFCMS logo at center, two input fields (<strong>Email or Username</strong> and <strong>Password</strong>), and a <strong>Sign In</strong> button in orange. The background uses a navy blue gradient. A "Remember Me" checkbox may appear below the password field.</p>
+      </div>
+
+      <h2>1.3 Logging In</h2>
+      <p>Use the default administrator credentials or your assigned account:</p>
+      <pre><code>Username: admin
+Password: admin123</code></pre>
+
+      <ol class="steps">
+        <li>Navigate to <code>http://localhost:4200</code></li>
+        <li>Enter your username in the <strong>Username</strong> field</li>
+        <li>Enter your password in the <strong>Password</strong> field</li>
+        <li>Click the <strong>Sign In</strong> button (orange)</li>
+        <li>Upon successful authentication, you will be redirected to the Dashboard</li>
+      </ol>
+
+      <div class="callout callout-warning">
+        <div class="callout-title">⚠ Important</div>
+        The default credentials (<code>admin / admin123</code>) should be changed immediately after first login for security purposes. Contact your system administrator if you cannot log in.
+      </div>
+
+      <h2>1.4 Understanding the Interface</h2>
+      <p>After logging in, you will see the main application interface with a top navigation bar:</p>
+
+      <div class="nav-bar">
+        <div class="nav-item active">Dashboard</div>
+        <div class="nav-item">Cases</div>
+        <div class="nav-item">Evidence</div>
+        <div class="nav-item">Users</div>
+      </div>
+
+      <p>The top navbar contains:</p>
+      <ul>
+        <li><strong>Logo (left):</strong> Clicking the JENE-DFCMS logo returns you to the Dashboard</li>
+        <li><strong>Navigation Links:</strong> Dashboard, Cases, Evidence, Users — your primary modules</li>
+        <li><strong>User Profile (right):</strong> Shows your name and role. Click to access profile settings or log out</li>
+      </ul>
+
+      <div class="callout callout-keyboard">
+        <div class="callout-title">⌨ Keyboard Shortcuts</div>
+        <kbd>Alt</kbd> + <kbd>D</kbd> &mdash; Go to Dashboard &nbsp;|&nbsp;
+        <kbd>Alt</kbd> + <kbd>C</kbd> &mdash; Go to Cases &nbsp;|&nbsp;
+        <kbd>Alt</kbd> + <kbd>E</kbd> &mdash; Go to Evidence &nbsp;|&nbsp;
+        <kbd>Alt</kbd> + <kbd>U</kbd> &mdash; Go to Users
+      </div>
+
+      <h2>1.5 Logging Out</h2>
+      <ol class="steps">
+        <li>Click on your username in the top-right corner of the navigation bar</li>
+        <li>Select <strong>Logout</strong> from the dropdown menu</li>
+        <li>You will be redirected to the login page</li>
+      </ol>
+
+      <div class="callout callout-note">
+        <div class="callout-title">ℹ Note</div>
+        Sessions automatically expire after 30 minutes of inactivity for security. You will be prompted to re-authenticate.
+      </div>
+    </div>
+
+    <!-- ===== CHAPTER 2: DASHBOARD ===== -->
+    <div class="chapter" id="ch2">
+      <div class="chapter-number">Chapter 02</div>
+      <h1 class="chapter-title">Dashboard</h1>
+      <p class="chapter-desc">Monitor system activity, view case statistics, and get a real-time overview of operations.</p>
+      <div class="chapter-divider"></div>
+
+      <h2>2.1 Overview</h2>
+      <p>The Dashboard is the first screen you see after logging in. It provides a high-level summary of all forensic operations, including case counts, evidence status, and recent activity. The dashboard is role-aware — different users see data relevant to their permissions.</p>
+
+      <div class="screen-desc">
+        <div class="screen-desc-title">Dashboard Layout</div>
+        <p>The dashboard displays a row of statistics cards at the top (showing Total Cases, Active Cases, Pending Evidence, Completed Tasks, etc.), followed by charts/graphs showing case distribution by status and investigator workload. Below the charts, a "Recent Activity" feed lists the latest actions across the system.</p>
+      </div>
+
+      <h2>2.2 Statistics Cards</h2>
+      <p>The top section displays key metrics in colored cards:</p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Card</th><th>Color</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Total Cases</strong></td><td>Blue</td><td>Count of all cases in the system across all statuses</td></tr>
+            <tr><td><strong>Active Cases</strong></td><td>Green</td><td>Cases currently in progress (status: IN_PROGRESS or UNDER_REVIEW)</td></tr>
+            <tr><td><strong>Pending Evidence</strong></td><td>Orange</td><td>Evidence items awaiting check-in or review</td></tr>
+            <tr><td><strong>Completed Tasks</strong></td><td>Purple</td><td>Tasks marked as completed in the current period</td></tr>
+            <tr><td><strong>Open Issues</strong></td><td>Red</td><td>Overdue tasks or flagged items requiring attention</td></tr>
+            <tr><td><strong>Team Members</strong></td><td>Teal</td><td>Number of active users in the system</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>2.3 Charts and Graphs</h2>
+      <p>Below the statistics cards, the dashboard includes visual analytics:</p>
+      <ul>
+        <li><strong>Case Status Distribution:</strong> A pie or doughnut chart showing cases by status — NEW, IN_PROGRESS, UNDER_REVIEW, COMPLETED, CLOSED</li>
+        <li><strong>Cases Over Time:</strong> A line chart showing case creation and completion trends over the selected period</li>
+        <li><strong>Evidence Status:</strong> A bar chart showing how many evidence items are checked in, checked out, or in transit</li>
+        <li><strong>Investigator Workload:</strong> A horizontal bar chart showing the number of active cases per investigator</li>
+      </ul>
+
+      <h2>2.4 Recent Activity Feed</h2>
+      <p>The bottom section of the dashboard displays a chronological feed of recent actions:</p>
+      <ul>
+        <li>Case created or updated</li>
+        <li>Evidence checked in or checked out</li>
+        <li>Task status changed</li>
+        <li>User roles modified</li>
+        <li>Reports generated</li>
+      </ul>
+      <p>Each activity entry shows the timestamp, user who performed the action, and a brief description. Click on any entry to navigate to the relevant case or evidence item.</p>
+
+      <div class="callout callout-tip">
+        <div class="callout-title">💡 Tip</div>
+        Use the date range picker (if available) to filter dashboard data by a specific time period. This is useful for weekly reviews or monthly reporting.
+      </div>
+
+      <h2>2.5 Refreshing Data</h2>
+      <p>The dashboard data refreshes automatically every 60 seconds. To manually refresh:</p>
+      <ol class="steps">
+        <li>Click the <strong>Refresh</strong> icon (circular arrow) in the top-right corner of the dashboard</li>
+        <li>Wait for the loading spinner to complete</li>
+        <li>All statistics and charts will update with the latest data</li>
+      </ol>
+    </div>
+
+    <!-- ===== CHAPTER 3: CASE MANAGEMENT ===== -->
+    <div class="chapter" id="ch3">
+      <div class="chapter-number">Chapter 03</div>
+      <h1 class="chapter-title">Case Management</h1>
+      <p class="chapter-desc">Create, update, track, and manage forensic investigation cases through their entire lifecycle.</p>
+      <div class="chapter-divider"></div>
+
+      <h2>3.1 Case Lifecycle Overview</h2>
+      <p>Every case in JENE-DFCMS follows a defined lifecycle. Understanding the status transitions is critical for proper case management.</p>
+
+      <div class="workflow">
+        <div class="workflow-step">NEW</div>
+        <div class="workflow-arrow">&rarr;</div>
+        <div class="workflow-step">IN_PROGRESS</div>
+        <div class="workflow-arrow">&rarr;</div>
+        <div class="workflow-step">UNDER_REVIEW</div>
+        <div class="workflow-arrow">&rarr;</div>
+        <div class="workflow-step">COMPLETED</div>
+        <div class="workflow-arrow">&rarr;</div>
+        <div class="workflow-step">CLOSED</div>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Status</th><th>Description</th><th>Allowed Transitions</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="badge badge-new">NEW</span></td><td>Case just created, not yet assigned</td><td>IN_PROGRESS, CLOSED</td></tr>
+            <tr><td><span class="badge badge-progress">IN_PROGRESS</span></td><td>Active investigation underway</td><td>UNDER_REVIEW, CLOSED</td></tr>
+            <tr><td><span class="badge badge-review">UNDER_REVIEW</span></td><td>QA review in progress</td><td>IN_PROGRESS (rejected), COMPLETED</td></tr>
+            <tr><td><span class="badge badge-complete">COMPLETED</span></td><td>Investigation concluded</td><td>CLOSED</td></tr>
+            <tr><td><span class="badge badge-closed">CLOSED</span></td><td>Case archived, no further changes</td><td>None (terminal state)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>3.2 Viewing All Cases</h2>
+      <p>Navigate to <strong>Cases</strong> in the top navigation bar. The Cases list page displays all cases in a searchable, filterable table.</p>
+
+      <div class="screen-desc">
+        <div class="screen-desc-title">Cases List Screen</div>
+        <p>The Cases page shows a table with columns: Case ID, Title, Status (color-coded badge), Priority, Assigned Investigator, Created Date, and Last Updated. Above the table, there are filter controls for status, priority, and date range. A search bar allows filtering by case title or ID. A "Create Case" button (orange) appears in the top-right corner.</p>
+      </div>
+
+      <h2>3.3 Creating a New Case</h2>
+      <ol class="steps">
+        <li>Click the <strong>Create Case</strong> button (orange) on the Cases list page</li>
+        <li>The "New Case" form appears. Fill in the required fields:
+          <ul>
+            <li><strong>Title</strong> (required): A descriptive name for the case</li>
+            <li><strong>Description</strong>: Detailed description of the investigation</li>
+            <li><strong>Priority</strong>: Select from LOW, MEDIUM, HIGH, or CRITICAL</li>
+            <li><strong>Assign Investigator</strong>: Select an investigator from the dropdown</li>
+            <li><strong>Due Date</strong>: Set the expected completion date</li>
+          </ul>
+        </li>
+        <li>Click <strong>Save</strong> to create the case. The status defaults to NEW</li>
+        <li>The system creates a unique Case ID (e.g., <code>CASE-2026-001</code>) and redirects you to the case detail page</li>
+      </ol>
+
+      <div class="callout callout-note">
+        <div class="callout-title">ℹ Note</div>
+        Only users with ADMIN, CASE_MANAGER, or INVESTIGATOR roles can create cases. REQUESTER users can submit case requests that require authoriser approval.
+      </div>
+
+      <h2>3.4 Case Detail Page</h2>
+      <p>Clicking on a case from the list opens the Case Detail page. This page is divided into tabs:</p>
+
+      <div class="screen-desc">
+        <div class="screen-desc-title">Case Detail Layout</div>
+        <p>The case detail page has a header showing the Case ID, title, and status badge. Below is a tabbed interface with: <strong>Overview</strong> (case details and description), <strong>Tasks</strong> (list of tasks under this case), <strong>Evidence</strong> (linked evidence items), <strong>History</strong> (audit trail of all changes), and <strong>Linked Cases</strong> (related cases). An "Edit" button allows modifying case details, and a "Change Status" dropdown provides status transitions.</p>
+      </div>
+
+      <h2>3.5 Editing a Case</h2>
+      <ol class="steps">
+        <li>Open the case detail page by clicking on a case from the list</li>
+        <li>Click the <strong>Edit</strong> button in the case header</li>
+        <li>Modify any editable fields (title, description, priority, due date, assignee)</li>
+        <li>Click <strong>Save</strong> to apply changes</li>
+        <li>The change is logged in the case history with timestamp and user information</li>
+      </ol>
+
+      <h2>3.6 Changing Case Status</h2>
+      <p>Status changes follow the lifecycle defined in section 3.1. Not all transitions are available from every status.</p>
+
+      <ol class="steps">
+        <li>Open the case detail page</li>
+        <li>Locate the <strong>Status</strong> dropdown in the case header</li>
+        <li>Select the new status from the available options (only valid transitions appear)</li>
+        <li>If transitioning to UNDER_REVIEW, a confirmation dialog appears asking you to confirm the QA handoff</li>
+        <li>The status change is recorded in the case history with the user's name and timestamp</li>
+      </ol>
+
+      <div class="callout callout-warning">
+        <div class="callout-title">⚠ Restriction</div>
+        Once a case is CLOSED, its status cannot be changed. This is a terminal state. Ensure all evidence is properly checked in and all tasks are completed before closing a case.
+      </div>
+
+      <h2>3.7 Case History</h2>
+      <p>The History tab on the case detail page shows a complete audit trail of all actions performed on the case:</p>
+      <ul>
+        <li>Status changes (with from/to values)</li>
+        <li>Field modifications (title, description, priority, assignee)</li>
+        <li>Task additions and updates</li>
+        <li>Evidence links added or removed</li>
+        <li>Case linkage operations</li>
+      </ul>
+      <p>Each history entry displays the timestamp, user, action type, and details of the change. History entries are immutable and cannot be deleted.</p>
+
+      <h2>3.8 Linking Cases</h2>
+      <p>Some investigations involve related cases. JENE-DFCMS allows you to create explicit links between cases.</p>
+
+      <ol class="steps">
+        <li>Open the case detail page</li>
+        <li>Navigate to the <strong>Linked Cases</strong> tab</li>
+        <li>Click <strong>Link Case</strong></li>
+        <li>Search for the related case by Case ID or title</li>
+        <li>Select the case and optionally specify the relationship type (e.g., "Related Investigation", "Parent Case", "Duplicate")</li>
+        <li>Click <strong>Confirm</strong> to create the link</li>
+        <li>The linked case now appears in both cases' Linked Cases tabs</li>
+      </ol>
+
+      <div class="callout callout-tip">
+        <div class="callout-title">💡 Tip</div>
+        Linking cases is especially useful in complex investigations involving multiple suspects or cross-jurisdictional incidents. Linked cases are cross-referenced in reports.
+      </div>
+
+      <h2>3.9 Filtering and Searching Cases</h2>
+      <p>Use the filter controls at the top of the Cases list to narrow results:</p>
+      <ul>
+        <li><strong>Status filter:</strong> Show only cases in a specific status</li>
+        <li><strong>Priority filter:</strong> Filter by LOW, MEDIUM, HIGH, or CRITICAL</li>
+        <li><strong>Assigned to:</strong> Show cases assigned to a specific investigator</li>
+        <li><strong>Date range:</strong> Filter by creation date or due date</li>
+        <li><strong>Search bar:</strong> Free-text search across case titles, IDs, and descriptions</li>
+      </ul>
+
+      <div class="callout callout-keyboard">
+        <div class="callout-title">⌨ Keyboard Shortcuts</div>
+        <kbd>Ctrl</kbd> + <kbd>N</kbd> &mdash; Create new case &nbsp;|&nbsp;
+        <kbd>Ctrl</kbd> + <kbd>F</kbd> &mdash; Focus search bar &nbsp;|&nbsp;
+        <kbd>Esc</kbd> &mdash; Close modal/dialog
+      </div>
+    </div>
+
+    <!-- ===== CHAPTER 4: TASK MANAGEMENT ===== -->
+    <div class="chapter" id="ch4">
+      <div class="chapter-number">Chapter 04</div>
+      <h1 class="chapter-title">Task Management</h1>
+      <p class="chapter-desc">Create, assign, and track tasks associated with forensic cases.</p>
+      <div class="chapter-divider"></div>
+
+      <h2>4.1 Tasks Overview</h2>
+      <p>Tasks are individual work items within a case. Each task represents a specific action that must be completed as part of the investigation — such as analyzing a hard drive, reviewing logs, or preparing a report. Tasks help break down complex cases into manageable units and enable progress tracking.</p>
+
+      <div class="screen-desc">
+        <div class="screen-desc-title">Tasks Tab (within Case Detail)</div>
+        <p>The Tasks tab shows a table listing all tasks for the current case. Columns include: Task ID, Title, Status, Assigned To, Priority, Created Date, and Due Date. A "Create Task" button appears at the top. Tasks are color-coded by status. Clicking a task opens its detail view.</p>
+      </div>
+
+      <h2>4.2 Creating a Task</h2>
+      <ol class="steps">
+        <li>Open the case where you want to add a task</li>
+        <li>Navigate to the <strong>Tasks</strong> tab</li>
+        <li>Click <strong>Create Task</strong></li>
+        <li>Fill in the task details:
+          <ul>
+            <li><strong>Title</strong> (required): Brief description of the task</li>
+            <li><strong>Description</strong>: Detailed instructions or notes</li>
+            <li><strong>Priority</strong>: LOW, MEDIUM, HIGH, or CRITICAL</li>
+            <li><strong>Assigned To</strong>: Select an investigator or team member</li>
+            <li><strong>Due Date</strong>: Expected completion date</li>
+          </ul>
+        </li>
+        <li>Click <strong>Save</strong> to create the task</li>
+        <li>The task appears in the Tasks tab with status NEW</li>
+      </ol>
+
+      <h2>4.3 Task Status Tracking</h2>
+      <p>Tasks follow their own status workflow:</p>
+      <div class="workflow">
+        <div class="workflow-step">NEW</div>
+        <div class="workflow-arrow">&rarr;</div>
+        <div class="workflow-step">IN_PROGRESS</div>
+        <div class="workflow-arrow">&rarr;</div>
+        <div class="workflow-step">COMPLETED</div>
+      </div>
+
+      <p>To update a task status:</p>
+      <ol class="steps">
+        <li>Open the task detail view by clicking on the task</li>
+        <li>Use the <strong>Status</strong> dropdown to change the status</li>
+        <li>When marking as COMPLETED, you may be prompted to add a completion summary</li>
+        <li>The status change is logged in the task history</li>
+      </ol>
+
+      <div class="callout callout-tip">
+        <div class="callout-title">💡 Tip</div>
+        You can quickly update task status from the Tasks tab by clicking the status badge on each row — it becomes a dropdown when clicked.
+      </div>
+
+      <h2>4.4 Adding Notes to Tasks</h2>
+      <p>Notes allow team members to communicate progress, share findings, or document issues within a task context.</p>
+
+      <ol class="steps">
+        <li>Open the task detail view</li>
+        <li>Scroll to the <strong>Notes</strong> section</li>
+        <li>Type your note in the text area</li>
+        <li>Click <strong>Add Note</strong> to save</li>
+        <li>The note appears in the chronological notes thread with your name and timestamp</li>
+      </ol>
+
+      <div class="callout callout-note">
+        <div class="callout-title">ℹ Note</div>
+        Notes are visible to all team members assigned to the case. They are included in case export and reports. Be mindful of sensitive information when adding notes.
+      </div>
+
+      <h2>4.5 Task History</h2>
+      <p>Each task maintains its own audit history, similar to case history. The task history records:</p>
+      <ul>
+        <li>Status changes with timestamps</li>
+        <li>Assignment changes (who the task was reassigned to)</li>
+        <li>Priority modifications</li>
+        <li>Notes added by team members</li>
+        <li>Due date changes</li>
+      </ul>
+
+      <h2>4.6 Assigning Investigators and QA</h2>
+      <p>Tasks can be assigned to specific team members for accountability and workload distribution.</p>
+
+      <ol class="steps">
+        <li>Open the task detail view</li>
+        <li>Click <strong>Edit</strong> or click directly on the "Assigned To" field</li>
+        <li>Select the appropriate investigator from the dropdown (shows only users with INVESTIGATOR or QA roles)</li>
+        <li>Optionally, assign a QA reviewer separately if your workflow requires quality assurance sign-off</li>
+        <li>Save the changes</li>
+      </ol>
+
+      <div class="callout callout-warning">
+        <div class="callout-title">⚠ Important</div>
+        QA reviewers should be different from the investigator assigned to the task to maintain independence. The system may enforce this separation based on your organization's configuration.
+      </div>
+
+      <h2>4.7 Bulk Task Operations</h2>
+      <p>For efficiency, the system supports bulk operations on tasks:</p>
+      <ul>
+        <li><strong>Bulk Status Change:</strong> Select multiple tasks using checkboxes and change their status simultaneously</li>
+        <li><strong>Bulk Assignment:</strong> Reassign multiple tasks to a different investigator</li>
+        <li><strong>Bulk Delete:</strong> Remove multiple tasks (requires admin privileges)</li>
+      </ul>
+
+      <div class="callout callout-keyboard">
+        <div class="callout-title">⌨ Keyboard Shortcuts</div>
+        <kbd>Ctrl</kbd> + <kbd>T</kbd> &mdash; Create new task &nbsp;|&nbsp;
+        <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>A</kbd> &mdash; Select all tasks &nbsp;|&nbsp;
+        <kbd>Delete</kbd> &mdash; Delete selected tasks (with confirmation)
+      </div>
+    </div>
+
+    <!-- ===== CHAPTER 5: EVIDENCE MANAGEMENT ===== -->
+    <div class="chapter" id="ch5">
+      <div class="chapter-number">Chapter 05</div>
+      <h1 class="chapter-title">Evidence Management</h1>
+      <p class="chapter-desc">Track, manage, and maintain chain of custody for all digital and physical evidence.</p>
+      <div class="chapter-divider"></div>
+
+      <h2>5.1 Evidence Overview</h2>
+      <p>Evidence management is a core function of any forensic system. JENE-DFCMS provides comprehensive evidence tracking with check-in/check-out workflows and full chain of custody documentation. Every evidence item is linked to a case and maintains a complete history of handling.</p>
+
+      <div class="screen-desc">
+        <div class="screen-desc-title">Evidence List Screen</div>
+        <p>The Evidence page (accessible from the top navigation) displays a table of all evidence items across all cases. Columns include: Evidence ID, Title, Case Reference, Status, Current Holder, Check-in Date, and Last Updated. Filters allow narrowing by case, status, evidence type, and date range. An "Add Evidence" button is available for creating new items.</p>
+      </div>
+
+      <h2>5.2 Evidence Lifecycle</h2>
+      <div class="workflow">
+        <div class="workflow-step">REGISTERED</div>
+        <div class="workflow-arrow">&rarr;</div>
+        <div class="workflow-step">CHECKED_IN</div>
+        <div class="workflow-arrow">&rarr;</div>
+        <div class="workflow-step">IN_ANALYSIS</div>
+        <div class="workflow-arrow">&rarr;</div>
+        <div class="workflow-step">CHECKED_OUT</div>
+        <div class="workflow-arrow">&rarr;</div>
+        <div class="workflow-step">RETURNED</div>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Status</th><th>Description</th><th>Who Can Change</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>REGISTERED</strong></td><td>Evidence created but not yet physically received</td><td>Any authorized user</td></tr>
+            <tr><td><strong>CHECKED_IN</strong></td><td>Evidence received and logged into the evidence locker</td><td>Investigator, Case Manager</td></tr>
+            <tr><td><strong>IN_ANALYSIS</strong></td><td>Evidence currently being examined</td><td>Investigator</td></tr>
+            <tr><td><strong>CHECKED_OUT</strong></td><td>Evidence temporarily removed for court or external review</td><td>Case Manager, Admin</td></tr>
+            <tr><td><strong>RETURNED</strong></td><td>Evidence returned to storage after checkout</td><td>Investigator, Case Manager</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>5.3 Creating Evidence Items</h2>
+      <p>Evidence items are created under a specific case. You can add evidence from the case detail page or directly from the Evidence list.</p>
+
+      <h3>Via Case Detail Page</h3>
+      <ol class="steps">
+        <li>Open the case you want to add evidence to</li>
+        <li>Navigate to the <strong>Evidence</strong> tab</li>
+        <li>Click <strong>Add Evidence</strong></li>
+        <li>Fill in the evidence details:
+          <ul>
+            <li><strong>Title</strong> (required): Descriptive name (e.g., "Suspect's Laptop Hard Drive")</li>
+            <li><strong>Description</strong>: Physical description, model, serial number</li>
+            <li><strong>Evidence Type</strong>: Select from DIGITAL, PHYSICAL, DOCUMENT, TESTIMONY</li>
+            <li><strong>Hash Value</strong>: MD5 or SHA-256 hash for digital evidence integrity</li>
+            <li><strong>Storage Location</strong>: Where the evidence is stored</li>
+          </ul>
+        </li>
+        <li>Click <strong>Save</strong> to register the evidence item</li>
+      </ol>
+
+      <h3>Via Evidence List Page</h3>
+      <ol class="steps">
+        <li>Navigate to <strong>Evidence</strong> in the top navigation</li>
+        <li>Click <strong>Add Evidence</strong></li>
+        <li>Select the associated case from the dropdown</li>
+        <li>Fill in the evidence details as described above</li>
+        <li>Click <strong>Save</strong></li>
+      </ol>
+
+      <h2>5.4 Check-In / Check-Out Workflow</h2>
+      <p>The check-in/check-out process ensures physical evidence accountability. Every time evidence changes hands, it must be formally checked in or out.</p>
+
+      <h3>Checking In Evidence</h3>
+      <ol class="steps">
+        <li>Open the evidence item detail page</li>
+        <li>Click <strong>Check In</strong> (available when status is REGISTERED)</li>
+        <li>Confirm the evidence details and storage location</li>
+        <li>Optionally add a condition report (notes on physical state)</li>
+        <li>Click <strong>Confirm Check-In</strong></li>
+        <li>The status changes to CHECKED_IN and a chain of custody entry is created</li>
+      </ol>
+
+      <h3>Checking Out Evidence</h3>
+      <ol class="steps">
+        <li>Open the evidence item detail page</li>
+        <li>Click <strong>Check Out</strong> (available when status is CHECKED_IN or IN_ANALYSIS)</li>
+        <li>Enter the checkout reason (e.g., "Court presentation", "External lab analysis")</li>
+        <li>Specify the expected return date</li>
+        <li>Confirm your identity (system may require re-authentication)</li>
+        <li>Click <strong>Confirm Check-Out</strong></li>
+        <li>Chain of custody is updated with the checkout record</li>
+      </ol>
+
+      <div class="callout callout-danger">
+        <div class="callout-title">🔒 Security</div>
+        Check-out operations require audit trail integrity. All check-out actions are logged with the user's identity, timestamp, and reason. Tampering with evidence records is logged and reported to administrators.
+      </div>
+
+      <h2>5.5 Chain of Custody</h2>
+      <p>The Chain of Custody tab on the evidence detail page provides a complete, chronological record of every person who has handled the evidence:</p>
+
+      <div class="screen-desc">
+        <div class="screen-desc-title">Chain of Custody Records</div>
+        <p>The chain of custody displays a timeline view with entries showing: Date/Time, Action (CHECKED_IN, CHECKED_OUT, TRANSFERRED, RETURNED), Performed By (user name and role), Location, and Notes. Each entry is timestamped and cannot be modified or deleted. An export option allows downloading the chain of custody as a PDF or CSV for court submissions.</p>
+      </div>
+
+      <p>Each chain of custody entry includes:</p>
+      <ul>
+        <li><strong>Timestamp:</strong> Exact date and time of the action</li>
+        <li><strong>Action:</strong> Type of custody event</li>
+        <li><strong>Actor:</strong> User who performed the action</li>
+        <li><strong>From/To:</strong> Custody transfer details</li>
+        <li><strong>Notes:</strong> Any additional observations or condition notes</li>
+      </ul>
+
+      <div class="callout callout-tip">
+        <div class="callout-title">💡 Tip</div>
+        Regularly export chain of custody records for your cases. These exports are court-admissible and provide an irrefutable record of evidence handling. Use the "Export PDF" button on the Chain of Custody tab.
+      </div>
+
+      <h2>5.6 Evidence Types and Categories</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Type</th><th>Examples</th><th>Special Fields</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>DIGITAL</strong></td><td>Hard drives, USB drives, mobile phones, cloud data</td><td>Hash value, file system type, capacity</td></tr>
+            <tr><td><strong>PHYSICAL</strong></td><td>Documents, weapons, biological samples</td><td>Physical dimensions, weight, packaging</td></tr>
+            <tr><td><strong>DOCUMENT</strong></td><td>Financial records, emails, contracts</td><td>Document type, page count, originality</td></tr>
+            <tr><td><strong>TESTIMONY</strong></td><td>Witness statements, depositions</td><td>Witness name, date of statement, format</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>5.7 Searching and Filtering Evidence</h2>
+      <p>The Evidence list supports powerful filtering:</p>
+      <ul>
+        <li><strong>By Case:</strong> Show evidence for a specific case</li>
+        <li><strong>By Status:</strong> Filter by CHECKED_IN, CHECKED_OUT, etc.</li>
+        <li><strong>By Type:</strong> DIGITAL, PHYSICAL, DOCUMENT, TESTIMONY</li>
+        <li><strong>By Date Range:</strong> Filter by check-in date or creation date</li>
+        <li><strong>Free Text Search:</strong> Search across titles, descriptions, and hash values</li>
+      </ul>
+    </div>
+
+    <!-- ===== CHAPTER 6: USER MANAGEMENT ===== -->
+    <div class="chapter" id="ch6">
+      <div class="chapter-number">Chapter 06</div>
+      <h1 class="chapter-title">User Management</h1>
+      <p class="chapter-desc">Create accounts, assign roles, and manage user access to the system.</p>
+      <div class="chapter-divider"></div>
+
+      <h2>6.1 Overview</h2>
+      <p>User Management is restricted to users with the ADMIN role. From this module, administrators can create new user accounts, edit existing profiles, assign roles, activate/deactivate accounts, and manage system access.</p>
+
+      <div class="screen-desc">
+        <div class="screen-desc-title">User Management Screen</div>
+        <p>The Users page (accessible from the top navigation) displays a table of all system users. Columns include: User ID, Full Name, Email, Role (with colored badge), Status (Active/Inactive), Created Date, and Last Login. An "Add User" button appears in the top-right corner. Search and role filter controls are available above the table.</p>
+      </div>
+
+      <h2>6.2 Creating a New User</h2>
+      <ol class="steps">
+        <li>Navigate to <strong>Users</strong> in the top navigation bar</li>
+        <li>Click <strong>Add User</strong> (orange button)</li>
+        <li>Fill in the user details:
+          <ul>
+            <li><strong>Full Name</strong> (required): User's complete name</li>
+            <li><strong>Email</strong> (required): Valid email address for notifications</li>
+            <li><strong>Username</strong> (required): Unique login identifier</li>
+            <li><strong>Password</strong> (required): Initial password (minimum 8 characters)</li>
+            <li><strong>Role</strong> (required): Select the appropriate role from the dropdown</li>
+            <li><strong>Phone</strong>: Contact number (optional)</li>
+            <li><strong>Department</strong>: Organizational department (optional)</li>
+          </ul>
+        </li>
+        <li>Click <strong>Save</strong> to create the user account</li>
+        <li>The user receives a welcome email (if email is configured) with login instructions</li>
+      </ol>
+
+      <div class="callout callout-warning">
+        <div class="callout-title">⚠ Security</div>
+        Passwords must be at least 8 characters and include a mix of uppercase, lowercase, numbers, and special characters. The system enforces password complexity requirements.
+      </div>
+
+      <h2>6.3 Available Roles</h2>
+      <p>JENE-DFCMS uses a role-based access control (RBAC) system. Each user is assigned exactly one role:</p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Role</th><th>Badge</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>ADMIN</strong></td>
+              <td><span class="role-badge role-admin">ADMIN</span></td>
+              <td>Full system access. Manages users, system settings, and all modules. Can perform any operation.</td>
+            </tr>
+            <tr>
+              <td><strong>CASE_MANAGER</strong></td>
+              <td><span class="role-badge role-cm">CASE_MANAGER</span></td>
+              <td>Creates and manages cases, assigns investigators, oversees case progress, manages evidence checkout.</td>
+            </tr>
+            <tr>
+              <td><strong>INVESTIGATOR</strong></td>
+              <td><span class="role-badge role-inv">INVESTIGATOR</span></td>
+              <td>Performs forensic analysis, creates tasks, manages evidence check-in/out, adds notes and findings.</td>
+            </tr>
+            <tr>
+              <td><strong>QA</strong></td>
+              <td><span class="role-badge role-qa">QA</span></td>
+              <td>Reviews completed work for quality and compliance. Can approve or reject tasks and case transitions.</td>
+            </tr>
+            <tr>
+              <td><strong>REQUESTER</strong></td>
+              <td><span class="role-badge role-req">REQUESTER</span></td>
+              <td>Submits case requests and views assigned cases. Cannot create cases directly; requires authoriser approval.</td>
+            </tr>
+            <tr>
+              <td><strong>AUTHORISER</strong></td>
+              <td><span class="role-badge role-auth">AUTHORISER</span></td>
+              <td>Approves case requests from REQUESTER users. Can view all cases but cannot perform investigations.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>6.4 Editing User Details</h2>
+      <ol class="steps">
+        <li>Navigate to the <strong>Users</strong> page</li>
+        <li>Click on the user's name or the <strong>Edit</strong> button in their row</li>
+        <li>Modify the desired fields (name, email, role, department, phone)</li>
+        <li>Click <strong>Save</strong> to apply changes</li>
+      </ol>
+
+      <div class="callout callout-note">
+        <div class="callout-title">ℹ Note</div>
+        You cannot change your own role to prevent privilege escalation. To change an admin's role, a different admin must perform the action.
+      </div>
+
+      <h2>6.5 Activating and Deactivating Users</h2>
+      <p>Instead of deleting users (which would break audit trails), administrators can deactivate accounts:</p>
+      <ol class="steps">
+        <li>Open the user detail page</li>
+        <li>Click <strong>Deactivate</strong> (or <strong>Activate</strong> for inactive users)</li>
+        <li>Confirm the action</li>
+        <li>Deactivated users cannot log in but their historical records remain intact</li>
+      </ol>
+
+      <h2>6.6 Resetting Passwords</h2>
+      <ol class="steps">
+        <li>Open the user detail page</li>
+        <li>Click <strong>Reset Password</strong></li>
+        <li>Enter a new temporary password or generate one automatically</li>
+        <li>The user is notified and must change the password on next login</li>
+      </ol>
+
+      <div class="callout callout-keyboard">
+        <div class="callout-title">⌨ Keyboard Shortcuts</div>
+        <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>U</kbd> &mdash; Open user management &nbsp;|&nbsp;
+        <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>N</kbd> &mdash; Create new user
+      </div>
+    </div>
+
+    <!-- ===== CHAPTER 7: REPORTS AND ANALYTICS ===== -->
+    <div class="chapter" id="ch7">
+      <div class="chapter-number">Chapter 07</div>
+      <h1 class="chapter-title">Reports and Analytics</h1>
+      <p class="chapter-desc">Generate, view, and export comprehensive reports on cases, evidence, and team activity.</p>
+      <div class="chapter-divider"></div>
+
+      <h2>7.1 Reports Overview</h2>
+      <p>JENE-DFCMS includes a reporting module that provides insights into operational metrics, case progress, and team performance. Reports can be viewed on-screen or exported to PDF and CSV formats for offline use and court submissions.</p>
+
+      <div class="screen-desc">
+        <div class="screen-desc-title">Reports Dashboard</div>
+        <p>The Reports section (typically accessible from the Dashboard or a dedicated Reports menu) displays available report types as cards. Each card shows the report name, description, and a "Generate" button. Previously generated reports appear in a history list with download links.</p>
+      </div>
+
+      <h2>7.2 Available Report Types</h2>
+
+      <h3>7.2.1 Dashboard Summary Report</h3>
+      <p>Provides a snapshot of all key metrics at a point in time:</p>
+      <ul>
+        <li>Total cases by status</li>
+        <li>Evidence items by status and type</li>
+        <li>Task completion rates</li>
+        <li>Team workload distribution</li>
+        <li>Overdue items and escalation alerts</li>
+      </ul>
+      <ol class="steps">
+        <li>Navigate to Reports</li>
+        <li>Select <strong>Dashboard Summary</strong></li>
+        <li>Choose the date range (default: current month)</li>
+        <li>Click <strong>Generate Report</strong></li>
+        <li>View the report on screen or click <strong>Export PDF</strong> to download</li>
+      </ol>
+
+      <h3>7.2.2 Case Report</h3>
+      <p>A detailed report for a specific case or range of cases:</p>
+      <ul>
+        <li>Case details (title, description, status, priority, timeline)</li>
+        <li>All tasks under the case with their statuses and assignees</li>
+        <li>Evidence items linked to the case with chain of custody summary</li>
+        <li>Case history audit trail</li>
+        <li>Linked cases and relationships</li>
+      </ul>
+      <ol class="steps">
+        <li>Navigate to Reports</li>
+        <li>Select <strong>Case Report</strong></li>
+        <li>Enter the Case ID or select from the dropdown</li>
+        <li>Optionally include task details, evidence details, and history</li>
+        <li>Click <strong>Generate Report</strong></li>
+        <li>Download as PDF for court submission or internal review</li>
+      </ol>
+
+      <h3>7.2.3 Activity Report</h3>
+      <p>Shows all actions performed within a date range, useful for audit and compliance:</p>
+      <ul>
+        <li>User login/logout events</li>
+        <li>Case creation and status changes</li>
+        <li>Evidence check-in/check-out events</li>
+        <li>Task assignments and completions</li>
+        <li>System configuration changes</li>
+      </ul>
+      <ol class="steps">
+        <li>Navigate to Reports</li>
+        <li>Select <strong>Activity Report</strong></li>
+        <li>Set the date range and optionally filter by user or action type</li>
+        <li>Click <strong>Generate Report</strong></li>
+        <li>Export to CSV for further analysis in Excel or other tools</li>
+      </ol>
+
+      <div class="callout callout-tip">
+        <div class="callout-title">💡 Tip</div>
+        Activity Reports are particularly useful for quarterly compliance audits. Schedule regular exports and archive them according to your organization's retention policy.
+      </div>
+
+      <h2>7.3 Exporting Reports</h2>
+      <p>All reports support the following export formats:</p>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Format</th><th>Use Case</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>PDF</strong></td><td>Court submissions, formal documentation</td><td>Includes formatting, charts, and branding</td></tr>
+            <tr><td><strong>CSV</strong></td><td>Data analysis in Excel, import to other systems</td><td>Raw data without formatting</td></tr>
+            <tr><td><strong>Print</strong></td><td>Physical copies</td><td>Optimized layout for standard paper sizes</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>7.4 Scheduling Reports</h2>
+      <p>Administrators can schedule recurring reports:</p>
+      <ol class="steps">
+        <li>Generate the desired report</li>
+        <li>Click <strong>Schedule</strong> instead of Export</li>
+        <li>Set the recurrence (daily, weekly, monthly)</li>
+        <li>Configure email delivery to specified recipients</li>
+        <li>Save the schedule</li>
+      </ol>
+
+      <div class="callout callout-note">
+        <div class="callout-title">ℹ Note</div>
+        Scheduled reports are generated during off-peak hours (typically 2:00 AM) to minimize system impact. Email delivery requires SMTP configuration in System Settings.
+      </div>
+    </div>
+
+    <!-- ===== APPENDIX A: ROLE PERMISSIONS MATRIX ===== -->
+    <div class="chapter" id="appendix-a">
+      <div class="chapter-number">Appendix A</div>
+      <h1 class="chapter-title">Role Permissions Matrix</h1>
+      <p class="chapter-desc">Detailed breakdown of what each role can access and modify.</p>
+      <div class="chapter-divider"></div>
+
+      <h2>A.1 Module Access Permissions</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Permission</th>
+              <th><span class="role-badge role-admin">ADMIN</span></th>
+              <th><span class="role-badge role-cm">CASE_MANAGER</span></th>
+              <th><span class="role-badge role-inv">INVESTIGATOR</span></th>
+              <th><span class="role-badge role-qa">QA</span></th>
+              <th><span class="role-badge role-req">REQUESTER</span></th>
+              <th><span class="role-badge role-auth">AUTHORISER</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>View Dashboard</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+            <tr><td>Create Cases</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td></tr>
+            <tr><td>Edit All Cases</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="partial">Own only</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td></tr>
+            <tr><td>Change Case Status</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="partial">Limited</td><td class="check">&#10003;</td><td class="cross">&mdash;</td><td class="check">&#10003;</td></tr>
+            <tr><td>Close Cases</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="cross">&mdash;</td><td class="check">&#10003;</td><td class="cross">&mdash;</td><td class="check">&#10003;</td></tr>
+            <tr><td>Create Tasks</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td></tr>
+            <tr><td>Assign Tasks</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="partial">Own cases</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td></tr>
+            <tr><td>Complete Tasks</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td></tr>
+            <tr><td>Add Task Notes</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td></tr>
+            <tr><td>Create Evidence</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td></tr>
+            <tr><td>Check-In Evidence</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td></tr>
+            <tr><td>Check-Out Evidence</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="partial">With approval</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td></tr>
+            <tr><td>View Chain of Custody</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="partial">Assigned only</td><td class="check">&#10003;</td></tr>
+            <tr><td>Manage Users</td><td class="check">&#10003;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td></tr>
+            <tr><td>Assign Roles</td><td class="check">&#10003;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td></tr>
+            <tr><td>View Reports</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="partial">Assigned cases</td><td class="check">&#10003;</td><td class="partial">Own requests</td><td class="check">&#10003;</td></tr>
+            <tr><td>Generate Reports</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="cross">&mdash;</td><td class="check">&#10003;</td><td class="cross">&mdash;</td><td class="check">&#10003;</td></tr>
+            <tr><td>Export Reports</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="cross">&mdash;</td><td class="check">&#10003;</td><td class="cross">&mdash;</td><td class="check">&#10003;</td></tr>
+            <tr><td>System Settings</td><td class="check">&#10003;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td></tr>
+            <tr><td>View Audit Logs</td><td class="check">&#10003;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td><td class="cross">&mdash;</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-note">
+        <div class="callout-title">ℹ Legend</div>
+        <span class="check">&#10003;</span> Full access &nbsp;&nbsp;
+        <span class="partial">Partial</span> Limited access (see description) &nbsp;&nbsp;
+        <span class="cross">&mdash;</span> No access
+      </div>
+    </div>
+
+    <!-- ===== APPENDIX B: SYSTEM SETTINGS ===== -->
+    <div class="chapter" id="appendix-b">
+      <div class="chapter-number">Appendix B</div>
+      <h1 class="chapter-title">System Settings</h1>
+      <p class="chapter-desc">Configuration options available to administrators.</p>
+      <div class="chapter-divider"></div>
+
+      <h2>B.1 Accessing System Settings</h2>
+      <p>Only users with the ADMIN role can access system settings. Navigate to the admin panel or click on <strong>Settings</strong> in the user profile dropdown.</p>
+
+      <div class="screen-desc">
+        <div class="screen-desc-title">System Settings Page</div>
+        <p>The Settings page is organized into tabs: <strong>General</strong>, <strong>Security</strong>, <strong>Email</strong>, <strong>Notifications</strong>, and <strong>About</strong>. Each tab contains relevant configuration options with save buttons.</p>
+      </div>
+
+      <h2>B.2 General Settings</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Setting</th><th>Default</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>System Name</strong></td><td>JENE-DFCMS</td><td>Display name shown in the header and reports</td></tr>
+            <tr><td><strong>Organization</strong></td><td>&mdash;</td><td>Your organization's name, included in report headers</td></tr>
+            <tr><td><strong>Case ID Prefix</strong></td><td>CASE</td><td>Prefix for auto-generated case IDs (e.g., CASE-2026-001)</td></tr>
+            <tr><td><strong>Date Format</strong></td><td>YYYY-MM-DD</td><td>Default date display format</td></tr>
+            <tr><td><strong>Timezone</strong></td><td>UTC</td><td>System timezone for all timestamps</td></tr>
+            <tr><td><strong>Items Per Page</strong></td><td>20</td><td>Default pagination size for list views</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>B.3 Security Settings</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Setting</th><th>Default</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Session Timeout</strong></td><td>30 minutes</td><td>Idle time before automatic logout</td></tr>
+            <tr><td><strong>Password Min Length</strong></td><td>8</td><td>Minimum characters for user passwords</td></tr>
+            <tr><td><strong>Password Complexity</strong></td><td>Enabled</td><td>Require uppercase, lowercase, numbers, special chars</td></tr>
+            <tr><td><strong>Max Login Attempts</strong></td><td>5</td><td>Failed attempts before account lockout</td></tr>
+            <tr><td><strong>Lockout Duration</strong></td><td>15 minutes</td><td>How long an account stays locked after max attempts</td></tr>
+            <tr><td><strong>Audit Log Retention</strong></td><td>365 days</td><td>How long audit logs are retained before archival</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>B.4 Email Settings</h2>
+      <p>Configure SMTP for notification delivery:</p>
+      <pre><code>SMTP Host: smtp.yourdomain.com
+SMTP Port: 587
+Username: notifications@yourdomain.com
+Password: ********
+From Address: noreply@yourdomain.com
+TLS/SSL: Enabled</code></pre>
+
+      <div class="callout callout-tip">
+        <div class="callout-title">💡 Tip</div>
+        Use the "Send Test Email" button to verify your SMTP configuration before saving. This ensures notifications and scheduled reports will be delivered correctly.
+      </div>
+
+      <h2>B.5 Notification Settings</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Event</th><th>Email</th><th>In-App</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Case Assigned</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td>Notify when a case is assigned to an investigator</td></tr>
+            <tr><td>Task Assigned</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td>Notify when a task is assigned to a user</td></tr>
+            <tr><td>Status Change</td><td class="cross">&mdash;</td><td class="check">&#10003;</td><td>In-app notification for case/task status changes</td></tr>
+            <tr><td>Evidence Checkout</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td>Alert when evidence is checked out</td></tr>
+            <tr><td>Due Date Approaching</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td>Reminder 3 days before case/task due date</td></tr>
+            <tr><td>Overdue Alert</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td>Alert when a case or task passes its due date</td></tr>
+            <tr><td>Report Generated</td><td class="check">&#10003;</td><td class="cross">&mdash;</td><td>Email when a scheduled report is ready</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>B.6 About and Version Information</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Property</th><th>Value</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Application</td><td>JENE-DFCMS</td></tr>
+            <tr><td>Version</td><td>2.0</td></tr>
+            <tr><td>Frontend URL</td><td><code>http://localhost:4200</code></td></tr>
+            <tr><td>Backend API</td><td><code>http://localhost:8080</code></td></tr>
+            <tr><td>Author</td><td>Sukhvinder Chhoker</td></tr>
+            <tr><td>License</td><td>Internal Use Only</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-danger">
+        <div class="callout-title">🔒 Security Reminder</div>
+        System settings affect all users. Changes to security settings (session timeout, password requirements, audit retention) should be documented and approved by your security team before implementation.
+      </div>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <div class="manual-footer">
+      <p><strong>JENE-DFCMS</strong> &mdash; Digital Forensic Case Management System</p>
+      <p>User Manual v2.0 &bull; Author: Sukhvinder Chhoker &bull; June 2026</p>
+      <p style="margin-top: 8px; font-size: 12px; color: var(--gray-400);">
+        This document is confidential and intended for internal use only.
+        Unauthorized distribution is prohibited.
+      </p>
+    </div>
+
+  </div>
+
+</body>
+</html>

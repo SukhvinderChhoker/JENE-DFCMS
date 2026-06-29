@@ -1,0 +1,12 @@
+-- Data is initialized by DataInitializer.java for proper password encoding
+-- This file is kept for reference of the data structure
+
+-- Default Department: Forensics
+-- Default Team: Digital Forensics
+-- Default ForemanOptions: dd/MM/yyyy HH:mm, Lab A, CASE, TASK, Foreman Corp, etc.
+-- Default Classifications: Public, Secret, Confidential, Internal
+-- Default Case Types: eDiscovery, Internal Investigation, Fraud Investigation, Incident Response, Security & Malware Investigation
+-- Default Priorities: Low(#00CCFF), Normal(#009900,default), High(#FF9933), Critical(#CC0000)
+-- Default Task Categories: Communications Retrieval, Internet Logs, Computer Forensics, Mobile & Tablet Forensics, Networked Data, Log file Analysis, Specialist Tasks, Other
+-- Default Evidence Types: SATA Hard Drive, IDE Hard Drive, Mobile Phone, Smart Phone, Tablet, USB Media, Laptop, Server, CD, DVD
+-- Admin User: admin / admin123 (ROLE_ADMIN)

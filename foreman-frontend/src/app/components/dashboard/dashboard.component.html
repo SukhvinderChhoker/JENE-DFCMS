@@ -1,0 +1,117 @@
+<div class="dashboard">
+  <div class="daily-tip">
+    <span class="material-icons">lightbulb</span>
+    <div class="tip-content">
+      <span class="tip-label">Forensic Tip of the Day</span>
+      <span class="tip-text">{{ dailyTip }}</span>
+    </div>
+  </div>
+
+  <h1>Dashboard</h1>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon" style="background: #e8eaf6; color: #1a237e;">
+        <span class="material-icons">folder</span>
+      </div>
+      <div class="stat-info">
+        <h3>{{ stats.totalCases }}</h3>
+        <p>Total Cases</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background: #e8f5e9; color: #2e7d32;">
+        <span class="material-icons">task</span>
+      </div>
+      <div class="stat-info">
+        <h3>{{ stats.queuedTasks }}</h3>
+        <p>Open Tasks</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background: #fff3e0; color: #e65100;">
+        <span class="material-icons">fingerprint</span>
+      </div>
+      <div class="stat-info">
+        <h3>{{ stats.totalEvidence }}</h3>
+        <p>Evidence Items</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background: #e3f2fd; color: #1565c0;">
+        <span class="material-icons">people</span>
+      </div>
+      <div class="stat-info">
+        <h3>{{ stats.activeUsers }}</h3>
+        <p>Active Users</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz-banner" routerLink="/quiz">
+    <div class="quiz-banner-content">
+      <span class="material-icons quiz-icon">school</span>
+      <div class="quiz-banner-text">
+        <h3>Forensic Knowledge Center</h3>
+        <p>Test your skills across Windows, Linux, macOS, Android, iOS, Malware, Network, Memory, Database, Blockchain, Cloud &amp; Mobile forensics</p>
+      </div>
+    </div>
+    <span class="material-icons arrow-icon">arrow_forward</span>
+  </div>
+
+  <div class="dashboard-grid">
+    <div class="panel recent-cases">
+      <div class="panel-header">
+        <h2>Recent Cases</h2>
+        <a routerLink="/cases" class="view-all">View All</a>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Case Name</th>
+            <th>Reference</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let case of recentCases">
+            <td><a [routerLink]="['/cases', case.id]">{{ case.caseName }}</a></td>
+            <td>{{ case.reference || '-' }}</td>
+            <td><span class="status-badge" [ngClass]="getStatusClass(case.currentStatus)">{{ case.currentStatus }}</span></td>
+            <td><span class="priority-badge" [ngClass]="getPriorityClass(case.casePriority)">{{ case.casePriority }}</span></td>
+            <td>{{ case.creationDate | date:'short' }}</td>
+          </tr>
+          <tr *ngIf="recentCases.length === 0">
+            <td colspan="5" class="no-data">No cases found</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel summary-panel">
+      <div class="panel-header">
+        <h2>Summary</h2>
+      </div>
+      <div class="summary-list">
+        <div class="summary-item">
+          <span class="label">Open Cases</span>
+          <span class="value">{{ stats.openCases }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Closed Cases</span>
+          <span class="value">{{ stats.closedCases }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Total Tasks</span>
+          <span class="value">{{ stats.totalTasks }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Completed Tasks</span>
+          <span class="value">{{ stats.completedTasks }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

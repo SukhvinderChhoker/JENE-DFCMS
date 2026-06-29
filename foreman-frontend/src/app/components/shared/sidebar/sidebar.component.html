@@ -1,0 +1,11 @@
+<aside class="sidebar" *ngIf="tabs.length > 0">
+  <nav class="sidebar-nav">
+    <a *ngFor="let tab of tabs"
+       class="sidebar-item"
+       [class.active]="activeTab === tab.label"
+       (click)="onTabSelect(tab.label)">
+      <span class="material-icons">{{ tab.icon }}</span>
+      <span class="tab-label">{{ tab.label }}</span>
+    </a>
+  </nav>
+</aside>

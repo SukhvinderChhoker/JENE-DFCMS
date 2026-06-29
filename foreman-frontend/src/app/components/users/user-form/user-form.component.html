@@ -1,0 +1,96 @@
+<div class="user-form-page">
+  <div class="page-header">
+    <a routerLink="/users" class="back-link">
+      <span class="material-icons">arrow_back</span> Users
+    </a>
+    <h1>{{ isEdit ? 'Edit User' : 'New User' }}</h1>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-card">
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="username">Username *</label>
+        <input type="text" id="username" formControlName="username" placeholder="Enter username">
+        <div class="error" *ngIf="form.get('username')?.touched && form.get('username')?.invalid">
+          Username is required
+        </div>
+      </div>
+
+      <div class="form-group" *ngIf="!isEdit">
+        <label for="password">Password *</label>
+        <input type="password" id="password" formControlName="password" placeholder="Enter password">
+      </div>
+
+      <div class="form-group">
+        <label for="forename">Forename *</label>
+        <input type="text" id="forename" formControlName="forename" placeholder="Enter forename">
+        <div class="error" *ngIf="form.get('forename')?.touched && form.get('forename')?.invalid">
+          Forename is required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="surname">Surname *</label>
+        <input type="text" id="surname" formControlName="surname" placeholder="Enter surname">
+        <div class="error" *ngIf="form.get('surname')?.touched && form.get('surname')?.invalid">
+          Surname is required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="middleName">Middle Name</label>
+        <input type="text" id="middleName" formControlName="middleName" placeholder="Enter middle name">
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email *</label>
+        <input type="email" id="email" formControlName="email" placeholder="Enter email">
+        <div class="error" *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
+          Valid email is required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="telephone">Telephone</label>
+        <input type="text" id="telephone" formControlName="telephone" placeholder="Enter telephone">
+      </div>
+
+      <div class="form-group">
+        <label for="jobTitle">Job Title</label>
+        <input type="text" id="jobTitle" formControlName="jobTitle" placeholder="Enter job title">
+      </div>
+
+      <div class="form-group">
+        <label for="team">Team</label>
+        <select id="team" formControlName="team">
+          <option value="">None</option>
+          <option *ngFor="let t of teams" [value]="t">{{ t }}</option>
+        </select>
+      </div>
+
+      <div class="form-group checkbox-group">
+        <label>
+          <input type="checkbox" formControlName="active">
+          Active
+        </label>
+      </div>
+
+      <div class="form-group full-width">
+        <label>Roles</label>
+        <div class="roles-grid">
+          <label *ngFor="let role of allRoles" class="role-checkbox">
+            <input type="checkbox" [checked]="isRoleChecked(role)" (change)="onRoleChange(role, $event)">
+            {{ role }}
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <a routerLink="/users" class="btn-secondary">Cancel</a>
+      <button type="submit" class="btn-primary" [disabled]="submitting">
+        {{ submitting ? 'Saving...' : (isEdit ? 'Update User' : 'Create User') }}
+      </button>
+    </div>
+  </form>
+</div>

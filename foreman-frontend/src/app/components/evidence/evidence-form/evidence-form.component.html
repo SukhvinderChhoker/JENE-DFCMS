@@ -1,0 +1,120 @@
+<div class="evidence-form-page">
+  <div class="page-header">
+    <a routerLink="/evidence" class="back-link">
+      <span class="material-icons">arrow_back</span> Evidence
+    </a>
+    <h1>{{ isEdit ? 'Edit Evidence' : 'New Evidence' }}</h1>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-card">
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="reference">Reference *</label>
+        <input type="text" id="reference" formControlName="reference" placeholder="Enter reference">
+        <div class="error" *ngIf="form.get('reference')?.touched && form.get('reference')?.invalid">
+          Reference is required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="type">Type *</label>
+        <select id="type" formControlName="type">
+          <option *ngFor="let t of evidenceTypes" [value]="t">{{ t }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="location">Location *</label>
+        <input type="text" id="location" formControlName="location" placeholder="Enter location">
+        <div class="error" *ngIf="form.get('location')?.touched && form.get('location')?.invalid">
+          Location is required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="originator">Originator</label>
+        <input type="text" id="originator" formControlName="originator" placeholder="Enter originator">
+      </div>
+
+      <div class="form-group">
+        <label for="evidenceBagNumber">Bag Number</label>
+        <input type="text" id="evidenceBagNumber" formControlName="evidenceBagNumber" placeholder="Enter bag number">
+      </div>
+
+      <div class="form-group">
+        <label for="caseId">Case</label>
+        <select id="caseId" formControlName="caseId">
+          <option value="">No case</option>
+          <option *ngFor="let c of cases" [value]="c.id">{{ c.caseName }}</option>
+        </select>
+      </div>
+
+      <div class="form-group full-width">
+        <label for="comment">Comment</label>
+        <textarea id="comment" formControlName="comment" rows="3" placeholder="Enter comment..."></textarea>
+      </div>
+    </div>
+
+    <div class="upload-section">
+      <h3>Evidence Photo</h3>
+      <div class="photo-upload-area" *ngIf="!photoPreview">
+        <label class="upload-dropzone" for="photoInput">
+          <span class="material-icons">add_a_photo</span>
+          <span>Click to select evidence photo</span>
+          <span class="upload-hint">JPG, PNG, GIF up to 10MB</span>
+        </label>
+        <input type="file" id="photoInput" accept="image/*" (change)="onPhotoSelected($event)" hidden>
+      </div>
+      <div class="photo-preview" *ngIf="photoPreview">
+        <img [src]="photoPreview" alt="Evidence photo preview">
+        <button type="button" class="remove-btn" (click)="removePhoto()">
+          <span class="material-icons">close</span>
+        </button>
+        <span class="photo-name" *ngIf="selectedPhoto">{{ selectedPhoto.name }}</span>
+      </div>
+    </div>
+
+    <div class="upload-section">
+      <h3>Supporting Documents</h3>
+      <p class="upload-desc">Upload case-related essential documents: seizure memos, warrants, consent forms, forensic tool logs, witness statements, reports, or any related files.</p>
+      <div class="doc-upload-area">
+        <label class="upload-dropzone" for="docInput">
+          <span class="material-icons">upload_file</span>
+          <span>Click to select documents</span>
+          <span class="upload-hint">PDF, DOC, DOCX, TXT, XLS, XLSX, ZIP up to 25MB each</span>
+        </label>
+        <input type="file" id="docInput" accept=".pdf,.doc,.docx,.txt,.xls,.xlsx,.zip,.rar,.7z,.csv,.json,.xml,.log,.pcap,.dd,.raw,.img,.E01,.s01" (change)="onDocumentsSelected($event)" hidden multiple>
+      </div>
+      <div class="doc-note-field" *ngIf="selectedDocuments.length > 0">
+        <label for="docNote">Document Note (optional)</label>
+        <input type="text" id="docNote" [(ngModel)]="documentNote" [ngModelOptions]="{standalone: true}" placeholder="e.g. Search warrant for premises at...">
+      </div>
+      <div class="selected-docs" *ngIf="selectedDocuments.length > 0">
+        <div class="doc-item" *ngFor="let doc of selectedDocuments; let i = index">
+          <span class="material-icons">description</span>
+          <span class="doc-name">{{ doc.name }}</span>
+          <span class="doc-size">{{ (doc.size / 1024 / 1024).toFixed(2) }} MB</span>
+          <button type="button" class="remove-doc-btn" (click)="removeDocument(i)">
+            <span class="material-icons">close</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="uploaded-docs" *ngIf="uploadedDocuments.length > 0">
+        <h4>Previously Uploaded</h4>
+        <div class="doc-item uploaded" *ngFor="let doc of uploadedDocuments">
+          <span class="material-icons">description</span>
+          <span class="doc-name">{{ doc.fileName }}</span>
+          <span class="doc-uploader">by {{ doc.uploaderName }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <a routerLink="/evidence" class="btn-secondary">Cancel</a>
+      <button type="submit" class="btn-primary" [disabled]="submitting">
+        {{ submitting ? 'Saving...' : (isEdit ? 'Update Evidence' : 'Create Evidence') }}
+      </button>
+    </div>
+  </form>
+</div>

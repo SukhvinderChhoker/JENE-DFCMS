@@ -1,0 +1,136 @@
+<div class="search-page">
+  <h1><span class="material-icons">search</span> Advanced Search</h1>
+
+  <div class="filters-card">
+    <div class="filters-grid">
+      <div class="filter-group full-width">
+        <label>Search</label>
+        <div class="search-input-wrapper">
+          <span class="material-icons">search</span>
+          <input type="text" [(ngModel)]="searchQuery" (input)="applyFilters()" placeholder="Search by case name, reference, or background...">
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label>Date From</label>
+        <input type="date" [(ngModel)]="dateFrom" (change)="applyFilters()">
+      </div>
+
+      <div class="filter-group">
+        <label>Date To</label>
+        <input type="date" [(ngModel)]="dateTo" (change)="applyFilters()">
+      </div>
+
+      <div class="filter-group">
+        <label>Case Type</label>
+        <select [(ngModel)]="caseType" (change)="applyFilters()">
+          <option value="">All Types</option>
+          <option *ngFor="let t of caseTypes" [value]="t">{{ t }}</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Priority</label>
+        <select [(ngModel)]="priority" (change)="applyFilters()">
+          <option value="">All Priorities</option>
+          <option *ngFor="let p of priorities" [value]="p">{{ p }}</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Status</label>
+        <select [(ngModel)]="status" (change)="applyFilters()">
+          <option value="">All Statuses</option>
+          <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="filter-actions">
+      <button class="btn-clear" (click)="clearFilters()">
+        <span class="material-icons">clear_all</span> Clear Filters
+      </button>
+      <span class="result-count">{{ filteredCases.length }} of {{ cases.length }} cases</span>
+    </div>
+  </div>
+
+  <div class="charts-row">
+    <div class="chart-card">
+      <h3>Cases by Type</h3>
+      <div class="bar-chart">
+        <div class="bar-item" *ngFor="let item of chartData">
+          <span class="bar-label">{{ item.label }}</span>
+          <div class="bar-track">
+            <div class="bar-fill" [style.width.%]="(item.value / getMaxValue()) * 100" [style.background]="item.color"></div>
+          </div>
+          <span class="bar-value">{{ item.value }}</span>
+        </div>
+        <div class="no-data" *ngIf="chartData.length === 0">No data</div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Cases by Priority</h3>
+      <div class="bar-chart">
+        <div class="bar-item" *ngFor="let item of priorityChartData">
+          <span class="bar-label">{{ item.label }}</span>
+          <div class="bar-track">
+            <div class="bar-fill" [style.width.%]="(item.value / getMaxValue()) * 100" [style.background]="item.color"></div>
+          </div>
+          <span class="bar-value">{{ item.value }}</span>
+        </div>
+        <div class="no-data" *ngIf="priorityChartData.length === 0">No data</div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Cases by Status</h3>
+      <div class="bar-chart">
+        <div class="bar-item" *ngFor="let item of statusChartData">
+          <span class="bar-label">{{ item.label }}</span>
+          <div class="bar-track">
+            <div class="bar-fill" [style.width.%]="(item.value / getMaxValue()) * 100" [style.background]="item.color"></div>
+          </div>
+          <span class="bar-value">{{ item.value }}</span>
+        </div>
+        <div class="no-data" *ngIf="statusChartData.length === 0">No data</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="results-card">
+    <h2>Search Results</h2>
+    <div class="loading" *ngIf="loading">
+      <span class="spinner"></span> Loading cases...
+    </div>
+    <table class="data-table" *ngIf="!loading">
+      <thead>
+        <tr>
+          <th>Reference</th>
+          <th>Case Name</th>
+          <th>Type</th>
+          <th>Priority</th>
+          <th>Status</th>
+          <th>Classification</th>
+          <th>Location</th>
+          <th>Created</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of filteredCases" (click)="navigateToCase(c.id)" class="clickable-row">
+          <td><strong>{{ c.reference || '-' }}</strong></td>
+          <td>{{ c.caseName }}</td>
+          <td>{{ c.caseType || '-' }}</td>
+          <td><span class="priority-badge" [ngClass]="getPriorityClass(c.casePriority)">{{ c.casePriority }}</span></td>
+          <td><span class="status-badge" [ngClass]="getStatusClass(c.currentStatus)">{{ c.currentStatus }}</span></td>
+          <td>{{ c.classification || '-' }}</td>
+          <td>{{ c.location || '-' }}</td>
+          <td>{{ c.creationDate }}</td>
+        </tr>
+        <tr *ngIf="filteredCases.length === 0 && !loading">
+          <td colspan="8" class="no-data">No cases match the current filters</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

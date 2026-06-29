@@ -1,0 +1,1738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JENE-DFCMS - Complete Features &amp; Templates Document</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#f4f6f9;color:#333;line-height:1.7}
+  .header{background:linear-gradient(135deg,#1a237e 0%,#283593 50%,#0d47a1 100%);color:white;padding:50px 20px;text-align:center}
+  .header h1{font-size:2.8em;margin-bottom:8px;letter-spacing:1px}
+  .header .sub{font-size:1.3em;opacity:.9;margin-bottom:5px}
+  .header .meta{margin-top:15px;font-size:.95em;opacity:.8}
+  .header .meta span{display:inline-block;margin:0 15px}
+  .container{max-width:1100px;margin:0 auto;padding:30px 20px}
+  .toc{background:white;border-radius:10px;padding:30px;margin-bottom:30px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+  .toc h2{color:#1a237e;font-size:1.4em;margin-bottom:15px;border-bottom:3px solid #ff6f00;padding-bottom:8px}
+  .toc ol{padding-left:20px}
+  .toc li{margin:6px 0}
+  .toc a{color:#1565c0;text-decoration:none;font-weight:500}
+  .toc a:hover{text-decoration:underline}
+  section{background:white;border-radius:10px;padding:35px;margin-bottom:25px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+  section h2{color:#1a237e;font-size:1.6em;border-bottom:3px solid #ff6f00;padding-bottom:10px;margin-bottom:25px}
+  section h3{color:#283593;font-size:1.2em;margin:20px 0 12px;padding-left:10px;border-left:4px solid #ff6f00}
+  section h4{color:#37474f;font-size:1.05em;margin:15px 0 8px}
+  p,li{font-size:.95em}
+  ul,ol{padding-left:22px;margin:8px 0}
+  li{margin:5px 0}
+  table{width:100%;border-collapse:collapse;margin:15px 0;font-size:.9em}
+  th,td{border:1px solid #ddd;padding:10px 12px;text-align:left}
+  th{background:#1a237e;color:white;font-weight:600}
+  tr:nth-child(even){background:#f8f9fa}
+  tr:hover{background:#e8eaf6}
+  .badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.8em;font-weight:600;color:white;margin:2px}
+  .badge-blue{background:#1565c0}
+  .badge-green{background:#2e7d32}
+  .badge-orange{background:#e65100}
+  .badge-red{background:#c62828}
+  .badge-purple{background:#6a1b9a}
+  .badge-teal{background:#00695c}
+  .template-box{background:#f5f5f5;border:1px solid #ddd;border-radius:8px;padding:20px;margin:15px 0}
+  .template-box h4{color:#1a237e;margin-bottom:10px}
+  .template-box code{background:#e3f2fd;padding:2px 6px;border-radius:3px;font-size:.88em}
+  .template-box pre{background:#263238;color:#eeffff;padding:15px;border-radius:6px;overflow-x:auto;font-size:.85em;line-height:1.5;margin:10px 0}
+  .field-table{margin:10px 0}
+  .field-table td:first-child{font-weight:600;color:#1a237e;white-space:nowrap}
+  .field-table td:nth-child(2){font-family:monospace;color:#2e7d32}
+  .alert{padding:15px 20px;border-radius:6px;margin:15px 0;font-size:.95em}
+  .alert-info{background:#e3f2fd;border-left:4px solid #1565c0}
+  .alert-warn{background:#fff3e0;border-left:4px solid #ff6f00}
+  .alert-success{background:#e8f5e9;border-left:4px solid #2e7d32}
+  .alert-danger{background:#fce4ec;border-left:4px solid #c62828}
+  .feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:15px;margin:15px 0}
+  .feature-card{background:#f8f9fa;border:1px solid #e0e0e0;border-radius:8px;padding:20px;border-top:4px solid #1a237e}
+  .feature-card h4{color:#1a237e;margin-bottom:8px}
+  .feature-card p{font-size:.9em;color:#555}
+  .stat-box{display:inline-block;background:#1a237e;color:white;padding:8px 16px;border-radius:6px;margin:5px;font-size:.9em}
+  .stat-box strong{font-size:1.3em}
+  .workflow{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:10px 0}
+  .workflow-step{background:#e3f2fd;border:1px solid #90caf9;border-radius:6px;padding:8px 14px;font-size:.88em;font-weight:500}
+  .workflow-arrow{color:#1a237e;font-size:1.2em;font-weight:700}
+  .footer{text-align:center;padding:35px;color:#666;font-size:.85em}
+  .footer .line{margin:5px 0}
+  .footer strong{color:#1a237e}
+  .section-num{background:#ff6f00;color:white;display:inline-block;width:32px;height:32px;line-height:32px;text-align:center;border-radius:50%;font-weight:700;margin-right:8px;font-size:.9em}
+  .indent{margin-left:20px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>JENE-DFCMS</h1>
+  <div class="sub">Complete Features &amp; Templates Document</div>
+  <div class="sub">Digital Forensic Case Management System</div>
+  <div class="meta">
+    <span>Version: 1.0</span>
+    <span>Author: Sukhvinder Chhoker</span>
+    <span>Email: chhokersukhvinder@gmail.com</span>
+    <span>Date: June 2026</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- TABLE OF CONTENTS -->
+  <div class="toc">
+    <h2>Table of Contents</h2>
+    <ol>
+      <li><a href="#s1">System Overview &amp; Architecture</a></li>
+      <li><a href="#s2">Authentication &amp; Security Features</a></li>
+      <li><a href="#s3">User Management Features</a></li>
+      <li><a href="#s4">Case Management Features</a></li>
+      <li><a href="#s5">Task Management Features</a></li>
+      <li><a href="#s6">Evidence Management Features</a></li>
+      <li><a href="#s7">Chain of Custody Features</a></li>
+      <li><a href="#s8">Forensic Notes Features</a></li>
+      <li><a href="#s9">Reports &amp; Dashboard Features</a></li>
+      <li><a href="#s10">File Upload &amp; Attachment Features</a></li>
+      <li><a href="#s11">Organization &amp; Configuration Features</a></li>
+      <li><a href="#s12">Audit Trail &amp; History Features</a></li>
+      <li><a href="#s13">Role-Based Access Control (RBAC)</a></li>
+      <li><a href="#s14">Frontend UI Features</a></li>
+      <li><a href="#s15">API &amp; Integration Features</a></li>
+      <li><a href="#s16">Database &amp; Persistence Features</a></li>
+      <li><a href="#s17">Data Templates &amp; Forms</a></li>
+      <li><a href="#s18">Workflow Templates</a></li>
+      <li><a href="#s19">Report Templates</a></li>
+      <li><a href="#s20">System Statistics Summary</a></li>
+    </ol>
+  </div>
+
+  <!-- SECTION 1: System Overview -->
+  <section id="s1">
+    <h2><span class="section-num">1</span>System Overview &amp; Architecture</h2>
+    <p>JENE-DFCMS is a full-stack Digital Forensic Case Management System built with <strong>Angular 17</strong> (frontend) and <strong>Spring Boot 3.2.0</strong> (backend), designed for managing forensic investigations, evidence, and chain of custody.</p>
+
+    <h3>Technology Stack</h3>
+    <table>
+      <thead><tr><th>Layer</th><th>Technology</th><th>Details</th></tr></thead>
+      <tbody>
+        <tr><td>Frontend</td><td>Angular 17</td><td>TypeScript, NgModule-based, Material-style CSS</td></tr>
+        <tr><td>Backend</td><td>Spring Boot 3.2.0</td><td>Java 17, Maven, REST API</td></tr>
+        <tr><td>Database</td><td>H2 (file-based)</td><td>JPA/Hibernate, auto-schema update</td></tr>
+        <tr><td>Authentication</td><td>JWT (JSON Web Tokens)</td><td>HMAC-SHA, 24h expiry, BCrypt passwords</td></tr>
+        <tr><td>Security</td><td>Spring Security 6</td><td>Stateless sessions, CORS, role-based access</td></tr>
+        <tr><td>Build</td><td>Maven</td><td>Spring Boot starter parent 3.2.0</td></tr>
+      </tbody>
+    </table>
+
+    <h3>System Statistics</h3>
+    <div>
+      <span class="stat-box"><strong>27</strong> Entity Classes</span>
+      <span class="stat-box"><strong>6</strong> Service Classes</span>
+      <span class="stat-box"><strong>7</strong> Controllers</span>
+      <span class="stat-box"><strong>33</strong> API Endpoints</span>
+      <span class="stat-box"><strong>20</strong> Repositories</span>
+      <span class="stat-box"><strong>16</strong> Frontend Components</span>
+      <span class="stat-box"><strong>6</strong> Frontend Services</span>
+      <span class="stat-box"><strong>6</strong> User Roles</span>
+      <span class="stat-box"><strong>27</strong> Database Tables</span>
+      <span class="stat-box"><strong>8</strong> DTOs</span>
+    </div>
+
+    <h3>Architecture Pattern</h3>
+    <div class="alert alert-info">
+      <strong>MVC + Service Layer:</strong> Controller &rarr; Service &rarr; Repository &rarr; Database. JWT filter sits before all authenticated endpoints. RoleHelper component provides centralized authorization checks.
+    </div>
+  </section>
+
+  <!-- SECTION 2: Authentication & Security -->
+  <section id="s2">
+    <h2><span class="section-num">2</span>Authentication &amp; Security Features</h2>
+
+    <h3>2.1 JWT Authentication</h3>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h4>Login</h4>
+        <p>POST /api/auth/login with username/password. Returns JWT token, username, roles, and userId. Token stored in localStorage.</p>
+      </div>
+      <div class="feature-card">
+        <h4>Self-Registration</h4>
+        <p>POST /api/auth/register. Creates account with default role INVESTIGATOR and password "password123".</p>
+      </div>
+      <div class="feature-card">
+        <h4>Token Interceptor</h4>
+        <p>Angular HttpInterceptor automatically attaches Bearer token to all API requests. Auto-logout on 401 response.</p>
+      </div>
+      <div class="feature-card">
+        <h4>Token Expiry</h4>
+        <p>JWT tokens expire after 24 hours (86,400,000 ms). Users must re-authenticate after expiry.</p>
+      </div>
+    </div>
+
+    <h3>2.2 Password Security</h3>
+    <ul>
+      <li><strong>BCrypt Hashing:</strong> All passwords are hashed with BCrypt before storage. No plain-text passwords in database.</li>
+      <li><strong>Password Change:</strong> PUT /api/users/{id}/password with old and new password. Validates old password before changing.</li>
+      <li><strong>Account Lockout:</strong> Configurable number of failed login attempts before account lockout (default: 5).</li>
+      <li><strong>Active/Inactive:</strong> Users can be deactivated without deletion.</li>
+    </ul>
+
+    <h3>2.3 Security Configuration</h3>
+    <table>
+      <thead><tr><th>Feature</th><th>Configuration</th></tr></thead>
+      <tbody>
+        <tr><td>CSRF</td><td>Disabled (stateless JWT API)</td></tr>
+        <tr><td>Session Management</td><td>STATELESS (no HTTP sessions)</td></tr>
+        <tr><td>CORS Origins</td><td>http://localhost:4200, http://127.0.0.1:4200</td></tr>
+        <tr><td>CORS Methods</td><td>GET, POST, PUT, DELETE, OPTIONS</td></tr>
+        <tr><td>Frame Options</td><td>sameOrigin (H2 console)</td></tr>
+        <tr><td>Public Endpoints</td><td>/api/auth/**, /h2-console/**</td></tr>
+        <tr><td>All Other Endpoints</td><td>Require valid JWT token</td></tr>
+      </tbody>
+    </table>
+
+    <h3>2.4 Security Features Template</h3>
+    <div class="template-box">
+      <h4>JWT Token Structure</h4>
+<pre>{
+  "header": {
+    "alg": "HS256",
+    "typ": "JWT"
+  },
+  "payload": {
+    "sub": "admin",
+    "roles": ["ADMIN"],
+    "iat": 1719657600,
+    "exp": 1719744000
+  }
+}</pre>
+    </div>
+
+    <div class="template-box">
+      <h4>Login Request/Response Template</h4>
+<pre>// Request
+POST /api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+// Response
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9...",
+  "username": "admin",
+  "roles": ["ADMIN"],
+  "userId": 1
+}</pre>
+    </div>
+
+    <div class="template-box">
+      <h4>Authenticated Request Template</h4>
+<pre>GET /api/cases
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9...
+Content-Type: application/json</pre>
+    </div>
+  </section>
+
+  <!-- SECTION 3: User Management -->
+  <section id="s3">
+    <h2><span class="section-num">3</span>User Management Features</h2>
+
+    <h3>3.1 User Entity Fields</h3>
+    <table class="field-table">
+      <thead><tr><th>Field</th><th>Type</th><th>Constraints</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>id</td><td>Long</td><td>@Id, AUTO_INCREMENT</td><td>Unique identifier</td></tr>
+        <tr><td>username</td><td>String</td><td>unique, NOT NULL</td><td>Login username</td></tr>
+        <tr><td>password</td><td>String</td><td>NOT NULL, @JsonIgnore</td><td>BCrypt hashed password</td></tr>
+        <tr><td>forename</td><td>String</td><td></td><td>First name</td></tr>
+        <tr><td>surname</td><td>String</td><td></td><td>Last name</td></tr>
+        <tr><td>middleName</td><td>String</td><td></td><td>Middle name</td></tr>
+        <tr><td>email</td><td>String</td><td>unique</td><td>Email address</td></tr>
+        <tr><td>telephone</td><td>String</td><td></td><td>Primary phone</td></tr>
+        <tr><td>altTelephone</td><td>String</td><td></td><td>Alternate phone</td></tr>
+        <tr><td>fax</td><td>String</td><td></td><td>Fax number</td></tr>
+        <tr><td>jobTitle</td><td>String</td><td></td><td>Job title</td></tr>
+        <tr><td>photo</td><td>String</td><td></td><td>Profile photo URL</td></tr>
+        <tr><td>active</td><td>boolean</td><td>default true</td><td>Account active status</td></tr>
+        <tr><td>lockedOut</td><td>boolean</td><td>default false</td><td>Account lockout status</td></tr>
+        <tr><td>numberLoginFails</td><td>int</td><td>default 0</td><td>Failed login counter</td></tr>
+        <tr><td>validated</td><td>boolean</td><td>default false</td><td>Email validation status</td></tr>
+        <tr><td>team</td><td>Team</td><td>@ManyToOne (EAGER)</td><td>Assigned team</td></tr>
+        <tr><td>manager</td><td>User</td><td>@ManyToOne (LAZY)</td><td>Reports-to manager</td></tr>
+        <tr><td>roles</td><td>List&lt;Role&gt;</td><td>@OneToMany (EAGER)</td><td>User roles</td></tr>
+      </tbody>
+    </table>
+
+    <h3>3.2 User API Endpoints</h3>
+    <table>
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Role Required</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>GET</td><td>/api/users</td><td>Any authenticated</td><td>List all users (optional ?role= filter)</td></tr>
+        <tr><td>GET</td><td>/api/users/{id}</td><td>Any authenticated</td><td>Get user by ID</td></tr>
+        <tr><td>POST</td><td>/api/users</td><td>ADMIN only</td><td>Create new user</td></tr>
+        <tr><td>PUT</td><td>/api/users/{id}</td><td>ADMIN only</td><td>Update user details</td></tr>
+        <tr><td>PUT</td><td>/api/users/{id}/password</td><td>Any authenticated</td><td>Change password</td></tr>
+        <tr><td>GET</td><td>/api/users/role/{role}</td><td>Any authenticated</td><td>Get users by role</td></tr>
+      </tbody>
+    </table>
+
+    <h3>3.3 User Roles</h3>
+    <table>
+      <thead><tr><th>Role</th><th>Badge</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>ADMIN</td><td><span class="badge badge-blue">ADMIN</span></td><td>Full system access. Manages users, cases, tasks, evidence.</td></tr>
+        <tr><td>CASE_MANAGER</td><td><span class="badge badge-teal">CASE_MANAGER</span></td><td>Manages case lifecycle. Assigns tasks, manages team.</td></tr>
+        <tr><td>INVESTIGATOR</td><td><span class="badge badge-green">INVESTIGATOR</span></td><td>Works on assigned tasks. Creates evidence, adds notes.</td></tr>
+        <tr><td>QA</td><td><span class="badge badge-orange">QA</span></td><td>Reviews forensic work. Adds review notes.</td></tr>
+        <tr><td>REQUESTER</td><td><span class="badge badge-purple">REQUESTER</span></td><td>Creates case requests. Limited to case creation.</td></tr>
+        <tr><td>AUTHORISER</td><td><span class="badge badge-red">AUTHORISER</span></td><td>Approves/rejects case authorization requests.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>3.4 User Creation Template</h3>
+    <div class="template-box">
+      <h4>Create User Request/Response</h4>
+<pre>// Request
+POST /api/users
+Authorization: Bearer &lt;admin-token&gt;
+Content-Type: application/json
+
+{
+  "username": "jsmith",
+  "password": "securePass123",
+  "forename": "John",
+  "surname": "Smith",
+  "middleName": "M",
+  "email": "john.smith@jene-dfcms.local",
+  "telephone": "+1234567890",
+  "jobTitle": "Forensic Investigator",
+  "active": true,
+  "team": "Digital Forensics",
+  "roles": ["INVESTIGATOR"]
+}
+
+// Response
+{
+  "id": 2,
+  "username": "jsmith",
+  "forename": "John",
+  "surname": "Smith",
+  "middleName": "M",
+  "email": "john.smith@jene-dfcms.local",
+  "telephone": "+1234567890",
+  "jobTitle": "Forensic Investigator",
+  "active": true,
+  "team": "Digital Forensics",
+  "roles": ["INVESTIGATOR"]
+}</pre>
+    </div>
+
+    <h3>3.5 User Frontend Features</h3>
+    <ul>
+      <li><strong>User List:</strong> Displays all users with role badge colors (blue=ADMIN, teal=CASE_MANAGER, green=INVESTIGATOR, orange=QA, purple=REQUESTER, red=AUTHORISER)</li>
+      <li><strong>User Form:</strong> Create/Edit mode, role checkboxes, team dropdown, form validation</li>
+      <li><strong>Role Filtering:</strong> Filter user list by role using dropdown</li>
+      <li><strong>Password Change:</strong> Self-service password change with old password validation</li>
+      <li><strong>Active Toggle:</strong> Admin can activate/deactivate user accounts</li>
+    </ul>
+  </section>
+
+  <!-- SECTION 4: Case Management -->
+  <section id="s4">
+    <h2><span class="section-num">4</span>Case Management Features</h2>
+
+    <h3>4.1 Case Entity Fields</h3>
+    <table class="field-table">
+      <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>id</td><td>Long</td><td>Unique identifier</td></tr>
+        <tr><td>caseName</td><td>String</td><td>Case title (required)</td></tr>
+        <tr><td>reference</td><td>String</td><td>Auto-generated: PREFIX-NNNN (e.g., CASE-0001)</td></tr>
+        <tr><td>currentStatus</td><td>String</td><td>Current case status</td></tr>
+        <tr><td>privateCase</td><td>boolean</td><td>Private case flag</td></tr>
+        <tr><td>background</td><td>String</td><td>Case background/description</td></tr>
+        <tr><td>location</td><td>String</td><td>Investigation location</td></tr>
+        <tr><td>creationDate</td><td>LocalDateTime</td><td>Auto-set on creation</td></tr>
+        <tr><td>classification</td><td>CaseClassification</td><td>Security classification</td></tr>
+        <tr><td>caseType</td><td>CaseType</td><td>Investigation type</td></tr>
+        <tr><td>justification</td><td>String</td><td>Case justification</td></tr>
+        <tr><td>casePriority</td><td>CasePriority</td><td>Priority level (required)</td></tr>
+        <tr><td>casePriorityColour</td><td>String</td><td>Priority color code</td></tr>
+        <tr><td>deadline</td><td>LocalDateTime</td><td>Case deadline</td></tr>
+        <tr><td>tasks</td><td>List&lt;Task&gt;</td><td>Associated tasks</td></tr>
+        <tr><td>evidence</td><td>List&lt;Evidence&gt;</td><td>Associated evidence</td></tr>
+        <tr><td>uploads</td><td>List&lt;FileUpload&gt;</td><td>Attached files</td></tr>
+        <tr><td>history</td><td>List&lt;CaseHistory&gt;</td><td>Change history</td></tr>
+        <tr><td>caseRoles</td><td>List&lt;UserCaseRole&gt;</td><td>Assigned personnel</td></tr>
+      </tbody>
+    </table>
+
+    <h3>4.2 Case Status Workflow</h3>
+    <div class="workflow">
+      <span class="workflow-step">DRAFT</span>
+      <span class="workflow-arrow">&rarr;</span>
+      <span class="workflow-step">OPEN</span>
+      <span class="workflow-arrow">&rarr;</span>
+      <span class="workflow-step">IN_PROGRESS</span>
+      <span class="workflow-arrow">&rarr;</span>
+      <span class="workflow-step">PENDING_AUTH</span>
+      <span class="workflow-arrow">&rarr;</span>
+      <span class="workflow-step">AUTHORIZED</span>
+      <span class="workflow-arrow">&rarr;</span>
+      <span class="workflow-step">CLOSED</span>
+    </div>
+
+    <table>
+      <thead><tr><th>State</th><th>Who Can Transition</th><th>Next State(s)</th></tr></thead>
+      <tbody>
+        <tr><td>DRAFT</td><td>CASE_MANAGER, ADMIN</td><td>OPEN, CLOSED</td></tr>
+        <tr><td>OPEN</td><td>CASE_MANAGER, ADMIN</td><td>IN_PROGRESS, CLOSED</td></tr>
+        <tr><td>IN_PROGRESS</td><td>CASE_MANAGER, ADMIN</td><td>PENDING_AUTH, CLOSED</td></tr>
+        <tr><td>PENDING_AUTH</td><td>AUTHORISER, ADMIN</td><td>AUTHORIZED, REJECTED</td></tr>
+        <tr><td>AUTHORIZED</td><td>CASE_MANAGER, ADMIN</td><td>CLOSED</td></tr>
+        <tr><td>REJECTED</td><td>AUTHORISER, ADMIN</td><td>OPEN, CLOSED</td></tr>
+        <tr><td>CLOSED</td><td>CASE_MANAGER, ADMIN</td><td>(terminal state)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>4.3 Case Classifications</h3>
+    <table>
+      <thead><tr><th>Classification</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>Public</td><td>Unrestricted access</td></tr>
+        <tr><td>Internal</td><td>Internal use only</td></tr>
+        <tr><td>Secret</td><td>Confidential information</td></tr>
+        <tr><td>Top Secret</td><td>Highest classification</td></tr>
+      </tbody>
+    </table>
+
+    <h3>4.4 Case Types</h3>
+    <table>
+      <thead><tr><th>Type</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>eDiscovery</td><td>Electronic discovery in legal proceedings</td></tr>
+        <tr><td>Internal Investigation</td><td>Internal organizational investigation</td></tr>
+        <tr><td>Fraud Investigation</td><td>Fraud-related forensic investigation</td></tr>
+        <tr><td>Incident Response</td><td>Security incident response</td></tr>
+        <tr><td>Security &amp; Malware Investigation</td><td>Malware and security threat analysis</td></tr>
+      </tbody>
+    </table>
+
+    <h3>4.5 Case Priorities</h3>
+    <table>
+      <thead><tr><th>Priority</th><th>Color</th><th>Default</th></tr></thead>
+      <tbody>
+        <tr><td>Low</td><td><span style="color:#00CCFF">&#9679;</span> #00CCFF</td><td>No</td></tr>
+        <tr><td>Normal</td><td><span style="color:#009900">&#9679;</span> #009900</td><td>Yes</td></tr>
+        <tr><td>High</td><td><span style="color:#FF9933">&#9679;</span> #FF9933</td><td>No</td></tr>
+        <tr><td>Critical</td><td><span style="color:#CC0000">&#9679;</span> #CC0000</td><td>No</td></tr>
+      </tbody>
+    </table>
+
+    <h3>4.6 Case API Endpoints</h3>
+    <table>
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Role Required</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>GET</td><td>/api/cases</td><td>Any authenticated</td><td>List cases (filter by ?status=, ?userId=)</td></tr>
+        <tr><td>GET</td><td>/api/cases/{id}</td><td>Any authenticated</td><td>Get case by ID</td></tr>
+        <tr><td>POST</td><td>/api/cases</td><td>ADMIN, CM, REQUESTER</td><td>Create case</td></tr>
+        <tr><td>PUT</td><td>/api/cases/{id}</td><td>ADMIN, CASE_MANAGER</td><td>Update case</td></tr>
+        <tr><td>PUT</td><td>/api/cases/{id}/status</td><td>ADMIN, CM, AUTHORISER</td><td>Change status</td></tr>
+        <tr><td>PUT</td><td>/api/cases/{id}/close</td><td>ADMIN, CM, AUTHORISER</td><td>Close case</td></tr>
+        <tr><td>PUT</td><td>/api/cases/{id}/authorize</td><td>ADMIN, AUTHORISER</td><td>Authorize/reject</td></tr>
+        <tr><td>GET</td><td>/api/cases/{id}/history</td><td>Any authenticated</td><td>View change history</td></tr>
+        <tr><td>GET</td><td>/api/cases/{id}/tasks</td><td>Any authenticated</td><td>View case tasks</td></tr>
+        <tr><td>GET</td><td>/api/cases/{id}/evidence</td><td>Any authenticated</td><td>View case evidence</td></tr>
+        <tr><td>POST</td><td>/api/cases/{id}/tasks</td><td>ADMIN, CASE_MANAGER</td><td>Create task for case</td></tr>
+        <tr><td>POST</td><td>/api/cases/{id}/evidence</td><td>ADMIN, CM, INVESTIGATOR</td><td>Create evidence for case</td></tr>
+        <tr><td>POST</td><td>/api/cases/{id}/link</td><td>ADMIN, CASE_MANAGER</td><td>Link cases</td></tr>
+        <tr><td>DELETE</td><td>/api/cases/{id}/link/{linkedId}</td><td>ADMIN, CASE_MANAGER</td><td>Unlink cases</td></tr>
+      </tbody>
+    </table>
+
+    <h3>4.7 Case Creation Template</h3>
+    <div class="template-box">
+      <h4>Create Case Request/Response</h4>
+<pre>// Request
+POST /api/cases?userId=1
+Authorization: Bearer &lt;token&gt;
+Content-Type: application/json
+
+{
+  "caseName": "Fraud Investigation - ACME Corp",
+  "background": " suspected financial fraud involving unauthorized transactions...",
+  "location": "New York Office",
+  "classification": "Secret",
+  "caseType": "Fraud Investigation",
+  "casePriority": "High",
+  "privateCase": false,
+  "deadline": "2026-07-15T17:00:00",
+  "justification": "Required for legal proceedings"
+}
+
+// Response
+{
+  "id": 1,
+  "caseName": "Fraud Investigation - ACME Corp",
+  "reference": "CASE-0001",
+  "currentStatus": "PENDING",
+  "privateCase": false,
+  "background": " suspected financial fraud...",
+  "location": "New York Office",
+  "creationDate": "2026-06-29T10:30:00",
+  "classification": "Secret",
+  "caseType": "Fraud Investigation",
+  "casePriority": "High",
+  "casePriorityColour": "#FF9933",
+  "deadline": "2026-07-15T17:00:00",
+  "taskCount": 0,
+  "evidenceCount": 0
+}</pre>
+    </div>
+
+    <h3>4.8 Case Frontend Features</h3>
+    <ul>
+      <li><strong>Case List:</strong> Filterable by status (All/Created/Open/In Progress/Pending Authorization/Closed/Archived)</li>
+      <li><strong>Case Detail:</strong> Tabbed view (Overview, Tasks, Evidence, History, Files, Settings)</li>
+      <li><strong>Case Form:</strong> Create/Edit mode with dropdowns for classifications, types, priorities</li>
+      <li><strong>Status Change:</strong> Modal dialog with status options and required reason field</li>
+      <li><strong>Priority Colors:</strong> Visual color coding for case priority levels</li>
+      <li><strong>Reference Display:</strong> Auto-generated reference shown prominently</li>
+    </ul>
+  </section>
+
+  <!-- SECTION 5: Task Management -->
+  <section id="s5">
+    <h2><span class="section-num">5</span>Task Management Features</h2>
+
+    <h3>5.1 Task Entity Fields</h3>
+    <table class="field-table">
+      <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>id</td><td>Long</td><td>Unique identifier</td></tr>
+        <tr><td>taskName</td><td>String</td><td>Task title (required)</td></tr>
+        <tr><td>caseEntity</td><td>Case</td><td>Parent case (required)</td></tr>
+        <tr><td>taskType</td><td>TaskType</td><td>Task type (required)</td></tr>
+        <tr><td>background</td><td>String</td><td>Task description</td></tr>
+        <tr><td>currentStatus</td><td>String</td><td>Current task status</td></tr>
+        <tr><td>location</td><td>String</td><td>Task location</td></tr>
+        <tr><td>creationDate</td><td>LocalDateTime</td><td>Auto-set on creation</td></tr>
+        <tr><td>deadline</td><td>LocalDateTime</td><td>Task deadline</td></tr>
+        <tr><td>princQA</td><td>boolean</td><td>Has primary QA assigned</td></tr>
+        <tr><td>seconQA</td><td>boolean</td><td>Has secondary QA assigned</td></tr>
+        <tr><td>statuses</td><td>List&lt;TaskStatus&gt;</td><td>Status history</td></tr>
+        <tr><td>notes</td><td>List&lt;TaskNotes&gt;</td><td>Forensic notes</td></tr>
+        <tr><td>taskRoles</td><td>List&lt;UserTaskRole&gt;</td><td>Assigned personnel</td></tr>
+        <tr><td>history</td><td>List&lt;TaskHistory&gt;</td><td>Change history</td></tr>
+      </tbody>
+    </table>
+
+    <h3>5.2 Task Status Workflow</h3>
+    <div class="workflow">
+      <span class="workflow-step">CREATED</span>
+      <span class="workflow-arrow">&rarr;</span>
+      <span class="workflow-step">QUEUED</span>
+      <span class="workflow-arrow">&rarr;</span>
+      <span class="workflow-step">ALLOCATED</span>
+      <span class="workflow-arrow">&rarr;</span>
+      <span class="workflow-step">IN_PROGRESS</span>
+      <span class="workflow-arrow">&rarr;</span>
+      <span class="workflow-step">QA</span>
+      <span class="workflow-arrow">&rarr;</span>
+      <span class="workflow-step">COMPLETE</span>
+    </div>
+
+    <h3>5.3 Task Types &amp; Categories</h3>
+    <table>
+      <thead><tr><th>Task Type</th><th>Category</th></tr></thead>
+      <tbody>
+        <tr><td>Email Extraction</td><td>Communications Retrieval</td></tr>
+        <tr><td>Chat Log Recovery</td><td>Communications Retrieval</td></tr>
+        <tr><td>Browser History Analysis</td><td>Internet Logs</td></tr>
+        <tr><td>Disk Forensics</td><td>Computer Forensics</td></tr>
+        <tr><td>Phone Extraction</td><td>Mobile &amp; Tablet Forensics</td></tr>
+        <tr><td>Network Capture Analysis</td><td>Networked Data</td></tr>
+        <tr><td>Server Log Review</td><td>Log file Analysis</td></tr>
+        <tr><td>Malware Analysis</td><td>Specialist Tasks</td></tr>
+      </tbody>
+    </table>
+
+    <h3>5.4 Task API Endpoints</h3>
+    <table>
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Role Required</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>GET</td><td>/api/tasks/case/{caseId}</td><td>Any authenticated</td><td>Get tasks by case</td></tr>
+        <tr><td>GET</td><td>/api/tasks/{id}</td><td>Any authenticated</td><td>Get task by ID</td></tr>
+        <tr><td>POST</td><td>/api/tasks/case/{caseId}</td><td>ADMIN, CASE_MANAGER</td><td>Create task</td></tr>
+        <tr><td>PUT</td><td>/api/tasks/{id}</td><td>ADMIN, CASE_MANAGER</td><td>Update task</td></tr>
+        <tr><td>PUT</td><td>/api/tasks/{id}/status</td><td>ADMIN, CM, INVESTIGATOR, QA</td><td>Change status</td></tr>
+        <tr><td>PUT</td><td>/api/tasks/{id}/assign-investigator</td><td>ADMIN, CASE_MANAGER</td><td>Assign investigator</td></tr>
+        <tr><td>PUT</td><td>/api/tasks/{id}/assign-qa</td><td>ADMIN, CASE_MANAGER</td><td>Assign QA</td></tr>
+        <tr><td>GET</td><td>/api/tasks/{id}/notes</td><td>Any authenticated</td><td>Get task notes</td></tr>
+        <tr><td>POST</td><td>/api/tasks/{id}/notes</td><td>ADMIN, CM, INV, QA</td><td>Add forensic note</td></tr>
+        <tr><td>GET</td><td>/api/tasks/{id}/history</td><td>Any authenticated</td><td>Get task history</td></tr>
+      </tbody>
+    </table>
+
+    <h3>5.5 Task Assignment Template</h3>
+    <div class="template-box">
+      <h4>Assign Investigator Request</h4>
+<pre>// Request
+PUT /api/tasks/1/assign-investigator
+Authorization: Bearer &lt;token&gt;
+Content-Type: application/json
+
+{
+  "userId": 3,
+  "principle": true,
+  "assignerId": 1
+}
+
+// Response
+{
+  "message": "Investigator assigned successfully"
+}</pre>
+    </div>
+
+    <h3>5.6 Task Frontend Features</h3>
+    <ul>
+      <li><strong>Task List:</strong> Displayed within case detail view, shows task status</li>
+      <li><strong>Task Detail:</strong> Full task view with status actions, notes, assignments</li>
+      <li><strong>Task Form:</strong> Create/Edit mode with task type dropdown, deadline picker</li>
+      <li><strong>Assignment Modals:</strong> Assign primary/secondary investigator and QA</li>
+      <li><strong>Status Actions:</strong> 6 actions: IN_PROGRESS, PENDING_QA, QA_PASSED, QA_FAILED, COMPLETED, CLOSED</li>
+      <li><strong>Forensic Notes:</strong> Add and view notes with author and timestamp</li>
+    </ul>
+  </section>
+
+  <!-- SECTION 6: Evidence Management -->
+  <section id="s6">
+    <h2><span class="section-num">6</span>Evidence Management Features</h2>
+
+    <h3>6.1 Evidence Entity Fields</h3>
+    <table class="field-table">
+      <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>id</td><td>Long</td><td>Unique identifier</td></tr>
+        <tr><td>reference</td><td>String</td><td>Auto-generated: EVD-NNNN</td></tr>
+        <tr><td>type</td><td>EvidenceType</td><td>Evidence type (required)</td></tr>
+        <tr><td>caseEntity</td><td>Case</td><td>Parent case (required)</td></tr>
+        <tr><td>user</td><td>User</td><td>Collecting user</td></tr>
+        <tr><td>qrCode</td><td>boolean</td><td>QR code enabled</td></tr>
+        <tr><td>qrCodeText</td><td>String</td><td>QR code content</td></tr>
+        <tr><td>comment</td><td>String</td><td>Evidence description</td></tr>
+        <tr><td>originator</td><td>String</td><td>Evidence originator</td></tr>
+        <tr><td>evidenceBagNumber</td><td>String</td><td>Evidence bag number</td></tr>
+        <tr><td>location</td><td>String</td><td>Storage location</td></tr>
+        <tr><td>currentStatus</td><td>String</td><td>Current status</td></tr>
+        <tr><td>dateAdded</td><td>LocalDateTime</td><td>Auto-set on creation</td></tr>
+        <tr><td>retentionStartDate</td><td>LocalDateTime</td><td>Retention start date</td></tr>
+        <tr><td>retentionDate</td><td>LocalDateTime</td><td>Retention end date</td></tr>
+        <tr><td>retentionReminderSent</td><td>boolean</td><td>Reminder flag</td></tr>
+        <tr><td>statuses</td><td>List&lt;EvidenceStatus&gt;</td><td>Status history</td></tr>
+        <tr><td>history</td><td>List&lt;EvidenceHistory&gt;</td><td>Change history</td></tr>
+        <tr><td>chainOfCustody</td><td>List&lt;ChainOfCustody&gt;</td><td>Custody records</td></tr>
+      </tbody>
+    </table>
+
+    <h3>6.2 Evidence Status Workflow</h3>
+    <div class="workflow">
+      <span class="workflow-step">INACTIVE</span>
+      <span class="workflow-arrow">&rarr;</span>
+      <span class="workflow-step">ACTIVE</span>
+      <span class="workflow-arrow">&rarr;</span>
+      <span class="workflow-step">IN_ANALYSIS</span>
+      <span class="workflow-arrow">&rarr;</span>
+      <span class="workflow-step">ANALYZED</span>
+    </div>
+
+    <h3>6.3 Evidence Types</h3>
+    <table>
+      <thead><tr><th>Type</th><th>Icon</th></tr></thead>
+      <tbody>
+        <tr><td>SATA Hard Drive</td><td>DIGITAL</td></tr>
+        <tr><td>IDE Hard Drive</td><td>DIGITAL</td></tr>
+        <tr><td>Mobile Phone</td><td>DIGITAL</td></tr>
+        <tr><td>Smart Phone</td><td>DIGITAL</td></tr>
+        <tr><td>Tablet</td><td>DIGITAL</td></tr>
+        <tr><td>USB Media</td><td>DIGITAL</td></tr>
+        <tr><td>Laptop</td><td>DIGITAL</td></tr>
+        <tr><td>Server</td><td>DIGITAL</td></tr>
+        <tr><td>CD</td><td>DIGITAL</td></tr>
+        <tr><td>DVD</td><td>DIGITAL</td></tr>
+      </tbody>
+    </table>
+
+    <h3>6.4 Evidence API Endpoints</h3>
+    <table>
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Role Required</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>GET</td><td>/api/evidence</td><td>Any authenticated</td><td>List evidence (optional ?userId=)</td></tr>
+        <tr><td>GET</td><td>/api/evidence/{id}</td><td>Any authenticated</td><td>Get evidence by ID</td></tr>
+        <tr><td>POST</td><td>/api/evidence/case/{caseId}</td><td>ADMIN, CM, INVESTIGATOR</td><td>Create evidence</td></tr>
+        <tr><td>PUT</td><td>/api/evidence/{id}</td><td>ADMIN, CM, INVESTIGATOR</td><td>Update evidence</td></tr>
+        <tr><td>PUT</td><td>/api/evidence/{id}/status</td><td>ADMIN, CM, INVESTIGATOR</td><td>Change status</td></tr>
+        <tr><td>PUT</td><td>/api/evidence/{id}/check-in</td><td>ADMIN, CM, INVESTIGATOR</td><td>Check-in evidence</td></tr>
+        <tr><td>PUT</td><td>/api/evidence/{id}/check-out</td><td>ADMIN, CM, INVESTIGATOR</td><td>Check-out evidence</td></tr>
+        <tr><td>GET</td><td>/api/evidence/{id}/chain-of-custody</td><td>Any authenticated</td><td>View custody log</td></tr>
+        <tr><td>GET</td><td>/api/evidence/{id}/history</td><td>Any authenticated</td><td>View change history</td></tr>
+      </tbody>
+    </table>
+
+    <h3>6.5 Evidence Creation Template</h3>
+    <div class="template-box">
+      <h4>Create Evidence Request/Response</h4>
+<pre>// Request
+POST /api/evidence/case/1?userId=3
+Authorization: Bearer &lt;token&gt;
+Content-Type: application/json
+
+{
+  "reference": "EVD-0001",
+  "type": "SATA Hard Drive",
+  "comment": "Primary suspect hard drive seized from office desk",
+  "originator": "Det. Smith",
+  "evidenceBagNumber": "BAG-2026-001",
+  "location": "Evidence Locker A",
+  "qrCode": true,
+  "qrCodeText": "EVD-0001-FRAUD-2026"
+}
+
+// Response
+{
+  "id": 1,
+  "reference": "EVD-0001",
+  "type": "SATA Hard Drive",
+  "caseId": 1,
+  "caseName": "Fraud Investigation - ACME Corp",
+  "qrCode": true,
+  "comment": "Primary suspect hard drive seized from office desk",
+  "originator": "Det. Smith",
+  "evidenceBagNumber": "BAG-2026-001",
+  "location": "Evidence Locker A",
+  "currentStatus": "INACTIVE",
+  "dateAdded": "2026-06-29T11:00:00"
+}</pre>
+    </div>
+
+    <h3>6.6 Evidence Frontend Features</h3>
+    <ul>
+      <li><strong>Evidence List:</strong> Grid view with type icons (computer=Digital, inventory_2=Physical, description=Document)</li>
+      <li><strong>Evidence Detail:</strong> Full view with chain of custody log, status actions</li>
+      <li><strong>Evidence Form:</strong> Create/Edit mode with type dropdown, case selection</li>
+      <li><strong>Check-in/Check-out:</strong> Modal dialogs with custodian name, date, comments</li>
+      <li><strong>Status Change:</strong> Modal with status options and note field</li>
+      <li><strong>Chain of Custody:</strong> Visual timeline of custody transfers</li>
+    </ul>
+  </section>
+
+  <!-- SECTION 7: Chain of Custody -->
+  <section id="s7">
+    <h2><span class="section-num">7</span>Chain of Custody Features</h2>
+
+    <h3>7.1 Chain of Custody Entity Fields</h3>
+    <table class="field-table">
+      <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>id</td><td>Long</td><td>Unique identifier</td></tr>
+        <tr><td>evidence</td><td>Evidence</td><td>Associated evidence (required)</td></tr>
+        <tr><td>user</td><td>User</td><td>User who recorded the entry</td></tr>
+        <tr><td>dateRecorded</td><td>LocalDateTime</td><td>When the entry was created</td></tr>
+        <tr><td>dateOfCustody</td><td>LocalDateTime</td><td>When custody changed</td></tr>
+        <tr><td>checkIn</td><td>boolean</td><td>true=check-in, false=check-out</td></tr>
+        <tr><td>comment</td><td>String</td><td>Custody transfer comments</td></tr>
+        <tr><td>custodyReceipt</td><td>String</td><td>Receipt reference</td></tr>
+        <tr><td>custodyReceiptLabel</td><td>String</td><td>Receipt label</td></tr>
+        <tr><td>custodian</td><td>String</td><td>Person taking custody</td></tr>
+      </tbody>
+    </table>
+
+    <h3>7.2 Chain of Custody API Endpoints</h3>
+    <table>
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>PUT</td><td>/api/evidence/{id}/check-in</td><td>Record evidence check-in</td></tr>
+        <tr><td>PUT</td><td>/api/evidence/{id}/check-out</td><td>Record evidence check-out</td></tr>
+        <tr><td>GET</td><td>/api/evidence/{id}/chain-of-custody</td><td>View complete custody log</td></tr>
+      </tbody>
+    </table>
+
+    <h3>7.3 Check-in Template</h3>
+    <div class="template-box">
+      <h4>Check-in Evidence Request</h4>
+<pre>// Request
+PUT /api/evidence/1/check-in
+Authorization: Bearer &lt;token&gt;
+Content-Type: application/json
+
+{
+  "custodian": "John Smith",
+  "date": "2026-06-29T14:30:00",
+  "comment": "Evidence returned to secure storage after analysis",
+  "userId": 3
+}
+
+// Response
+{
+  "id": 1,
+  "evidenceId": 1,
+  "userFullname": "John Smith",
+  "custodian": "John Smith",
+  "dateRecorded": "2026-06-29T14:30:00",
+  "dateOfCustody": "2026-06-29T14:30:00",
+  "checkIn": true,
+  "comment": "Evidence returned to secure storage after analysis"
+}</pre>
+    </div>
+
+    <h3>7.4 Check-out Template</h3>
+    <div class="template-box">
+      <h4>Check-out Evidence Request</h4>
+<pre>// Request
+PUT /api/evidence/1/check-out
+Authorization: Bearer &lt;token&gt;
+Content-Type: application/json
+
+{
+  "custodian": "Jane Doe",
+  "date": "2026-06-29T10:00:00",
+  "comment": "Evidence taken for forensic analysis",
+  "userId": 3
+}
+
+// Response
+{
+  "id": 2,
+  "evidenceId": 1,
+  "userFullname": "John Smith",
+  "custodian": "Jane Doe",
+  "dateRecorded": "2026-06-29T10:00:00",
+  "dateOfCustody": "2026-06-29T10:00:00",
+  "checkIn": false,
+  "comment": "Evidence taken for forensic analysis"
+}</pre>
+    </div>
+
+    <h3>7.5 Chain of Custody Features</h3>
+    <ul>
+      <li><strong>Immutable Records:</strong> Once created, chain of custody entries cannot be modified or deleted</li>
+      <li><strong>Custodian Tracking:</strong> Records who has physical custody of evidence at all times</li>
+      <li><strong>Timestamp Recording:</strong> Both recording time and custody transfer time are captured</li>
+      <li><strong>Comment Support:</strong> Free-text comments for each custody transfer</li>
+      <li><strong>Visual Timeline:</strong> Frontend displays chain of custody as a chronological timeline</li>
+      <li><strong>Audit Trail:</strong> Complete history of evidence handling for legal proceedings</li>
+    </ul>
+  </section>
+
+  <!-- SECTION 8: Forensic Notes -->
+  <section id="s8">
+    <h2><span class="section-num">8</span>Forensic Notes Features</h2>
+
+    <h3>8.1 Task Notes Entity Fields</h3>
+    <table class="field-table">
+      <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>id</td><td>Long</td><td>Unique identifier</td></tr>
+        <tr><td>task</td><td>Task</td><td>Parent task (required)</td></tr>
+        <tr><td>author</td><td>User</td><td>Note author</td></tr>
+        <tr><td>dateTime</td><td>LocalDateTime</td><td>Auto-set on creation</td></tr>
+        <tr><td>note</td><td>String</td><td>Note content (TEXT)</td></tr>
+        <tr><td>hash</td><td>String</td><td>Integrity hash</td></tr>
+      </tbody>
+    </table>
+
+    <h3>8.2 Forensic Notes API Endpoints</h3>
+    <table>
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Role Required</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>GET</td><td>/api/tasks/{id}/notes</td><td>Any authenticated</td><td>Get task notes</td></tr>
+        <tr><td>POST</td><td>/api/tasks/{id}/notes</td><td>ADMIN, CM, INV, QA</td><td>Add forensic note</td></tr>
+      </tbody>
+    </table>
+
+    <h3>8.3 Add Note Template</h3>
+    <div class="template-box">
+      <h4>Add Forensic Note Request/Response</h4>
+<pre>// Request
+POST /api/tasks/1/notes
+Authorization: Bearer &lt;token&gt;
+Content-Type: application/json
+
+{
+  "note": "Initial disk imaging completed. Hash verified: SHA256 abc123...",
+  "authorId": 3
+}
+
+// Response
+{
+  "id": 1,
+  "note": "Initial disk imaging completed. Hash verified: SHA256 abc123...",
+  "authorFullname": "John Smith",
+  "dateTime": "2026-06-29T15:00:00",
+  "hash": "a1b2c3d4e5f6..."
+}</pre>
+    </div>
+
+    <h3>8.4 Forensic Notes Features</h3>
+    <ul>
+      <li><strong>Immutable:</strong> Notes cannot be edited or deleted once created</li>
+      <li><strong>Author Tracking:</strong> Each note records the author and timestamp</li>
+      <li><strong>Integrity Hash:</strong> Notes are hashed for tamper detection</li>
+      <li><strong>Chronological Display:</strong> Notes are displayed newest-first</li>
+      <li><strong>Access Control:</strong> Only assigned investigators, QA, case managers, and admins can add notes</li>
+    </ul>
+  </section>
+
+  <!-- SECTION 9: Reports & Dashboard -->
+  <section id="s9">
+    <h2><span class="section-num">9</span>Reports &amp; Dashboard Features</h2>
+
+    <h3>9.1 Dashboard Statistics</h3>
+    <table class="field-table">
+      <thead><tr><th>Metric</th><th>Type</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>totalCases</td><td>int</td><td>Total number of cases</td></tr>
+        <tr><td>openCases</td><td>int</td><td>Currently open cases</td></tr>
+        <tr><td>closedCases</td><td>int</td><td>Closed cases</td></tr>
+        <tr><td>totalTasks</td><td>int</td><td>Total number of tasks</td></tr>
+        <tr><td>queuedTasks</td><td>int</td><td>Tasks in queue</td></tr>
+        <tr><td>completedTasks</td><td>int</td><td>Completed tasks</td></tr>
+        <tr><td>totalEvidence</td><td>int</td><td>Total evidence items</td></tr>
+        <tr><td>activeUsers</td><td>int</td><td>Active user accounts</td></tr>
+      </tbody>
+    </table>
+
+    <h3>9.2 Reports API Endpoints</h3>
+    <table>
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>GET</td><td>/api/reports/dashboard</td><td>Dashboard statistics</td></tr>
+        <tr><td>GET</td><td>/api/reports/case/{caseId}</td><td>Full case report</td></tr>
+        <tr><td>GET</td><td>/api/reports/cases/{caseId}</td><td>Case report (alternate path)</td></tr>
+        <tr><td>GET</td><td>/api/reports/case/{caseId}/activity</td><td>Case activity report</td></tr>
+        <tr><td>GET</td><td>/api/reports/cases/{caseId}/activity</td><td>Case activity report (alternate path)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>9.3 Dashboard Template</h3>
+    <div class="template-box">
+      <h4>Dashboard Stats Response</h4>
+<pre>// Request
+GET /api/reports/dashboard
+Authorization: Bearer &lt;token&gt;
+
+// Response
+{
+  "totalCases": 15,
+  "openCases": 8,
+  "closedCases": 7,
+  "totalTasks": 42,
+  "queuedTasks": 12,
+  "completedTasks": 28,
+  "totalEvidence": 67,
+  "activeUsers": 6
+}</pre>
+    </div>
+
+    <h3>9.4 Case Report Template</h3>
+    <div class="template-box">
+      <h4>Case Report Response</h4>
+<pre>// Request
+GET /api/reports/case/1
+Authorization: Bearer &lt;token&gt;
+
+// Response
+{
+  "case": {
+    "id": 1,
+    "caseName": "Fraud Investigation - ACME Corp",
+    "reference": "CASE-0001",
+    "currentStatus": "IN_PROGRESS",
+    "classification": "Secret",
+    "casePriority": "High",
+    "creationDate": "2026-06-29T10:30:00"
+  },
+  "tasks": {
+    "total": 5,
+    "completed": 2,
+    "inProgress": 2,
+    "pending": 1
+  },
+  "evidence": {
+    "total": 8,
+    "active": 3,
+    "inStorage": 5
+  }
+}</pre>
+    </div>
+
+    <h3>9.5 Report Frontend Features</h3>
+    <ul>
+      <li><strong>Dashboard Cards:</strong> Visual cards showing total/open/closed cases, tasks, evidence, users</li>
+      <li><strong>Recent Cases:</strong> List of 5 most recent cases with status and priority</li>
+      <li><strong>Status Colors:</strong> Color-coded status badges throughout the UI</li>
+      <li><strong>Priority Colors:</strong> Visual priority indicators (green=Normal, orange=High, red=Critical)</li>
+      <li><strong>Loading States:</strong> Spinner animations during data loading</li>
+    </ul>
+  </section>
+
+  <!-- SECTION 10: File Upload -->
+  <section id="s10">
+    <h2><span class="section-num">10</span>File Upload &amp; Attachment Features</h2>
+
+    <h3>10.1 File Upload Entity Fields</h3>
+    <table class="field-table">
+      <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>id</td><td>Long</td><td>Unique identifier</td></tr>
+        <tr><td>uploader</td><td>User</td><td>User who uploaded</td></tr>
+        <tr><td>deleter</td><td>User</td><td>User who deleted (soft-delete)</td></tr>
+        <tr><td>dateTime</td><td>LocalDateTime</td><td>Upload timestamp</td></tr>
+        <tr><td>fileNote</td><td>String</td><td>File description</td></tr>
+        <tr><td>fileHash</td><td>String</td><td>File integrity hash</td></tr>
+        <tr><td>fileName</td><td>String</td><td>Original filename</td></tr>
+        <tr><td>uploadLocation</td><td>String</td><td>Storage path</td></tr>
+        <tr><td>fileTitle</td><td>String</td><td>Display title</td></tr>
+        <tr><td>deleted</td><td>boolean</td><td>Soft-delete flag</td></tr>
+        <tr><td>dateDeleted</td><td>LocalDateTime</td><td>Deletion timestamp</td></tr>
+        <tr><td>fileType</td><td>FileType (enum)</td><td>CASE, TASK, or EVIDENCE</td></tr>
+        <tr><td>caseEntity</td><td>Case</td><td>Associated case</td></tr>
+        <tr><td>taskId</td><td>Long</td><td>Associated task ID</td></tr>
+        <tr><td>evidenceId</td><td>Long</td><td>Associated evidence ID</td></tr>
+      </tbody>
+    </table>
+
+    <h3>10.2 File Upload Features</h3>
+    <ul>
+      <li><strong>Soft-Delete:</strong> Files are marked as deleted but not physically removed</li>
+      <li><strong>Integrity Hash:</strong> Each file is hashed for tamper detection</li>
+      <li><strong>Type Association:</strong> Files can be associated with cases, tasks, or evidence</li>
+      <li><strong>Max Upload Size:</strong> 50MB per file, 50MB per request</li>
+      <li><strong>File Types:</strong> CASE, TASK, EVIDENCE (enum-based)</li>
+    </ul>
+
+    <h3>10.3 File Size Configuration</h3>
+    <div class="template-box">
+      <h4>Upload Configuration (application.properties)</h4>
+<pre>spring.servlet.multipart.max-file-size=50MB
+spring.servlet.multipart.max-request-size=50MB</pre>
+    </div>
+  </section>
+
+  <!-- SECTION 11: Organization -->
+  <section id="s11">
+    <h2><span class="section-num">11</span>Organization &amp; Configuration Features</h2>
+
+    <h3>11.1 Organization Structure</h3>
+    <table>
+      <thead><tr><th>Entity</th><th>Fields</th><th>Seed Data</th></tr></thead>
+      <tbody>
+        <tr><td>Department</td><td>id, department, teams</td><td>Forensics</td></tr>
+        <tr><td>Team</td><td>id, team, department</td><td>Digital Forensics</td></tr>
+      </tbody>
+    </table>
+
+    <h3>11.2 ForemanOptions (System Configuration)</h3>
+    <table class="field-table">
+      <thead><tr><th>Option</th><th>Default Value</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>dateFormat</td><td>dd/MM/yyyy HH:mm</td><td>Date display format</td></tr>
+        <tr><td>defaultLocation</td><td>Lab A</td><td>Default evidence location</td></tr>
+        <tr><td>caseNames</td><td>CASE</td><td>Case reference prefix</td></tr>
+        <tr><td>taskNames</td><td>TASK</td><td>Task reference prefix</td></tr>
+        <tr><td>company</td><td>JENE-DFCMS</td><td>Organization name</td></tr>
+        <tr><td>department</td><td>Digital Forensics</td><td>Department name</td></tr>
+        <tr><td>evidenceRetention</td><td>true</td><td>Enable retention tracking</td></tr>
+        <tr><td>evidenceRetentionPeriod</td><td>365</td><td>Retention period in days</td></tr>
+        <tr><td>numberLoginsBeforeAccountLockout</td><td>5</td><td>Failed login limit</td></tr>
+      </tbody>
+    </table>
+
+    <h3>11.3 Default Seeded Data</h3>
+    <table>
+      <thead><tr><th>Category</th><th>Items</th></tr></thead>
+      <tbody>
+        <tr><td>Case Classifications</td><td>Public, Secret, Confidential, Internal</td></tr>
+        <tr><td>Case Types</td><td>eDiscovery, Internal Investigation, Fraud Investigation, Incident Response, Security &amp; Malware Investigation</td></tr>
+        <tr><td>Case Priorities</td><td>Low (#00CCFF), Normal (#009900), High (#FF9933), Critical (#CC0000)</td></tr>
+        <tr><td>Evidence Types</td><td>SATA Hard Drive, IDE Hard Drive, Mobile Phone, Smart Phone, Tablet, USB Media, Laptop, Server, CD, DVD</td></tr>
+        <tr><td>Task Categories</td><td>Communications Retrieval, Internet Logs, Computer Forensics, Mobile &amp; Tablet Forensics, Networked Data, Log file Analysis, Specialist Tasks, Other</td></tr>
+        <tr><td>Task Types</td><td>Email Extraction, Chat Log Recovery, Browser History Analysis, Disk Forensics, Phone Extraction, Network Capture Analysis, Server Log Review, Malware Analysis</td></tr>
+        <tr><td>Default User</td><td>admin / admin123 (ADMIN role)</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- SECTION 12: Audit Trail -->
+  <section id="s12">
+    <h2><span class="section-num">12</span>Audit Trail &amp; History Features</h2>
+
+    <h3>12.1 History Entity Types</h3>
+    <table>
+      <thead><tr><th>Entity</th><th>Purpose</th><th>Tracked Fields</th></tr></thead>
+      <tbody>
+        <tr><td>CaseHistory</td><td>Case change tracking</td><td>caseName, reference, background, privateCase, location, classification, caseType, justification, casePriority, deadline</td></tr>
+        <tr><td>TaskHistory</td><td>Task change tracking</td><td>taskName, taskType, background, location, deadline</td></tr>
+        <tr><td>EvidenceHistory</td><td>Evidence change tracking</td><td>reference, type, qrCode, qrCodeText, comment, originator, evidenceBagNumber, location</td></tr>
+        <tr><td>CaseStatus</td><td>Case status changes</td><td>status, dateTime, user, reason</td></tr>
+        <tr><td>TaskStatus</td><td>Task status changes</td><td>status, dateTime, user, note</td></tr>
+        <tr><td>EvidenceStatus</td><td>Evidence status changes</td><td>status, dateTime, user, note</td></tr>
+      </tbody>
+    </table>
+
+    <h3>12.2 Audit Trail Features</h3>
+    <ul>
+      <li><strong>Automatic Recording:</strong> All changes to cases, tasks, and evidence are automatically recorded</li>
+      <li><strong>User Attribution:</strong> Each change records which user made it and when</li>
+      <li><strong>Snapshot Data:</strong> History records capture a snapshot of the entity at the time of change</li>
+      <li><strong>Status Tracking:</strong> Complete status change history with reasons and notes</li>
+      <li><strong>Immutable:</strong> History records cannot be modified or deleted</li>
+      <li><strong>Chronological Display:</strong> History is displayed newest-first in the UI</li>
+    </ul>
+
+    <h3>12.3 Case History API Template</h3>
+    <div class="template-box">
+      <h4>Case History Response</h4>
+<pre>// Request
+GET /api/cases/1/history
+Authorization: Bearer &lt;token&gt;
+
+// Response
+[
+  {
+    "id": 1,
+    "caseName": "Fraud Investigation - ACME Corp",
+    "userFullname": "Admin User",
+    "date_time": "2026-06-29T10:30:00",
+    "changes": {
+      "caseName": [null, "Fraud Investigation - ACME Corp"],
+      "casePriority": [null, "High"],
+      "classification": [null, "Secret"]
+    }
+  },
+  {
+    "id": 2,
+    "caseName": "Fraud Investigation - ACME Corp",
+    "userFullname": "Case Manager",
+    "date_time": "2026-06-29T14:00:00",
+    "changes": {
+      "currentStatus": ["PENDING", "OPEN"],
+      "location": [null, "New York Office"]
+    }
+  }
+]</pre>
+    </div>
+  </section>
+
+  <!-- SECTION 13: RBAC -->
+  <section id="s13">
+    <h2><span class="section-num">13</span>Role-Based Access Control (RBAC)</h2>
+
+    <h3>13.1 Six User Roles</h3>
+    <table>
+      <thead><tr><th>Role</th><th>Badge</th><th>Primary Responsibilities</th></tr></thead>
+      <tbody>
+        <tr><td>ADMIN</td><td><span class="badge badge-blue">ADMIN</span></td><td>Full system access. User management. All operations.</td></tr>
+        <tr><td>CASE_MANAGER</td><td><span class="badge badge-teal">CASE_MANAGER</span></td><td>Case lifecycle management. Task assignment. Team coordination.</td></tr>
+        <tr><td>INVESTIGATOR</td><td><span class="badge badge-green">INVESTIGATOR</span></td><td>Forensic analysis. Evidence handling. Notes documentation.</td></tr>
+        <tr><td>QA</td><td><span class="badge badge-orange">QA</span></td><td>Quality review. Compliance checking. Review notes.</td></tr>
+        <tr><td>REQUESTER</td><td><span class="badge badge-purple">REQUESTER</span></td><td>Case request submission. Limited to case creation.</td></tr>
+        <tr><td>AUTHORISER</td><td><span class="badge badge-red">AUTHORISER</span></td><td>Case approval/rejection. Final sign-off authority.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>13.2 Complete Access Matrix</h3>
+    <table>
+      <thead><tr><th>Operation</th><th>ADMIN</th><th>CM</th><th>INV</th><th>QA</th><th>REQ</th><th>AUTH</th></tr></thead>
+      <tbody>
+        <tr><td>Create Case</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td><td>&#10007;</td><td>&#10003;</td><td>&#10007;</td></tr>
+        <tr><td>Edit Case</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td><td>&#10007;</td><td>&#10007;</td><td>&#10007;</td></tr>
+        <tr><td>Authorize Case</td><td>&#10003;</td><td>&#10007;</td><td>&#10007;</td><td>&#10007;</td><td>&#10007;</td><td>&#10003;</td></tr>
+        <tr><td>Create Task</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td><td>&#10007;</td><td>&#10007;</td><td>&#10007;</td></tr>
+        <tr><td>Assign Personnel</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td><td>&#10007;</td><td>&#10007;</td><td>&#10007;</td></tr>
+        <tr><td>Work on Tasks</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td><td>&#10007;</td></tr>
+        <tr><td>Create Evidence</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td><td>&#10007;</td><td>&#10007;</td></tr>
+        <tr><td>Check-in/out Evidence</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td><td>&#10007;</td><td>&#10007;</td></tr>
+        <tr><td>Manage Users</td><td>&#10003;</td><td>&#10007;</td><td>&#10007;</td><td>&#10007;</td><td>&#10007;</td><td>&#10007;</td></tr>
+        <tr><td>View Reports</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr>
+      </tbody>
+    </table>
+
+    <h3>13.3 Enforcement Points</h3>
+    <ul>
+      <li><strong>Server-side:</strong> RoleHelper component checks roles in every controller method</li>
+      <li><strong>Client-side:</strong> Angular AuthService checks roles for UI element visibility</li>
+      <li><strong>JWT Claims:</strong> Roles are embedded in JWT token for stateless authorization</li>
+      <li><strong>BCrypt Passwords:</strong> Passwords are never stored in plain text</li>
+    </ul>
+  </section>
+
+  <!-- SECTION 14: Frontend UI -->
+  <section id="s14">
+    <h2><span class="section-num">14</span>Frontend UI Features</h2>
+
+    <h3>14.1 Angular Components</h3>
+    <table>
+      <thead><tr><th>Component</th><th>Route</th><th>Features</th></tr></thead>
+      <tbody>
+        <tr><td>LoginComponent</td><td>/login</td><td>Username/password form, error display, loading state</td></tr>
+        <tr><td>DashboardComponent</td><td>/dashboard</td><td>Stats cards, recent cases, status/priority CSS classes</td></tr>
+        <tr><td>CaseListComponent</td><td>/cases</td><td>Filterable list, status tabs, priority colors</td></tr>
+        <tr><td>CaseDetailComponent</td><td>/cases/:id</td><td>Tabbed view (Overview/Tasks/Evidence/History/Files/Settings)</td></tr>
+        <tr><td>CaseFormComponent</td><td>/cases/new, /cases/:id/edit</td><td>Create/Edit mode, dropdowns, validation</td></tr>
+        <tr><td>TaskListComponent</td><td>(embedded)</td><td>Task list within case detail</td></tr>
+        <tr><td>TaskDetailComponent</td><td>/tasks/:id</td><td>Status actions, notes, assignment modals</td></tr>
+        <tr><td>TaskFormComponent</td><td>/cases/:id/tasks/new, /tasks/:id/edit</td><td>Create/Edit mode, task type dropdown</td></tr>
+        <tr><td>EvidenceListComponent</td><td>/evidence</td><td>Grid view, type icons, status colors</td></tr>
+        <tr><td>EvidenceDetailComponent</td><td>/evidence/:id</td><td>Chain of custody, check-in/out, status change</td></tr>
+        <tr><td>EvidenceFormComponent</td><td>/evidence/new, /evidence/:id/edit</td><td>Create/Edit mode, type dropdown</td></tr>
+        <tr><td>UserListComponent</td><td>/users</td><td>Role badge colors, filtering</td></tr>
+        <tr><td>UserFormComponent</td><td>/users/new, /users/:id/edit</td><td>Role checkboxes, team dropdown</td></tr>
+        <tr><td>NavbarComponent</td><td>(shared)</td><td>User menu, logout, navigation</td></tr>
+        <tr><td>SidebarComponent</td><td>(shared)</td><td>Tab-based navigation</td></tr>
+      </tbody>
+    </table>
+
+    <h3>14.2 Frontend Services</h3>
+    <table>
+      <thead><tr><th>Service</th><th>Methods</th></tr></thead>
+      <tbody>
+        <tr><td>AuthService</td><td>login, logout, getToken, isLoggedIn, getCurrentUser, getRoles, isAdmin, hasRole</td></tr>
+        <tr><td>UserService</td><td>getAll, getById, create, update, getByRole, changePassword</td></tr>
+        <tr><td>CaseService</td><td>getAll, getById, create, update, changeStatus, close, authorize, getHistory, getTasks, getEvidence, linkCases, unlinkCases</td></tr>
+        <tr><td>TaskService</td><td>getByCase, getById, create, update, changeStatus, assignInvestigator, assignQA, getNotes, addNote, getHistory</td></tr>
+        <tr><td>EvidenceService</td><td>getAll, getById, create, update, changeStatus, checkIn, checkOut, getChainOfCustody, getHistory</td></tr>
+        <tr><td>ReportService</td><td>getDashboard, getCaseReport, getCaseActivity</td></tr>
+      </tbody>
+    </table>
+
+    <h3>14.3 UI Design Features</h3>
+    <ul>
+      <li><strong>Color Scheme:</strong> Dark blue (#1a237e) primary, Amber (#ff6f00) accent</li>
+      <li><strong>Responsive Layout:</strong> Sidebar navigation with collapsible menu</li>
+      <li><strong>Loading States:</strong> Spinner animations during API calls</li>
+      <li><strong>Error Handling:</strong> Toast notifications for success/error messages</li>
+      <li><strong>Form Validation:</strong> Required field indicators, email validation</li>
+      <li><strong>Modal Dialogs:</strong> Status changes, assignments, confirmations</li>
+      <li><strong>Tabbed Interface:</strong> Case detail uses tabs for organized information display</li>
+      <li><strong>Role Badges:</strong> Color-coded role indicators throughout the UI</li>
+    </ul>
+  </section>
+
+  <!-- SECTION 15: API -->
+  <section id="s15">
+    <h2><span class="section-num">15</span>API &amp; Integration Features</h2>
+
+    <h3>15.1 REST API Architecture</h3>
+    <ul>
+      <li><strong>Base URL:</strong> http://localhost:8080/api</li>
+      <li><strong>Content Type:</strong> application/json</li>
+      <li><strong>Authentication:</strong> Bearer token in Authorization header</li>
+      <li><strong>Error Format:</strong> HTTP status codes with error messages</li>
+      <li><strong>CORS:</strong> Configured for Angular frontend (localhost:4200)</li>
+    </ul>
+
+    <h3>15.2 API Endpoint Summary</h3>
+    <table>
+      <thead><tr><th>Module</th><th>Endpoints</th><th>Total</th></tr></thead>
+      <tbody>
+        <tr><td>Authentication</td><td>login, register</td><td>2</td></tr>
+        <tr><td>Users</td><td>getAll, getById, create, update, changePassword, getByRole</td><td>6</td></tr>
+        <tr><td>Cases</td><td>getAll, getById, create, update, changeStatus, close, authorize, history, tasks, evidence, createTask, createEvidence, link, unlink</td><td>14</td></tr>
+        <tr><td>Tasks</td><td>getByCase, getById, create, update, changeStatus, assignInvestigator, assignQA, notes, addNote, history</td><td>10</td></tr>
+        <tr><td>Evidence</td><td>getAll, getById, create, update, changeStatus, checkIn, checkOut, chainOfCustody, history</td><td>9</td></tr>
+        <tr><td>Reports</td><td>dashboard, caseReport, caseReportAlt, caseActivity, caseActivityAlt</td><td>5</td></tr>
+        <tr><td colspan="2"><strong>Total</strong></td><td><strong>46</strong></td></tr>
+      </tbody>
+    </table>
+
+    <h3>15.3 HTTP Status Codes</h3>
+    <table>
+      <thead><tr><th>Code</th><th>Meaning</th><th>When Used</th></tr></thead>
+      <tbody>
+        <tr><td>200</td><td>OK</td><td>Successful GET, PUT, POST</td></tr>
+        <tr><td>201</td><td>Created</td><td>Successful resource creation</td></tr>
+        <tr><td>400</td><td>Bad Request</td><td>Invalid request data</td></tr>
+        <tr><td>401</td><td>Unauthorized</td><td>Missing or invalid JWT token</td></tr>
+        <tr><td>403</td><td>Forbidden</td><td>Insufficient role permissions</td></tr>
+        <tr><td>404</td><td>Not Found</td><td>Resource not found</td></tr>
+        <tr><td>500</td><td>Internal Server Error</td><td>Server-side error</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- SECTION 16: Database -->
+  <section id="s16">
+    <h2><span class="section-num">16</span>Database &amp; Persistence Features</h2>
+
+    <h3>16.1 Database Configuration</h3>
+    <table class="field-table">
+      <thead><tr><th>Property</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>Database Type</td><td>H2 (file-based)</td></tr>
+        <tr><td>JDBC URL</td><td>jdbc:h2:file:./data/jene-dfcms-db</td></tr>
+        <tr><td>Schema Strategy</td><td>spring.jpa.hibernate.ddl-auto=update</td></tr>
+        <tr><td>Console</td><td>Enabled at /h2-console</td></tr>
+        <tr><td>Connection Pool</td><td>HikariCP (Spring Boot default)</td></tr>
+        <tr><td>Lazy Loading</td><td>hibernate.enable_lazy_load_no_trans=true</td></tr>
+      </tbody>
+    </table>
+
+    <h3>16.2 Database Tables (27)</h3>
+    <table>
+      <thead><tr><th>Table</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>users</td><td>User accounts</td></tr>
+        <tr><td>role</td><td>User roles</td></tr>
+        <tr><td>cases</td><td>Forensic cases</td></tr>
+        <tr><td>case_status</td><td>Case status history</td></tr>
+        <tr><td>case_history</td><td>Case change history</td></tr>
+        <tr><td>case_classification</td><td>Security classifications</td></tr>
+        <tr><td>case_type</td><td>Investigation types</td></tr>
+        <tr><td>case_priority</td><td>Priority levels</td></tr>
+        <tr><td>case_timesheet</td><td>Case time tracking</td></tr>
+        <tr><td>task</td><td>Investigation tasks</td></tr>
+        <tr><td>task_status</td><td>Task status history</td></tr>
+        <tr><td>task_history</td><td>Task change history</td></tr>
+        <tr><td>task_notes</td><td>Forensic notes</td></tr>
+        <tr><td>task_type</td><td>Task types</td></tr>
+        <tr><td>task_category</td><td>Task categories</td></tr>
+        <tr><td>task_timesheet</td><td>Task time tracking</td></tr>
+        <tr><td>evidence</td><td>Evidence items</td></tr>
+        <tr><td>evidence_status</td><td>Evidence status history</td></tr>
+        <tr><td>evidence_history</td><td>Evidence change history</td></tr>
+        <tr><td>evidence_type</td><td>Evidence types</td></tr>
+        <tr><td>chain_of_custody</td><td>Custody transfer records</td></tr>
+        <tr><td>file_upload</td><td>Uploaded files</td></tr>
+        <tr><td>team</td><td>Teams</td></tr>
+        <tr><td>department</td><td>Departments</td></tr>
+        <tr><td>user_case_role</td><td>User-case assignments</td></tr>
+        <tr><td>user_task_role</td><td>User-task assignments</td></tr>
+        <tr><td>foreman_options</td><td>System configuration</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- SECTION 17: Data Templates -->
+  <section id="s17">
+    <h2><span class="section-num">17</span>Data Templates &amp; Forms</h2>
+
+    <h3>17.1 Case Form Template</h3>
+    <div class="template-box">
+      <h4>Case Creation Form Fields</h4>
+<table class="field-table">
+  <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Options/Validation</th></tr></thead>
+  <tbody>
+    <tr><td>Case Name</td><td>text</td><td>Yes</td><td>Min 3 characters</td></tr>
+    <tr><td>Reference</td><td>text</td><td>Auto</td><td>Auto-generated: CASE-NNNN</td></tr>
+    <tr><td>Background</td><td>textarea</td><td>No</td><td>Rich text description</td></tr>
+    <tr><td>Location</td><td>text</td><td>No</td><td>Investigation location</td></tr>
+    <tr><td>Classification</td><td>dropdown</td><td>No</td><td>Public, Internal, Secret, Top Secret</td></tr>
+    <tr><td>Case Type</td><td>dropdown</td><td>No</td><td>eDiscovery, Internal Investigation, Fraud, Incident, Security</td></tr>
+    <tr><td>Priority</td><td>dropdown</td><td>Yes</td><td>Low, Normal, High, Critical</td></tr>
+    <tr><td>Private Case</td><td>checkbox</td><td>No</td><td>Default: unchecked</td></tr>
+    <tr><td>Deadline</td><td>datetime</td><td>No</td><td>Future date required</td></tr>
+    <tr><td>Justification</td><td>textarea</td><td>No</td><td>Case justification text</td></tr>
+  </tbody>
+</table>
+    </div>
+
+    <h3>17.2 Task Form Template</h3>
+    <div class="template-box">
+      <h4>Task Creation Form Fields</h4>
+<table class="field-table">
+  <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Options/Validation</th></tr></thead>
+  <tbody>
+    <tr><td>Task Name</td><td>text</td><td>Yes</td><td>Min 3 characters</td></tr>
+    <tr><td>Task Type</td><td>dropdown</td><td>Yes</td><td>Email Extraction, Chat Log Recovery, Browser History, Disk Forensics, etc.</td></tr>
+    <tr><td>Background</td><td>textarea</td><td>No</td><td>Task description</td></tr>
+    <tr><td>Location</td><td>text</td><td>No</td><td>Task location</td></tr>
+    <tr><td>Deadline</td><td>datetime</td><td>No</td><td>Future date</td></tr>
+  </tbody>
+</table>
+    </div>
+
+    <h3>17.3 Evidence Form Template</h3>
+    <div class="template-box">
+      <h4>Evidence Creation Form Fields</h4>
+<table class="field-table">
+  <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Options/Validation</th></tr></thead>
+  <tbody>
+    <tr><td>Reference</td><td>text</td><td>Yes</td><td>Auto-generated: EVD-NNNN</td></tr>
+    <tr><td>Evidence Type</td><td>dropdown</td><td>Yes</td><td>SATA, IDE, Mobile Phone, Smart Phone, Tablet, USB, Laptop, Server, CD, DVD</td></tr>
+    <tr><td>Comment</td><td>textarea</td><td>No</td><td>Evidence description</td></tr>
+    <tr><td>Originator</td><td>text</td><td>No</td><td>Who collected the evidence</td></tr>
+    <tr><td>Evidence Bag Number</td><td>text</td><td>No</td><td>Physical bag reference</td></tr>
+    <tr><td>Location</td><td>text</td><td>Yes</td><td>Storage location</td></tr>
+    <tr><td>Case</td><td>dropdown</td><td>Yes</td><td>Select parent case</td></tr>
+  </tbody>
+</table>
+    </div>
+
+    <h3>17.4 User Form Template</h3>
+    <div class="template-box">
+      <h4>User Creation Form Fields</h4>
+<table class="field-table">
+  <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Options/Validation</th></tr></thead>
+  <tbody>
+    <tr><td>Username</td><td>text</td><td>Yes</td><td>Unique, alphanumeric</td></tr>
+    <tr><td>Password</td><td>password</td><td>Yes (create) / Optional (edit)</td><td>Min 6 characters</td></tr>
+    <tr><td>Forename</td><td>text</td><td>Yes</td><td>First name</td></tr>
+    <tr><td>Surname</td><td>text</td><td>Yes</td><td>Last name</td></tr>
+    <tr><td>Middle Name</td><td>text</td><td>No</td><td>Middle name</td></tr>
+    <tr><td>Email</td><td>email</td><td>Yes</td><td>Valid email format, unique</td></tr>
+    <tr><td>Telephone</td><td>text</td><td>No</td><td>Phone number</td></tr>
+    <tr><td>Job Title</td><td>text</td><td>No</td><td>Position title</td></tr>
+    <tr><td>Team</td><td>dropdown</td><td>No</td><td>Digital Forensics, Cybercrime, Intelligence, Operations, Management</td></tr>
+    <tr><td>Active</td><td>checkbox</td><td>No</td><td>Default: checked</td></tr>
+    <tr><td>Roles</td><td>checkboxes</td><td>Yes</td><td>ADMIN, CASE_MANAGER, INVESTIGATOR, QA, REQUESTER, AUTHORISER</td></tr>
+  </tbody>
+</table>
+    </div>
+
+    <h3>17.5 Chain of Custody Form Template</h3>
+    <div class="template-box">
+      <h4>Check-in/Check-out Form Fields</h4>
+<table class="field-table">
+  <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>Custodian</td><td>text</td><td>Yes</td><td>Person taking/returning custody</td></tr>
+    <tr><td>Date</td><td>datetime</td><td>No (defaults to now)</td><td>When custody changed</td></tr>
+    <tr><td>Comment</td><td>textarea</td><td>No</td><td>Reason for custody transfer</td></tr>
+  </tbody>
+</table>
+    </div>
+
+    <h3>17.6 Forensic Note Form Template</h3>
+    <div class="template-box">
+      <h4>Add Note Form Fields</h4>
+<table class="field-table">
+  <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>Note</td><td>textarea</td><td>Yes</td><td>Forensic note content</td></tr>
+    <tr><td>Author</td><td>auto-filled</td><td>Auto</td><td>Current logged-in user</td></tr>
+  </tbody>
+</table>
+    </div>
+  </section>
+
+  <!-- SECTION 18: Workflow Templates -->
+  <section id="s18">
+    <h2><span class="section-num">18</span>Workflow Templates</h2>
+
+    <h3>18.1 Complete Case Lifecycle</h3>
+    <div class="template-box">
+      <h4>End-to-End Case Workflow</h4>
+<ol>
+  <li><strong>REQUESTER</strong> creates case &rarr; status: DRAFT</li>
+  <li><strong>CASE_MANAGER</strong> reviews and opens case &rarr; status: OPEN</li>
+  <li><strong>CASE_MANAGER</strong> creates tasks (e.g., Disk Forensics, Email Extraction)</li>
+  <li><strong>CASE_MANAGER</strong> assigns INVESTIGATOR to tasks</li>
+  <li><strong>CASE_MANAGER</strong> assigns QA reviewer to tasks</li>
+  <li><strong>INVESTIGATOR</strong> works on tasks, adds forensic notes</li>
+  <li><strong>INVESTIGATOR</strong> creates evidence items, checks in/out evidence</li>
+  <li><strong>CASE_MANAGER</strong> starts case work &rarr; status: IN_PROGRESS</li>
+  <li><strong>INVESTIGATOR/QA</strong> review tasks, mark as complete</li>
+  <li><strong>CASE_MANAGER</strong> requests authorization &rarr; status: PENDING_AUTH</li>
+  <li><strong>AUTHORISER</strong> reviews and approves &rarr; status: AUTHORIZED</li>
+  <li><strong>CASE_MANAGER</strong> closes case &rarr; status: CLOSED</li>
+</ol>
+    </div>
+
+    <h3>18.2 Task Assignment Workflow</h3>
+    <div class="template-box">
+      <h4>Task Assignment Process</h4>
+<ol>
+  <li><strong>CASE_MANAGER</strong> creates task under case</li>
+  <li><strong>CASE_MANAGER</strong> assigns primary INVESTIGATOR (principle=true)</li>
+  <li><strong>CASE_MANAGER</strong> optionally assigns secondary INVESTIGATOR (principle=false)</li>
+  <li><strong>CASE_MANAGER</strong> assigns primary QA reviewer</li>
+  <li><strong>CASE_MANAGER</strong> optionally assigns secondary QA reviewer</li>
+  <li><strong>INVESTIGATOR</strong> begins work, changes status to IN_PROGRESS</li>
+  <li><strong>INVESTIGATOR</strong> adds forensic notes during work</li>
+  <li><strong>INVESTIGATOR</strong> completes work, requests QA review</li>
+  <li><strong>QA</strong> reviews work, adds review notes</li>
+  <li><strong>QA</strong> passes or fails QA review</li>
+  <li>If passed: task moves to COMPLETED</li>
+  <li>If failed: task returns to IN_PROGRESS for rework</li>
+</ol>
+    </div>
+
+    <h3>18.3 Evidence Handling Workflow</h3>
+    <div class="template-box">
+      <h4>Evidence Collection &amp; Analysis Process</h4>
+<ol>
+  <li><strong>INVESTIGATOR</strong> collects evidence at scene</li>
+  <li><strong>INVESTIGATOR</strong> creates evidence record in system</li>
+  <li><strong>INVESTIGATOR</strong> checks OUT evidence (removes from storage)</li>
+  <li><strong>INVESTIGATOR</strong> performs forensic analysis</li>
+  <li><strong>INVESTIGATOR</strong> adds forensic notes with findings</li>
+  <li><strong>INVESTIGATOR</strong> checks IN evidence (returns to storage)</li>
+  <li>Chain of custody record is created for each transfer</li>
+  <li>Evidence status updated: INACTIVE &rarr; ACTIVE &rarr; IN_ANALYSIS &rarr; ANALYZED</li>
+</ol>
+    </div>
+
+    <h3>18.4 Case Authorization Workflow</h3>
+    <div class="template-box">
+      <h4>Authorization Process</h4>
+<ol>
+  <li><strong>CASE_MANAGER</strong> completes all tasks</li>
+  <li><strong>CASE_MANAGER</strong> changes status to PENDING_AUTH</li>
+  <li><strong>AUTHORISER</strong> receives notification (manual)</li>
+  <li><strong>AUTHORISER</strong> reviews case report and evidence</li>
+  <li>If approved: status &rarr; AUTHORIZED</li>
+  <li>If rejected: status &rarr; REJECTED (with reason)</li>
+  <li>If rejected: <strong>CASE_MANAGER</strong> can reopen case</li>
+</ol>
+    </div>
+  </section>
+
+  <!-- SECTION 19: Report Templates -->
+  <section id="s19">
+    <h2><span class="section-num">19</span>Report Templates</h2>
+
+    <h3>19.1 Dashboard Report Template</h3>
+    <div class="template-box">
+      <h4>Dashboard Statistics Report</h4>
+<pre>========================================
+     JENE-DFCMS DASHBOARD REPORT
+     Generated: 2026-06-29 15:00
+========================================
+
+CASE STATISTICS
+---------------
+Total Cases:      15
+Open Cases:        8
+Closed Cases:      7
+
+TASK STATISTICS
+---------------
+Total Tasks:      42
+Queued Tasks:     12
+Completed Tasks:  28
+
+EVIDENCE STATISTICS
+-------------------
+Total Evidence:   67
+Active Evidence:   5
+In Storage:       62
+
+USER STATISTICS
+---------------
+Active Users:      6
+
+========================================</pre>
+    </div>
+
+    <h3>19.2 Case Report Template</h3>
+    <div class="template-box">
+      <h4>Individual Case Report</h4>
+<pre>========================================
+     CASE REPORT: CASE-0001
+     Generated: 2026-06-29 15:00
+========================================
+
+CASE DETAILS
+------------
+Case Name:     Fraud Investigation - ACME Corp
+Reference:     CASE-0001
+Status:        IN_PROGRESS
+Classification: Secret
+Priority:      High (#FF9933)
+Created:       2026-06-29 10:30
+Location:      New York Office
+Background:    Suspected financial fraud...
+
+TASK SUMMARY
+------------
+Total Tasks:      5
+Completed:        2
+In Progress:      2
+Pending:          1
+
+TASK DETAILS
+------------
+1. [COMPLETED] Disk Forensics
+   Investigator: John Smith
+   Completed: 2026-06-29 12:00
+
+2. [IN_PROGRESS] Email Extraction
+   Investigator: Jane Doe
+   Started: 2026-06-29 13:00
+
+...
+
+EVIDENCE SUMMARY
+----------------
+Total Evidence:   8
+Active:           3
+In Storage:       5
+
+EVIDENCE DETAILS
+----------------
+1. EVD-0001 - SATA Hard Drive
+   Status: IN_ANALYSIS
+   Location: Evidence Locker A
+   Custody: 3 transfers
+
+...
+
+========================================</pre>
+    </div>
+
+    <h3>19.3 Case Activity Report Template</h3>
+    <div class="template-box">
+      <h4>Case Activity Timeline</h4>
+<pre>========================================
+     CASE ACTIVITY: CASE-0001
+     Generated: 2026-06-29 15:00
+========================================
+
+ACTIVITY TIMELINE
+-----------------
+
+2026-06-29 10:30 | Admin User
+  ACTION: Case Created
+  DETAILS: New fraud investigation case opened
+
+2026-06-29 11:00 | Case Manager
+  ACTION: Status Changed
+  FROM: PENDING
+  TO: OPEN
+  REASON: Case reviewed and approved
+
+2026-06-29 11:15 | Case Manager
+  ACTION: Task Created
+  TASK: Disk Forensics
+  ASSIGNED: John Smith (Primary Investigator)
+
+2026-06-29 11:30 | Case Manager
+  ACTION: Evidence Created
+  EVIDENCE: EVD-0001 - SATA Hard Drive
+  LOCATION: Evidence Locker A
+
+2026-06-29 12:00 | John Smith
+  ACTION: Evidence Checked Out
+  CUSTODIAN: John Smith
+  REASON: Forensic analysis
+
+2026-06-29 14:00 | John Smith
+  ACTION: Forensic Note Added
+  NOTE: Initial disk imaging completed...
+
+...
+
+========================================</pre>
+    </div>
+
+    <h3>19.4 Chain of Custody Report Template</h3>
+    <div class="template-box">
+      <h4>Evidence Chain of Custody Report</h4>
+<pre>========================================
+     CHAIN OF CUSTODY: EVD-0001
+     Generated: 2026-06-29 15:00
+========================================
+
+EVIDENCE DETAILS
+----------------
+Reference:    EVD-0001
+Type:         SATA Hard Drive
+Case:         CASE-0001
+Current Status: IN_ANALYSIS
+
+CUSTODY TRANSFERS
+-----------------
+
+1. CHECK-OUT
+   Date: 2026-06-29 12:00
+   Custodian: John Smith
+   Recorded by: John Smith
+   Reason: Forensic analysis
+
+2. CHECK-IN
+   Date: 2026-06-29 14:30
+   Custodian: John Smith
+   Recorded by: John Smith
+   Reason: Analysis complete, returning to storage
+
+3. CHECK-OUT
+   Date: 2026-06-29 15:00
+   Custodian: Jane Doe
+   Recorded by: John Smith
+   Reason: Secondary analysis
+
+========================================</pre>
+    </div>
+  </section>
+
+  <!-- SECTION 20: Summary -->
+  <section id="s20">
+    <h2><span class="section-num">20</span>System Statistics Summary</h2>
+
+    <h3>20.1 Complete System Metrics</h3>
+    <table>
+      <thead><tr><th>Category</th><th>Count</th></tr></thead>
+      <tbody>
+        <tr><td>Entity Classes (Java)</td><td>27</td></tr>
+        <tr><td>Service Classes</td><td>6</td></tr>
+        <tr><td>Controller Classes</td><td>7</td></tr>
+        <tr><td>Repository Interfaces</td><td>20</td></tr>
+        <tr><td>REST API Endpoints</td><td>46</td></tr>
+        <tr><td>DTO Classes</td><td>8</td></tr>
+        <tr><td>Database Tables</td><td>27</td></tr>
+        <tr><td>Frontend Components</td><td>15</td></tr>
+        <tr><td>Frontend Services</td><td>6</td></tr>
+        <tr><td>Frontend Routes</td><td>17</td></tr>
+        <tr><td>Security Roles</td><td>6</td></tr>
+        <tr><td>Case Statuses</td><td>6</td></tr>
+        <tr><td>Task Statuses</td><td>8</td></tr>
+        <tr><td>Evidence Statuses</td><td>4</td></tr>
+        <tr><td>Seeded Case Types</td><td>5</td></tr>
+        <tr><td>Seeded Classifications</td><td>4</td></tr>
+        <tr><td>Seeded Priorities</td><td>4</td></tr>
+        <tr><td>Seeded Evidence Types</td><td>10</td></tr>
+        <tr><td>Seeded Task Categories</td><td>8</td></tr>
+        <tr><td>Seeded Task Types</td><td>8</td></tr>
+      </tbody>
+    </table>
+
+    <h3>20.2 Feature Categories</h3>
+    <table>
+      <thead><tr><th>Feature Area</th><th>Capabilities</th></tr></thead>
+      <tbody>
+        <tr><td>Authentication</td><td>JWT login, self-registration, password hashing, account lockout, token expiry</td></tr>
+        <tr><td>User Management</td><td>CRUD, role assignment, team assignment, active/inactive, password change</td></tr>
+        <tr><td>Case Management</td><td>CRUD, status workflow, classification, priority, type, linking, history</td></tr>
+        <tr><td>Task Management</td><td>CRUD, assignment (primary/secondary), status workflow, notes, history</td></tr>
+        <tr><td>Evidence Management</td><td>CRUD, type tracking, QR codes, retention dates, status workflow, history</td></tr>
+        <tr><td>Chain of Custody</td><td>Check-in/out, custodian tracking, timestamps, immutable records</td></tr>
+        <tr><td>Forensic Notes</td><td>Create only, author tracking, timestamps, integrity hashing</td></tr>
+        <tr><td>File Uploads</td><td>Soft-delete, integrity hashes, type association, 50MB limit</td></tr>
+        <tr><td>Reports</td><td>Dashboard stats, case reports, activity reports, chain of custody reports</td></tr>
+        <tr><td>RBAC</td><td>6 roles, server-side enforcement, client-side filtering, JWT claims</td></tr>
+        <tr><td>Audit Trail</td><td>Case/task/evidence history, status changes, user attribution, timestamps</td></tr>
+        <tr><td>Organization</td><td>Departments, teams, system configuration, seeded reference data</td></tr>
+        <tr><td>Security</td><td>BCrypt, CORS, CSRF disabled, stateless sessions, frame options</td></tr>
+        <tr><td>Database</td><td>H2 file-based, auto-schema, lazy loading, connection pooling</td></tr>
+        <tr><td>Frontend</td><td>Angular 17, JWT interceptor, route guards, responsive UI, modals</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+</div>
+
+<div class="footer">
+  <div class="line"><strong>JENE-DFCMS</strong> - Digital Forensic Case Management System</div>
+  <div class="line">Complete Features &amp; Templates Document v1.0</div>
+  <div class="line">Author: Sukhvinder Chhoker | Email: chhokersukhvinder@gmail.com | Phone: +917576069781</div>
+  <div class="line">Copyright 2026. All rights reserved.</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JENE-DFCMS - Roles &amp; Access Control Document</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; color: #333; line-height: 1.6; }
+
+  .header { background: linear-gradient(135deg, #1a237e 0%, #283593 100%); color: white; padding: 40px 20px; text-align: center; }
+  .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+  .header .subtitle { font-size: 1.2em; opacity: 0.9; }
+  .header .meta { margin-top: 15px; font-size: 0.95em; opacity: 0.8; }
+  .header .meta span { display: inline-block; margin: 0 15px; }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 30px 20px; }
+
+  .toc { background: white; border-radius: 8px; padding: 25px 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .toc h2 { color: #1a237e; margin-bottom: 15px; font-size: 1.3em; }
+  .toc ol { padding-left: 20px; }
+  .toc li { margin: 8px 0; }
+  .toc a { color: #1565c0; text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+
+  section { background: white; border-radius: 8px; padding: 30px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  section h2 { color: #1a237e; font-size: 1.5em; border-bottom: 3px solid #ff6f00; padding-bottom: 10px; margin-bottom: 20px; }
+  section h3 { color: #283593; font-size: 1.15em; margin: 20px 0 10px; }
+  section h4 { color: #37474f; font-size: 1.05em; margin: 15px 0 8px; }
+  section p, section li { font-size: 0.95em; }
+
+  table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9em; }
+  th, td { border: 1px solid #ddd; padding: 10px 12px; text-align: left; }
+  th { background: #1a237e; color: white; font-weight: 600; }
+  tr:nth-child(even) { background: #f8f9fa; }
+  tr:hover { background: #e8eaf6; }
+  td.center { text-align: center; }
+
+  .role-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .role-badge { display: inline-block; padding: 4px 12px; border-radius: 15px; font-size: 0.85em; font-weight: 600; color: white; }
+  .badge-admin { background: #1565c0; }
+  .badge-cm { background: #00695c; }
+  .badge-inv { background: #2e7d32; }
+  .badge-qa { background: #e65100; }
+  .badge-req { background: #6a1b9a; }
+  .badge-auth { background: #c62828; }
+
+  .yes { color: #2e7d32; font-weight: 700; }
+  .no { color: #c62828; font-weight: 700; }
+  .partial { color: #e65100; font-weight: 700; }
+
+  .alert { padding: 15px 20px; border-radius: 6px; margin: 15px 0; font-size: 0.95em; }
+  .alert-info { background: #e3f2fd; border-left: 4px solid #1565c0; }
+  .alert-warn { background: #fff3e0; border-left: 4px solid #ff6f00; }
+  .alert-danger { background: #fce4ec; border-left: 4px solid #c62828; }
+  .alert-success { background: #e8f5e9; border-left: 4px solid #2e7d32; }
+
+  .legend { display: flex; gap: 20px; flex-wrap: wrap; margin: 10px 0 20px; font-size: 0.9em; }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+
+  ul { padding-left: 20px; margin: 8px 0; }
+  li { margin: 4px 0; }
+
+  .flow-box { background: #f5f5f5; border: 1px solid #ddd; border-radius: 6px; padding: 15px; margin: 10px 0; }
+  .flow-box code { background: #e3f2fd; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+
+  .footer { text-align: center; padding: 30px; color: #666; font-size: 0.85em; }
+  .footer .line { margin: 5px 0; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>JENE-DFCMS</h1>
+  <div class="subtitle">Roles &amp; Access Control Document</div>
+  <div class="subtitle">Digital Forensic Case Management System - Authorization Matrix</div>
+  <div class="meta">
+    <span>Version: 1.0</span>
+    <span>Author: Sukhvinder Chhoker</span>
+    <span>Email: chhokersukhvinder@gmail.com</span>
+    <span>Date: June 2026</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="toc">
+    <h2>Table of Contents</h2>
+    <ol>
+      <li><a href="#overview">System Overview &amp; RBAC Architecture</a></li>
+      <li><a href="#roles">Role Definitions</a></li>
+      <li><a href="#matrix">Complete Access Control Matrix</a></li>
+      <li><a href="#cases">Case Management Permissions</a></li>
+      <li><a href="#tasks">Task Management Permissions</a></li>
+      <li><a href="#evidence">Evidence Management Permissions</a></li>
+      <li><a href="#users">User Management Permissions</a></li>
+      <li><a href="#reports">Reports &amp; Dashboard Permissions</a></li>
+      <li><a href="#notes">Forensic Notes Permissions</a></li>
+      <li><a href="#auth-flow">Authorization Flow</a></li>
+      <li><a href="#api-mapping">API Endpoint to Role Mapping</a></li>
+      <li><a href="#enforcement">Server-Side Enforcement Details</a></li>
+      <li><a href="#frontend">Frontend Role-Based UI Behavior</a></li>
+    </ol>
+  </div>
+
+  <!-- SECTION 1: Overview -->
+  <section id="overview">
+    <h2>1. System Overview &amp; RBAC Architecture</h2>
+    <p>JENE-DFCMS implements a <strong>Role-Based Access Control (RBAC)</strong> system with 6 defined roles. Access control is enforced at <strong>two levels</strong>:</p>
+    <ul>
+      <li><strong>Server-side (Spring Boot controllers):</strong> Each API endpoint checks the authenticated user's role via <code>RoleHelper</code> before processing. Unauthorized requests receive HTTP 403 with descriptive error messages.</li>
+      <li><strong>Client-side (Angular frontend):</strong> UI elements are conditionally displayed/hidden based on the logged-in user's roles. Navigation, buttons, and forms adapt per role.</li>
+    </ul>
+
+    <div class="alert alert-info">
+      <strong>Key Principle:</strong> Server-side enforcement is the primary security layer. The frontend hides elements but cannot be relied upon for access control. All API requests require a valid JWT token, and role checks happen server-side in every controller method.
+    </div>
+
+    <h3>Authentication Flow</h3>
+    <div class="flow-box">
+      <ol>
+        <li>User submits credentials to <code>POST /api/auth/login</code></li>
+        <li>Server validates credentials against BCrypt-hashed password</li>
+        <li>Server generates JWT token containing username and roles</li>
+        <li>Frontend stores token in localStorage and attaches it to all subsequent requests via <code>Authorization: Bearer &lt;token&gt;</code> header</li>
+        <li>On each request, <code>JwtAuthFilter</code> extracts username, loads user from DB with roles</li>
+        <li><code>RoleHelper</code> in each controller checks if the user has the required role for the specific operation</li>
+      </ol>
+    </div>
+
+    <h3>Role Data Model</h3>
+    <p>Roles are stored in the <code>roles</code> table and linked to users via <code>user_roles</code>. A user can have multiple roles. Example:</p>
+    <div class="flow-box">
+      <code>user_roles(user_id=1, role_id=1)</code> &rarr; User 1 has ADMIN<br>
+      <code>user_roles(user_id=2, role_id=3)</code> &rarr; User 2 has INVESTIGATOR<br>
+      <code>user_roles(user_id=3, role_id=2)</code> &rarr; User 3 has CASE_MANAGER
+    </div>
+  </section>
+
+  <!-- SECTION 2: Role Definitions -->
+  <section id="roles">
+    <h2>2. Role Definitions</h2>
+
+    <div class="role-header">
+      <span class="role-badge badge-admin">ADMIN</span>
+      <strong>Full System Administrator</strong>
+    </div>
+    <p>The highest-privilege role. Has unrestricted access to all system features including user management, case management, task management, evidence management, and reporting. Can authorize cases, manage system settings, and perform all operations. Typically assigned to system administrators and senior forensic managers.</p>
+    <ul>
+      <li>Can create, edit, delete, and manage all users</li>
+      <li>Can perform all case, task, evidence, and report operations</li>
+      <li>Can authorize cases (approve/reject)</li>
+      <li>Can change system-wide settings</li>
+      <li>Can view all data regardless of assignment</li>
+    </ul>
+
+    <div class="role-header">
+      <span class="role-badge badge-cm">CASE_MANAGER</span>
+      <strong>Case Management Lead</strong>
+    </div>
+    <p>Responsible for managing the lifecycle of forensic cases. Can create and edit cases, assign tasks to investigators and QA staff, manage case status, and link/unlink related cases. Cannot authorize cases or manage users.</p>
+    <ul>
+      <li>Can create and edit cases</li>
+      <li>Can assign tasks to investigators and QA staff</li>
+      <li>Can manage case status (except authorization)</li>
+      <li>Can link/unlink related cases</li>
+      <li>Can create tasks and evidence entries</li>
+      <li>Cannot authorize cases or manage users</li>
+    </ul>
+
+    <div class="role-header">
+      <span class="role-badge badge-inv">INVESTIGATOR</span>
+      <strong>Forensic Investigator</strong>
+    </div>
+    <p>Works on assigned forensic tasks. Can create and manage evidence, add forensic notes, check-in/check-out evidence items, and update task status. Can only work on tasks/cases they are assigned to.</p>
+    <ul>
+      <li>Can view assigned cases and tasks</li>
+      <li>Can create and edit evidence</li>
+      <li>Can check-in/check-out evidence (chain of custody)</li>
+      <li>Can add forensic notes to tasks</li>
+      <li>Can update status of assigned tasks</li>
+      <li>Cannot create cases or tasks, cannot assign work</li>
+    </ul>
+
+    <div class="role-header">
+      <span class="role-badge badge-qa">QA</span>
+      <strong>Quality Assurance Reviewer</strong>
+    </div>
+    <p>Reviews forensic work for quality and compliance. Can view tasks and add notes for review purposes. Has read-only access to evidence. Focuses on ensuring work meets forensic standards and legal requirements.</p>
+    <ul>
+      <li>Can view assigned cases and tasks</li>
+      <li>Can add review notes to tasks</li>
+      <li>Can view evidence (read-only)</li>
+      <li>Cannot create or modify evidence, cases, or tasks</li>
+      <li>Cannot check-in/check-out evidence</li>
+    </ul>
+
+    <div class="role-header">
+      <span class="role-badge badge-req">REQUESTER</span>
+      <strong>Case Requester</strong>
+    </div>
+    <p>Submits new forensic case requests. Can create new cases but cannot manage tasks, evidence, or other aspects of case execution. Typically used by law enforcement officers or legal teams requesting forensic analysis.</p>
+    <ul>
+      <li>Can create new cases (submit requests)</li>
+      <li>Can view their own submitted cases</li>
+      <li>Cannot create tasks or evidence</li>
+      <li>Cannot modify existing cases beyond initial submission</li>
+    </ul>
+
+    <div class="role-header">
+      <span class="role-badge badge-auth">AUTHORISER</span>
+      <strong>Case Authoriser / Approver</strong>
+    </div>
+    <p>Has authority to approve or reject case authorization requests. This is the final sign-off role in the forensic case lifecycle. Can also close cases. Typically assigned to senior officials or legal authorities.</p>
+    <ul>
+      <li>Can authorize (approve/reject) cases</li>
+      <li>Can close cases</li>
+      <li>Can change case status</li>
+      <li>Cannot create cases, tasks, or evidence</li>
+      <li>Cannot manage users</li>
+    </ul>
+  </section>
+
+  <!-- SECTION 3: Complete Access Control Matrix -->
+  <section id="matrix">
+    <h2>3. Complete Access Control Matrix</h2>
+
+    <div class="legend">
+      <div class="legend-item"><span class="yes">&#10003;</span> Full Access</div>
+      <div class="legend-item"><span class="partial">&#9679;</span> Partial (Assigned Only)</div>
+      <div class="legend-item"><span class="no">&#10007;</span> No Access</div>
+    </div>
+
+    <h3>Cases</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Operation</th>
+          <th>ADMIN</th>
+          <th>CASE_MANAGER</th>
+          <th>INVESTIGATOR</th>
+          <th>QA</th>
+          <th>REQUESTER</th>
+          <th>AUTHORISER</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>View all cases</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center partial">Assigned only</td>
+          <td class="center partial">Assigned only</td>
+          <td class="center partial">Own only</td>
+          <td class="center partial">Assigned only</td>
+        </tr>
+        <tr>
+          <td>View single case</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center partial">Assigned only</td>
+          <td class="center partial">Assigned only</td>
+          <td class="center partial">Own only</td>
+          <td class="center partial">Assigned only</td>
+        </tr>
+        <tr>
+          <td>Create case</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center no">&#10007;</td>
+        </tr>
+        <tr>
+          <td>Edit case details</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+        </tr>
+        <tr>
+          <td>Change case status</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center yes">&#10003;</td>
+        </tr>
+        <tr>
+          <td>Close case</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center yes">&#10003;</td>
+        </tr>
+        <tr>
+          <td>Authorize case</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center yes">&#10003;</td>
+        </tr>
+        <tr>
+          <td>Link / Unlink cases</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+        </tr>
+        <tr>
+          <td>View case history</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center partial">Assigned only</td>
+          <td class="center partial">Assigned only</td>
+          <td class="center partial">Own only</td>
+          <td class="center partial">Assigned only</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Tasks</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Operation</th>
+          <th>ADMIN</th>
+          <th>CASE_MANAGER</th>
+          <th>INVESTIGATOR</th>
+          <th>QA</th>
+          <th>REQUESTER</th>
+          <th>AUTHORISER</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>View tasks</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center partial">Assigned only</td>
+          <td class="center partial">Assigned only</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+        </tr>
+        <tr>
+          <td>Create task</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+        </tr>
+        <tr>
+          <td>Edit task</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center partial">Assigned only</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+        </tr>
+        <tr>
+          <td>Change task status</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center partial">Assigned only</td>
+          <td class="center partial">Assigned only</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+        </tr>
+        <tr>
+          <td>Assign investigator</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+        </tr>
+        <tr>
+          <td>Assign QA reviewer</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+        </tr>
+        <tr>
+          <td>Add forensic notes</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center partial">Assigned only</td>
+          <td class="center partial">Assigned only</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+        </tr>
+        <tr>
+          <td>View task history</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center partial">Assigned only</td>
+          <td class="center partial">Assigned only</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Evidence</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Operation</th>
+          <th>ADMIN</th>
+          <th>CASE_MANAGER</th>
+          <th>INVESTIGATOR</th>
+          <th>QA</th>
+          <th>REQUESTER</th>
+          <th>AUTHORISER</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>View evidence</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center partial">Assigned only</td>
+          <td class="center partial">Read-only</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+        </tr>
+        <tr>
+          <td>Create evidence</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center partial">Assigned only</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+        </tr>
+        <tr>
+          <td>Edit evidence</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center partial">Assigned only</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+        </tr>
+        <tr>
+          <td>Change evidence status</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center partial">Assigned only</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+        </tr>
+        <tr>
+          <td>Check-in evidence</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center partial">Assigned only</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+        </tr>
+        <tr>
+          <td>Check-out evidence</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center partial">Assigned only</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+        </tr>
+        <tr>
+          <td>View chain of custody</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center partial">Assigned only</td>
+          <td class="center partial">Read-only</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+        </tr>
+        <tr>
+          <td>View evidence history</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center partial">Assigned only</td>
+          <td class="center partial">Read-only</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Users</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Operation</th>
+          <th>ADMIN</th>
+          <th>CASE_MANAGER</th>
+          <th>INVESTIGATOR</th>
+          <th>QA</th>
+          <th>REQUESTER</th>
+          <th>AUTHORISER</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>View user list</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+        </tr>
+        <tr>
+          <td>View user details</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+        </tr>
+        <tr>
+          <td>Create user</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+        </tr>
+        <tr>
+          <td>Edit user</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+          <td class="center no">&#10007;</td>
+        </tr>
+        <tr>
+          <td>Change password</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+        </tr>
+        <tr>
+          <td>Filter users by role</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Reports &amp; Dashboard</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Operation</th>
+          <th>ADMIN</th>
+          <th>CASE_MANAGER</th>
+          <th>INVESTIGATOR</th>
+          <th>QA</th>
+          <th>REQUESTER</th>
+          <th>AUTHORISER</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>View dashboard</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+        </tr>
+        <tr>
+          <td>View case report</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+        </tr>
+        <tr>
+          <td>View case activity</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+        </tr>
+        <tr>
+          <td>Export reports</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+          <td class="center yes">&#10003;</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- SECTION 4-8: Detailed breakdowns -->
+  <section id="cases">
+    <h2>4. Case Management Permissions (Detailed)</h2>
+
+    <h3>Case Lifecycle States</h3>
+    <p>A case progresses through the following states. Role-based transitions are enforced:</p>
+    <table>
+      <thead>
+        <tr><th>State</th><th>Who Can Transition</th><th>Next State(s)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>DRAFT</td><td>CASE_MANAGER, ADMIN</td><td>OPEN, CLOSED</td></tr>
+        <tr><td>OPEN</td><td>CASE_MANAGER, ADMIN</td><td>IN_PROGRESS, CLOSED</td></tr>
+        <tr><td>IN_PROGRESS</td><td>CASE_MANAGER, ADMIN</td><td>PENDING_AUTH, CLOSED</td></tr>
+        <tr><td>PENDING_AUTH</td><td>AUTHORISER, ADMIN</td><td>AUTHORIZED, REJECTED</td></tr>
+        <tr><td>AUTHORIZED</td><td>CASE_MANAGER, ADMIN</td><td>CLOSED</td></tr>
+        <tr><td>REJECTED</td><td>AUTHORISER, ADMIN</td><td>OPEN, CLOSED</td></tr>
+        <tr><td>CLOSED</td><td>CASE_MANAGER, ADMIN</td><td>(terminal)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Case Operations Detail</h3>
+    <ul>
+      <li><strong>Create Case:</strong> ADMIN, CASE_MANAGER, REQUESTER &mdash; Creates a new forensic case with title, description, priority, classification, type</li>
+      <li><strong>Edit Case:</strong> ADMIN, CASE_MANAGER &mdash; Modifies case details (title, description, priority, classification, type, assigned team)</li>
+      <li><strong>Change Status:</strong> ADMIN, CASE_MANAGER, AUTHORISER &mdash; Transitions case through lifecycle states with required reason field</li>
+      <li><strong>Close Case:</strong> ADMIN, CASE_MANAGER, AUTHORISER &mdash; Moves case to terminal CLOSED state with reason</li>
+      <li><strong>Authorize Case:</strong> ADMIN, AUTHORISER only &mdash; Approves or rejects case authorization request with reason</li>
+      <li><strong>Link Cases:</strong> ADMIN, CASE_MANAGER &mdash; Links two related cases for cross-referencing</li>
+      <li><strong>View History:</strong> All authenticated users (filtered by assignment)</li>
+    </ul>
+  </section>
+
+  <section id="tasks">
+    <h2>5. Task Management Permissions (Detailed)</h2>
+
+    <h3>Task Lifecycle States</h3>
+    <table>
+      <thead>
+        <tr><th>State</th><th>Who Can Transition</th><th>Next State(s)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>PENDING</td><td>ADMIN, CASE_MANAGER, assigned INVESTIGATOR</td><td>IN_PROGRESS, BLOCKED, COMPLETED</td></tr>
+        <tr><td>IN_PROGRESS</td><td>ADMIN, CASE_MANAGER, assigned INVESTIGATOR</td><td>PENDING, BLOCKED, IN_REVIEW, COMPLETED</td></tr>
+        <tr><td>IN_REVIEW</td><td>ADMIN, CASE_MANAGER, assigned QA</td><td>IN_PROGRESS, COMPLETED</td></tr>
+        <tr><td>BLOCKED</td><td>ADMIN, CASE_MANAGER, assigned INVESTIGATOR</td><td>PENDING, IN_PROGRESS</td></tr>
+        <tr><td>COMPLETED</td><td>ADMIN, CASE_MANAGER</td><td>PENDING (reopen)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Task Assignment</h3>
+    <ul>
+      <li><strong>Assign Investigator:</strong> ADMIN, CASE_MANAGER &mdash; Assigns primary or secondary investigator to task</li>
+      <li><strong>Assign QA:</strong> ADMIN, CASE_MANAGER &mdash; Assigns primary or secondary QA reviewer to task</li>
+      <li><strong>Investigators/QA cannot self-assign</strong> &mdash; Assignment is always done by Case Manager or Admin</li>
+    </ul>
+
+    <h3>Forensic Notes</h3>
+    <ul>
+      <li><strong>Add Notes:</strong> ADMIN, CASE_MANAGER, assigned INVESTIGATOR, assigned QA</li>
+      <li><strong>View Notes:</strong> All users with task access</li>
+      <li><strong>Author tracking:</strong> Notes are timestamped and linked to the author for audit purposes</li>
+    </ul>
+  </section>
+
+  <section id="evidence">
+    <h2>6. Evidence Management Permissions (Detailed)</h2>
+
+    <h3>Evidence Lifecycle States</h3>
+    <table>
+      <thead>
+        <tr><th>State</th><th>Who Can Transition</th><th>Next State(s)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>COLLECTED</td><td>ADMIN, CASE_MANAGER, assigned INVESTIGATOR</td><td>IN_ANALYSIS, IN_STORAGE</td></tr>
+        <tr><td>IN_ANALYSIS</td><td>ADMIN, CASE_MANAGER, assigned INVESTIGATOR</td><td>COLLECTED, IN_STORAGE, ANALYZED</td></tr>
+        <tr><td>IN_STORAGE</td><td>ADMIN, CASE_MANAGER, assigned INVESTIGATOR</td><td>COLLECTED, IN_ANALYSIS</td></tr>
+        <tr><td>ANALYZED</td><td>ADMIN, CASE_MANAGER</td><td>COLLECTED, IN_STORAGE</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Chain of Custody</h3>
+    <ul>
+      <li><strong>Check-out:</strong> ADMIN, CASE_MANAGER, assigned INVESTIGATOR &mdash; Records evidence removal from storage with custodian name, date, and comments</li>
+      <li><strong>Check-in:</strong> ADMIN, CASE_MANAGER, assigned INVESTIGATOR &mdash; Records evidence return to storage with custodian name, date, and comments</li>
+      <li><strong>View Chain:</strong> All users with evidence access (QA has read-only)</li>
+      <li><strong>Chain of Custody is immutable</strong> &mdash; Entries cannot be modified or deleted once created</li>
+    </ul>
+
+    <h3>Evidence Types Supported</h3>
+    <ul>
+      <li>Digital: Hard drives, USB drives, memory cards, network captures</li>
+      <li>Physical: Documents, weapons, biological samples</li>
+      <li>Each evidence item has: title, description, type, status, collected date, location, hash value</li>
+    </ul>
+  </section>
+
+  <section id="users">
+    <h2>7. User Management Permissions (Detailed)</h2>
+
+    <h3>User Operations</h3>
+    <table>
+      <thead>
+        <tr><th>Operation</th><th>Who Can Do It</th><th>Details</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>View user list</td><td>ALL roles</td><td>Any authenticated user can view the user directory</td></tr>
+        <tr><td>View user profile</td><td>ALL roles</td><td>Any authenticated user can view any user's profile</td></tr>
+        <tr><td>Create new user</td><td>ADMIN only</td><td>Only system administrators can create new user accounts</td></tr>
+        <tr><td>Edit user details</td><td>ADMIN only</td><td>Only system administrators can modify user information</td></tr>
+        <tr><td>Change password</td><td>ALL roles</td><td>Any user can change their own password (requires old password)</td></tr>
+        <tr><td>Filter by role</td><td>ALL roles</td><td>Any user can filter the user list by role</td></tr>
+      </tbody>
+    </table>
+
+    <div class="alert alert-warn">
+      <strong>Security Note:</strong> User creation and editing is restricted to ADMIN role only. All user management actions are logged for audit trail purposes.
+    </div>
+  </section>
+
+  <section id="reports">
+    <h2>8. Reports &amp; Dashboard Permissions</h2>
+    <p>Reporting and dashboard access is available to <strong>all authenticated users</strong>. The dashboard shows real-time statistics including:</p>
+    <ul>
+      <li>Total cases and their status distribution</li>
+      <li>Active tasks and completion rates</li>
+      <li>Evidence items and their status</li>
+      <li>Recent activity across the system</li>
+    </ul>
+    <div class="alert alert-info">
+      <strong>Note:</strong> While all users can access the dashboard and reports, the underlying data is filtered based on each user's assigned cases and tasks. For example, an INVESTIGATOR only sees statistics for their assigned work.
+    </div>
+  </section>
+
+  <section id="notes">
+    <h2>9. Forensic Notes Permissions</h2>
+    <p>Forensic notes are critical for maintaining an audit trail of investigative work:</p>
+    <ul>
+      <li><strong>Create note:</strong> ADMIN, CASE_MANAGER, assigned INVESTIGATOR, assigned QA</li>
+      <li><strong>View notes:</strong> All users with access to the parent task</li>
+      <li><strong>Edit/Delete notes:</strong> NOT ALLOWED (notes are immutable once created)</li>
+      <li><strong>Author tracking:</strong> Each note records the author (user ID) and creation timestamp</li>
+      <li><strong>Case history:</strong> All case-level actions (status changes, assignments, etc.) are automatically recorded as history entries</li>
+    </ul>
+  </section>
+
+  <!-- SECTION 10: Authorization Flow -->
+  <section id="auth-flow">
+    <h2>10. Authorization Flow</h2>
+
+    <h3>Case Authorization Workflow</h3>
+    <div class="flow-box">
+      <ol>
+        <li><strong>CASE_MANAGER</strong> creates case &rarr; status: <code>DRAFT</code></li>
+        <li><strong>CASE_MANAGER</strong> opens case &rarr; status: <code>OPEN</code></li>
+        <li><strong>CASE_MANAGER</strong> starts work &rarr; status: <code>IN_PROGRESS</code></li>
+        <li><strong>CASE_MANAGER</strong> requests authorization &rarr; status: <code>PENDING_AUTH</code></li>
+        <li><strong>AUTHORISER</strong> reviews and approves &rarr; status: <code>AUTHORIZED</code></li>
+        <li><strong>CASE_MANAGER</strong> closes case &rarr; status: <code>CLOSED</code></li>
+      </ol>
+    </div>
+
+    <h3>Rejection Flow</h3>
+    <div class="flow-box">
+      <ol>
+        <li>Case is at <code>PENDING_AUTH</code></li>
+        <li><strong>AUTHORISER</strong> rejects with reason &rarr; status: <code>REJECTED</code></li>
+        <li><strong>CASE_MANAGER</strong> or <strong>ADMIN</strong> reopens &rarr; status: <code>OPEN</code></li>
+        <li>Work continues and new authorization is requested</li>
+      </ol>
+    </div>
+
+    <h3>Evidence Chain of Custody Flow</h3>
+    <div class="flow-box">
+      <ol>
+        <li><strong>INVESTIGATOR</strong> collects evidence &rarr; status: <code>COLLECTED</code></li>
+        <li><strong>INVESTIGATOR</strong> checks out evidence &rarr; records custodian, date, comment</li>
+        <li><strong>INVESTIGATOR</strong> analyzes evidence &rarr; status: <code>IN_ANALYSIS</code></li>
+        <li><strong>INVESTIGATOR</strong> checks in evidence &rarr; records return to storage</li>
+        <li>Each check-in/check-out creates an immutable chain of custody entry</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- SECTION 11: API Endpoint to Role Mapping -->
+  <section id="api-mapping">
+    <h2>11. API Endpoint to Role Mapping</h2>
+    <p>Complete mapping of every REST API endpoint to the roles that can access it:</p>
+
+    <h3>Authentication</h3>
+    <table>
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Roles</th></tr></thead>
+      <tbody>
+        <tr><td>POST</td><td>/api/auth/login</td><td>Public (no auth required)</td></tr>
+        <tr><td>POST</td><td>/api/auth/register</td><td>Public (no auth required)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Users</h3>
+    <table>
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Roles</th></tr></thead>
+      <tbody>
+        <tr><td>GET</td><td>/api/users</td><td>ALL authenticated users</td></tr>
+        <tr><td>GET</td><td>/api/users/{id}</td><td>ALL authenticated users</td></tr>
+        <tr><td>POST</td><td>/api/users</td><td>ADMIN only</td></tr>
+        <tr><td>PUT</td><td>/api/users/{id}</td><td>ADMIN only</td></tr>
+        <tr><td>PUT</td><td>/api/users/{id}/password</td><td>ALL authenticated users (own password)</td></tr>
+        <tr><td>GET</td><td>/api/users/role/{role}</td><td>ALL authenticated users</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Cases</h3>
+    <table>
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Roles</th></tr></thead>
+      <tbody>
+        <tr><td>GET</td><td>/api/cases</td><td>ADMIN, CASE_MANAGER, REQUESTER, INVESTIGATOR, QA, AUTHORISER</td></tr>
+        <tr><td>GET</td><td>/api/cases/{id}</td><td>ALL authenticated users</td></tr>
+        <tr><td>POST</td><td>/api/cases</td><td>ADMIN, CASE_MANAGER, REQUESTER</td></tr>
+        <tr><td>PUT</td><td>/api/cases/{id}</td><td>ADMIN, CASE_MANAGER</td></tr>
+        <tr><td>PUT</td><td>/api/cases/{id}/status</td><td>ADMIN, CASE_MANAGER, AUTHORISER</td></tr>
+        <tr><td>PUT</td><td>/api/cases/{id}/close</td><td>ADMIN, CASE_MANAGER, AUTHORISER</td></tr>
+        <tr><td>PUT</td><td>/api/cases/{id}/authorize</td><td>ADMIN, AUTHORISER</td></tr>
+        <tr><td>GET</td><td>/api/cases/{id}/history</td><td>ALL authenticated users</td></tr>
+        <tr><td>GET</td><td>/api/cases/{id}/tasks</td><td>ALL authenticated users</td></tr>
+        <tr><td>GET</td><td>/api/cases/{id}/evidence</td><td>ALL authenticated users</td></tr>
+        <tr><td>POST</td><td>/api/cases/{id}/tasks</td><td>ADMIN, CASE_MANAGER</td></tr>
+        <tr><td>POST</td><td>/api/cases/{id}/evidence</td><td>ADMIN, CASE_MANAGER, INVESTIGATOR</td></tr>
+        <tr><td>POST</td><td>/api/cases/{id}/link</td><td>ADMIN, CASE_MANAGER</td></tr>
+        <tr><td>DELETE</td><td>/api/cases/{id}/link/{linkedId}</td><td>ADMIN, CASE_MANAGER</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Tasks</h3>
+    <table>
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Roles</th></tr></thead>
+      <tbody>
+        <tr><td>GET</td><td>/api/tasks/case/{caseId}</td><td>ALL authenticated users</td></tr>
+        <tr><td>GET</td><td>/api/tasks/{id}</td><td>ALL authenticated users</td></tr>
+        <tr><td>POST</td><td>/api/tasks/case/{caseId}</td><td>ADMIN, CASE_MANAGER</td></tr>
+        <tr><td>PUT</td><td>/api/tasks/{id}</td><td>ADMIN, CASE_MANAGER</td></tr>
+        <tr><td>PUT</td><td>/api/tasks/{id}/status</td><td>ADMIN, CASE_MANAGER, INVESTIGATOR, QA</td></tr>
+        <tr><td>PUT</td><td>/api/tasks/{id}/assign-investigator</td><td>ADMIN, CASE_MANAGER</td></tr>
+        <tr><td>PUT</td><td>/api/tasks/{id}/assign-qa</td><td>ADMIN, CASE_MANAGER</td></tr>
+        <tr><td>GET</td><td>/api/tasks/{id}/notes</td><td>ALL authenticated users</td></tr>
+        <tr><td>POST</td><td>/api/tasks/{id}/notes</td><td>ADMIN, CASE_MANAGER, INVESTIGATOR, QA</td></tr>
+        <tr><td>GET</td><td>/api/tasks/{id}/history</td><td>ALL authenticated users</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Evidence</h3>
+    <table>
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Roles</th></tr></thead>
+      <tbody>
+        <tr><td>GET</td><td>/api/evidence</td><td>ALL authenticated users</td></tr>
+        <tr><td>GET</td><td>/api/evidence/{id}</td><td>ALL authenticated users</td></tr>
+        <tr><td>POST</td><td>/api/evidence/case/{caseId}</td><td>ADMIN, CASE_MANAGER, INVESTIGATOR</td></tr>
+        <tr><td>PUT</td><td>/api/evidence/{id}</td><td>ADMIN, CASE_MANAGER, INVESTIGATOR</td></tr>
+        <tr><td>PUT</td><td>/api/evidence/{id}/status</td><td>ADMIN, CASE_MANAGER, INVESTIGATOR</td></tr>
+        <tr><td>PUT</td><td>/api/evidence/{id}/check-in</td><td>ADMIN, CASE_MANAGER, INVESTIGATOR</td></tr>
+        <tr><td>PUT</td><td>/api/evidence/{id}/check-out</td><td>ADMIN, CASE_MANAGER, INVESTIGATOR</td></tr>
+        <tr><td>GET</td><td>/api/evidence/{id}/chain-of-custody</td><td>ALL authenticated users</td></tr>
+        <tr><td>GET</td><td>/api/evidence/{id}/history</td><td>ALL authenticated users</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Reports</h3>
+    <table>
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Roles</th></tr></thead>
+      <tbody>
+        <tr><td>GET</td><td>/api/reports/dashboard</td><td>ALL authenticated users</td></tr>
+        <tr><td>GET</td><td>/api/reports/case/{caseId}</td><td>ALL authenticated users</td></tr>
+        <tr><td>GET</td><td>/api/reports/cases/{caseId}</td><td>ALL authenticated users</td></tr>
+        <tr><td>GET</td><td>/api/reports/case/{caseId}/activity</td><td>ALL authenticated users</td></tr>
+        <tr><td>GET</td><td>/api/reports/cases/{caseId}/activity</td><td>ALL authenticated users</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- SECTION 12: Enforcement Details -->
+  <section id="enforcement">
+    <h2>12. Server-Side Enforcement Details</h2>
+
+    <h3>RoleHelper Component</h3>
+    <p>All role checks are centralized in <code>com.foreman.config.RoleHelper</code>:</p>
+    <ul>
+      <li>Extracts the current user from the JWT token on each request</li>
+      <li>Loads user from database with roles (EAGER fetch)</li>
+      <li>Provides convenience methods: <code>isAdmin()</code>, <code>isCaseManager()</code>, <code>isInvestigator()</code>, <code>isQA()</code>, <code>isRequester()</code>, <code>isAuthoriser()</code></li>
+      <li>Provides composite methods: <code>canManageCases()</code>, <code>canCreateCases()</code>, <code>canAuthorizeCases()</code>, <code>canManageTasks()</code>, <code>canWorkOnTasks()</code>, <code>canManageEvidence()</code>, <code>canManageUsers()</code></li>
+    </ul>
+
+    <h3>Error Handling</h3>
+    <p>When a user attempts an unauthorized action, the system returns:</p>
+    <ul>
+      <li><strong>HTTP 403 Forbidden</strong> with message: <code>"Access denied: [specific reason]"</code></li>
+      <li><strong>HTTP 401 Unauthorized</strong> when no valid JWT token is provided</li>
+      <li>Frontend displays error toasts with the specific denial reason</li>
+    </ul>
+
+    <h3>Enforcement Points</h3>
+    <table>
+      <thead><tr><th>Controller</th><th>Enforcement</th></tr></thead>
+      <tbody>
+        <tr><td>CaseController</td><td>RoleHelper injected; requireAuth() on all endpoints; canCreateCases(), canManageCases(), canAuthorizeCases(), canManageTasks(), canManageEvidence() on mutations</td></tr>
+        <tr><td>TaskController</td><td>RoleHelper injected; requireAuth() on all endpoints; canManageTasks() on create/update/assign; canWorkOnTasks() on status change and notes</td></tr>
+        <tr><td>EvidenceController</td><td>RoleHelper injected; requireAuth() on all endpoints; canManageEvidence() on create/update/status/check-in/check-out</td></tr>
+        <tr><td>UserController</td><td>RoleHelper injected; requireAuth() on all endpoints; requireAdmin() on create/update</td></tr>
+        <tr><td>ReportController</td><td>Dashboard and reports accessible to all authenticated users</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- SECTION 13: Frontend Behavior -->
+  <section id="frontend">
+    <h2>13. Frontend Role-Based UI Behavior</h2>
+
+    <h3>Navigation Menu Visibility</h3>
+    <table>
+      <thead><tr><th>Menu Item</th><th>Visible To</th></tr></thead>
+      <tbody>
+        <tr><td>Dashboard</td><td>ALL roles</td></tr>
+        <tr><td>Cases</td><td>ALL roles</td></tr>
+        <tr><td>Tasks</td><td>ADMIN, CASE_MANAGER, INVESTIGATOR, QA</td></tr>
+        <tr><td>Evidence</td><td>ADMIN, CASE_MANAGER, INVESTIGATOR</td></tr>
+        <tr><td>Reports</td><td>ALL roles</td></tr>
+        <tr><td>Users</td><td>ADMIN, CASE_MANAGER</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Button Visibility</h3>
+    <table>
+      <thead><tr><th>Button/Action</th><th>Visible To</th></tr></thead>
+      <tbody>
+        <tr><td>Create Case</td><td>ADMIN, CASE_MANAGER, REQUESTER</td></tr>
+        <tr><td>Edit Case</td><td>ADMIN, CASE_MANAGER</td></tr>
+        <tr><td>Close Case</td><td>ADMIN, CASE_MANAGER, AUTHORISER</td></tr>
+        <tr><td>Authorize Case</td><td>ADMIN, AUTHORISER</td></tr>
+        <tr><td>Create Task</td><td>ADMIN, CASE_MANAGER</td></tr>
+        <tr><td>Assign Investigator</td><td>ADMIN, CASE_MANAGER</td></tr>
+        <tr><td>Assign QA</td><td>ADMIN, CASE_MANAGER</td></tr>
+        <tr><td>Add Forensic Note</td><td>ADMIN, CASE_MANAGER, INVESTIGATOR, QA</td></tr>
+        <tr><td>Create Evidence</td><td>ADMIN, CASE_MANAGER, INVESTIGATOR</td></tr>
+        <tr><td>Check-in/Check-out Evidence</td><td>ADMIN, CASE_MANAGER, INVESTIGATOR</td></tr>
+        <tr><td>Create User</td><td>ADMIN only</td></tr>
+        <tr><td>Edit User</td><td>ADMIN only</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Role Badge Colors</h3>
+    <table>
+      <thead><tr><th>Role</th><th>Badge Color</th><th>Hex Code</th></tr></thead>
+      <tbody>
+        <tr><td>ADMIN</td><td>Blue</td><td>#1565c0</td></tr>
+        <tr><td>CASE_MANAGER</td><td>Teal</td><td>#00695c</td></tr>
+        <tr><td>INVESTIGATOR</td><td>Green</td><td>#2e7d32</td></tr>
+        <tr><td>QA</td><td>Orange</td><td>#e65100</td></tr>
+        <tr><td>REQUESTER</td><td>Purple</td><td>#6a1b9a</td></tr>
+        <tr><td>AUTHORISER</td><td>Red</td><td>#c62828</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Dashboard Adaptation</h3>
+    <p>The dashboard adapts based on the logged-in user's role:</p>
+    <ul>
+      <li><strong>ADMIN/CASE_MANAGER:</strong> Full statistics, all cases, all users</li>
+      <li><strong>INVESTIGATOR:</strong> Statistics for assigned tasks and evidence</li>
+      <li><strong>QA:</strong> Statistics for assigned review tasks</li>
+      <li><strong>REQUESTER:</strong> Statistics for submitted cases</li>
+      <li><strong>AUTHORISER:</strong> Statistics for cases pending authorization</li>
+    </ul>
+  </section>
+
+</div>
+
+<div class="footer">
+  <div class="line"><strong>JENE-DFCMS</strong> - Digital Forensic Case Management System</div>
+  <div class="line">Roles &amp; Access Control Document v1.0</div>
+  <div class="line">Author: Sukhvinder Chhoker | Email: chhokersukhvinder@gmail.com | Phone: +917576069781</div>
+  <div class="line">Copyright 2026. All rights reserved.</div>
+</div>
+
+</body>
+</html>

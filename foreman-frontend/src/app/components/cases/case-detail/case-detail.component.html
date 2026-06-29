@@ -1,0 +1,195 @@
+<div class="case-detail" *ngIf="case">
+  <div class="page-header">
+    <div class="header-left">
+      <a routerLink="/cases" class="back-link">
+        <span class="material-icons">arrow_back</span> Cases
+      </a>
+      <h1>{{ case.caseName }}</h1>
+      <div class="header-meta">
+        <span class="ref" *ngIf="case.reference">{{ case.reference }}</span>
+        <span class="status-badge" [ngClass]="getStatusClass(case.currentStatus)">{{ case.currentStatus }}</span>
+        <span class="priority-badge" [ngClass]="getPriorityClass(case.casePriority)">{{ case.casePriority }}</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a [routerLink]="['/cases', case.id, 'edit']" class="btn-secondary">
+        <span class="material-icons">edit</span> Edit
+      </a>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <button *ngFor="let tab of tabs"
+            [class.active]="activeTab === tab.label"
+            (click)="setTab(tab.label)">
+      <span class="material-icons">{{ tab.icon }}</span> {{ tab.label }}
+    </button>
+  </div>
+
+  <div class="tab-content" *ngIf="activeTab === 'overview'">
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>Case Information</h3>
+        <div class="info-row"><span class="label">Status</span><span class="status-badge" [ngClass]="getStatusClass(case.currentStatus)">{{ case.currentStatus }}</span></div>
+        <div class="info-row"><span class="label">Priority</span><span class="priority-badge" [ngClass]="getPriorityClass(case.casePriority)">{{ case.casePriority }}</span></div>
+        <div class="info-row"><span class="label">Type</span><span>{{ case.caseType || '-' }}</span></div>
+        <div class="info-row"><span class="label">Classification</span><span>{{ case.classification || '-' }}</span></div>
+        <div class="info-row"><span class="label">Private</span><span>{{ case.privateCase ? 'Yes' : 'No' }}</span></div>
+        <div class="info-row"><span class="label">Location</span><span>{{ case.location || '-' }}</span></div>
+      </div>
+      <div class="info-card">
+        <h3>People</h3>
+        <div class="info-row"><span class="label">Case Manager</span><span>{{ case.principleCaseManager || '-' }}</span></div>
+        <div class="info-row"><span class="label">Secondary CM</span><span>{{ case.secondaryCaseManager || '-' }}</span></div>
+        <div class="info-row"><span class="label">Requester</span><span>{{ case.requester || '-' }}</span></div>
+        <div class="info-row"><span class="label">Authoriser</span><span>{{ case.authoriser || '-' }}</span></div>
+      </div>
+      <div class="info-card">
+        <h3>Dates</h3>
+        <div class="info-row"><span class="label">Created</span><span>{{ case.creationDate | date:'medium' }}</span></div>
+        <div class="info-row"><span class="label">Deadline</span><span>{{ case.deadline | date:'medium' || '-' }}</span></div>
+      </div>
+      <div class="info-card" *ngIf="case.background">
+        <h3>Background</h3>
+        <p class="background-text">{{ case.background }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" *ngIf="activeTab === 'Tasks'">
+    <div class="section-header">
+      <h2>Tasks</h2>
+      <a [routerLink]="['/cases', case.id, 'tasks', 'new']" class="btn-primary">
+        <span class="material-icons">add</span> Add Task
+      </a>
+    </div>
+    <table class="data-table" *ngIf="tasks.length > 0">
+      <thead>
+        <tr>
+          <th>Task Name</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Investigator</th>
+          <th>Deadline</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let task of tasks">
+          <td><a [routerLink]="['/tasks', task.id]">{{ task.taskName }}</a></td>
+          <td>{{ task.taskType }}</td>
+          <td><span class="status-badge" [ngClass]="getStatusClass(task.currentStatus)">{{ task.currentStatus }}</span></td>
+          <td>{{ task.principleInvestigator || '-' }}</td>
+          <td>{{ task.deadline | date:'short' || '-' }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="empty-state" *ngIf="tasks.length === 0">
+      <span class="material-icons">task</span>
+      <p>No tasks yet</p>
+    </div>
+  </div>
+
+  <div class="tab-content" *ngIf="activeTab === 'Evidence'">
+    <div class="section-header">
+      <h2>Evidence</h2>
+      <a [routerLink]="['/evidence', 'new']" [queryParams]="{caseId: case.id}" class="btn-primary">
+        <span class="material-icons">add</span> Add Evidence
+      </a>
+    </div>
+    <table class="data-table" *ngIf="evidenceItems.length > 0">
+      <thead>
+        <tr>
+          <th>Reference</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Location</th>
+          <th>Date Added</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ev of evidenceItems">
+          <td><a [routerLink]="['/evidence', ev.id]">{{ ev.reference }}</a></td>
+          <td>{{ ev.type }}</td>
+          <td><span class="status-badge" [ngClass]="getStatusClass(ev.currentStatus)">{{ ev.currentStatus }}</span></td>
+          <td>{{ ev.location }}</td>
+          <td>{{ ev.dateAdded | date:'short' }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="empty-state" *ngIf="evidenceItems.length === 0">
+      <span class="material-icons">fingerprint</span>
+      <p>No evidence items</p>
+    </div>
+  </div>
+
+  <div class="tab-content" *ngIf="activeTab === 'History'">
+    <div class="history-list">
+      <div class="history-item" *ngFor="let h of history">
+        <div class="history-avatar">
+          <span class="material-icons">person</span>
+        </div>
+        <div class="history-content">
+          <p><strong>{{ h.userFullname }}</strong> made changes</p>
+          <div class="history-changes">
+            <div *ngFor="let key of objectKeys(h.changes)" class="change-item">
+              <span class="field">{{ key }}</span>: {{ h.changes[key][0] }} &rarr; {{ h.changes[key][1] }}
+            </div>
+          </div>
+          <span class="history-date">{{ h.date_time | date:'medium' }}</span>
+        </div>
+      </div>
+      <div class="empty-state" *ngIf="history.length === 0">
+        <span class="material-icons">history</span>
+        <p>No history yet</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" *ngIf="activeTab === 'Files'">
+    <div class="empty-state">
+      <span class="material-icons">folder_open</span>
+      <p>File management coming soon</p>
+    </div>
+  </div>
+
+  <div class="tab-content" *ngIf="activeTab === 'Settings'">
+    <div class="settings-section">
+      <h2>Case Actions</h2>
+      <div class="action-buttons">
+        <a [routerLink]="['/cases', case.id, 'edit']" class="btn-secondary">
+          <span class="material-icons">edit</span> Edit Case
+        </a>
+        <button class="btn-warning" (click)="showStatusModal = true">
+          <span class="material-icons">swap_horiz</span> Change Status
+        </button>
+        <button class="btn-danger" (click)="closeCase()">
+          <span class="material-icons">lock</span> Close Case
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="showStatusModal" (click)="showStatusModal = false">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h3>Change Status</h3>
+      <div class="form-group">
+        <label>New Status</label>
+        <select [(ngModel)]="statusForm.status">
+          <option value="CREATED">Created</option>
+          <option value="PENDING">Pending</option>
+          <option value="OPEN">Open</option>
+          <option value="CLOSED">Closed</option>
+          <option value="ARCHIVED">Archived</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Reason</label>
+        <textarea [(ngModel)]="statusForm.reason" rows="3" placeholder="Enter reason..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="showStatusModal = false">Cancel</button>
+        <button class="btn-primary" (click)="changeStatus()">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>

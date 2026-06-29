@@ -1,0 +1,2138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Building a Digital Forensic Case Management System from Scratch</title>
+<style>
+  :root {
+    --navy: #1a237e; --navy-light: #283593; --navy-dark: #0d1642;
+    --orange: #ff6f00; --orange-light: #ff9800; --orange-dark: #e65100;
+    --bg: #f5f5f5; --text: #212121; --code-bg: #1e1e2e; --code-text: #cdd6f4; --border: #ddd;
+  }
+  @page { size: A4; margin: 2cm; }
+  @media print { .page-break { page-break-before: always; } body { font-size: 11pt; } nav, .no-print { display: none; } }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, 'Times New Roman', serif; line-height: 1.7; color: var(--text); background: var(--bg); max-width: 900px; margin: 0 auto; padding: 20px; }
+  .cover { background: linear-gradient(135deg, var(--navy-dark), var(--navy), var(--navy-light)); color: white; text-align: center; padding: 80px 40px; border-radius: 8px; margin-bottom: 40px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+  .cover h1 { font-size: 2.4em; margin-bottom: 20px; line-height: 1.2; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+  .cover .subtitle { font-size: 1.3em; color: var(--orange-light); margin-bottom: 30px; font-style: italic; }
+  .cover .author { font-size: 1.1em; margin-top: 30px; opacity: 0.9; }
+  .cover .version { margin-top: 15px; font-size: 0.95em; opacity: 0.7; }
+  .cover .tech-stack { margin-top: 30px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+  .cover .tech-badge { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); padding: 8px 18px; border-radius: 20px; font-family: monospace; font-size: 0.9em; }
+  .toc { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 30px 40px; margin-bottom: 40px; }
+  .toc h2 { color: var(--navy); border-bottom: 3px solid var(--orange); padding-bottom: 10px; margin-bottom: 20px; font-size: 1.6em; }
+  .toc-part { font-weight: bold; color: var(--navy); margin-top: 18px; font-size: 1.05em; }
+  .toc a { color: var(--text); text-decoration: none; display: block; padding: 4px 0 4px 20px; transition: color 0.2s; }
+  .toc a:hover { color: var(--orange); }
+  .chapter { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 40px; margin-bottom: 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .chapter h2 { color: var(--navy); font-size: 1.8em; border-bottom: 3px solid var(--orange); padding-bottom: 12px; margin-bottom: 25px; }
+  .chapter h3 { color: var(--navy-light); font-size: 1.3em; margin-top: 30px; margin-bottom: 12px; }
+  .chapter h4 { color: var(--orange-dark); font-size: 1.1em; margin-top: 20px; margin-bottom: 8px; }
+  p { margin-bottom: 14px; } ul, ol { margin: 10px 0 14px 24px; } li { margin-bottom: 6px; }
+  pre { background: var(--code-bg); color: var(--code-text); padding: 18px 22px; border-radius: 6px; overflow-x: auto; font-family: Consolas, 'Fira Code', monospace; font-size: 0.88em; line-height: 1.5; margin: 14px 0 18px 0; border-left: 4px solid var(--orange); }
+  code { font-family: Consolas, 'Fira Code', monospace; background: #e8eaf6; padding: 2px 6px; border-radius: 3px; font-size: 0.92em; }
+  pre code { background: none; padding: 0; }
+  .ascii-box { background: #fafafa; border: 2px solid var(--navy); border-radius: 6px; padding: 20px; margin: 18px 0; overflow-x: auto; }
+  .ascii-box pre { background: transparent; color: var(--text); border: none; border-left: none; padding: 0; margin: 0; }
+  .callout { border-radius: 6px; padding: 16px 20px; margin: 18px 0; border-left: 5px solid; }
+  .callout-title { font-weight: bold; margin-bottom: 6px; font-size: 1em; }
+  .callout-note { background: #e3f2fd; border-color: #1976d2; } .callout-note .callout-title { color: #1565c0; }
+  .callout-warning { background: #fff3e0; border-color: var(--orange); } .callout-warning .callout-title { color: var(--orange-dark); }
+  .callout-tip { background: #e8f5e9; border-color: #388e3c; } .callout-tip .callout-title { color: #2e7d32; }
+  .callout-danger { background: #ffebee; border-color: #c62828; } .callout-danger .callout-title { color: #b71c1c; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.92em; }
+  th { background: var(--navy); color: white; padding: 10px 14px; text-align: left; }
+  td { padding: 8px 14px; border-bottom: 1px solid var(--border); }
+  tr:nth-child(even) { background: #f5f5f5; } tr:hover { background: #e8eaf6; }
+  .author-page { background: linear-gradient(135deg, var(--navy-dark), var(--navy)); color: white; text-align: center; padding: 60px 40px; border-radius: 8px; margin-top: 40px; }
+  .author-page h2 { color: var(--orange-light); border-bottom-color: var(--orange-light); }
+  .author-page p { color: rgba(255,255,255,0.85); }
+  .author-page .author-name { font-size: 1.8em; margin: 20px 0 10px 0; color: white; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1>Building a Digital Forensic Case Management System from Scratch</h1>
+  <div class="subtitle">A Complete Guide to JENE-DFCMS</div>
+  <div class="tech-stack">
+    <span class="tech-badge">Angular 17</span>
+    <span class="tech-badge">Spring Boot 3</span>
+    <span class="tech-badge">H2 Database</span>
+    <span class="tech-badge">Spring Security 6</span>
+    <span class="tech-badge">JWT Auth</span>
+  </div>
+  <div class="author">Written by Sukhvinder Chhoker</div>
+  <div class="version">Version 1.0 &mdash; June 2026</div>
+</div>
+
+<nav class="toc no-print" id="toc">
+  <h2>Table of Contents</h2>
+  <div class="toc-part">PART I: FOUNDATION</div>
+  <a href="#ch1">Chapter 1: Introduction to Digital Forensics &amp; Case Management</a>
+  <a href="#ch2">Chapter 2: System Architecture &amp; Design</a>
+  <div class="toc-part">PART II: BACKEND DEVELOPMENT</div>
+  <a href="#ch3">Chapter 3: Setting Up Spring Boot</a>
+  <a href="#ch4">Chapter 4: Data Model &amp; JPA Entities</a>
+  <a href="#ch5">Chapter 5: Repositories &amp; Data Access</a>
+  <a href="#ch6">Chapter 6: Service Layer</a>
+  <a href="#ch7">Chapter 7: REST Controllers &amp; API Design</a>
+  <a href="#ch8">Chapter 8: Security &amp; Authentication</a>
+  <div class="toc-part">PART III: FRONTEND DEVELOPMENT</div>
+  <a href="#ch9">Chapter 9: Setting Up Angular 17</a>
+  <a href="#ch10">Chapter 10: Authentication &amp; Interceptors</a>
+  <a href="#ch11">Chapter 11: Core Components</a>
+  <a href="#ch12">Chapter 12: Services &amp; HTTP Communication</a>
+  <a href="#ch13">Chapter 13: Styling &amp; UI Design</a>
+  <div class="toc-part">PART IV: INTEGRATION &amp; DEPLOYMENT</div>
+  <a href="#ch14">Chapter 14: End-to-End Integration</a>
+  <a href="#ch15">Chapter 15: Testing</a>
+  <a href="#ch16">Chapter 16: Common Issues &amp; Solutions</a>
+  <a href="#ch17">Chapter 17: Deployment &amp; Production Considerations</a>
+  <div class="toc-part">APPENDICES</div>
+  <a href="#appA">Appendix A: Complete Database Schema</a>
+  <a href="#appB">Appendix B: Complete REST API Reference</a>
+  <a href="#appC">Appendix C: Complete File Listing</a>
+  <a href="#authorpage">Author Page</a>
+</nav>
+
+<!-- PART I -->
+<div class="chapter page-break" id="ch1">
+  <h2>Chapter 1: Introduction to Digital Forensics &amp; Case Management</h2>
+  <h3>1.1 What is Digital Forensics?</h3>
+  <p>Digital forensics is the process of identifying, preserving, analyzing, and presenting digital evidence in a manner that is legally admissible. It encompasses the recovery of data from computers, mobile devices, networks, and cloud environments.</p>
+  <h3>1.2 What is a DFCMS?</h3>
+  <p>A <strong>Digital Forensic Case Management System (DFCMS)</strong> is a specialized software platform designed to manage the lifecycle of forensic investigations. It provides a centralized system for tracking cases, managing evidence, assigning tasks to investigators, maintaining chain of custody records, and generating reports.</p>
+  <h4>Key Capabilities:</h4>
+  <ul>
+    <li><strong>Case Management:</strong> Create, track, and manage forensic cases through their lifecycle</li>
+    <li><strong>Task Assignment:</strong> Assign investigation tasks to specific forensic examiners</li>
+    <li><strong>Evidence Tracking:</strong> Register digital evidence with chain of custody records</li>
+    <li><strong>Chain of Custody:</strong> Record every transfer and access of physical/digital evidence</li>
+    <li><strong>Audit Trail:</strong> Complete history of all actions performed on cases, tasks, and evidence</li>
+    <li><strong>Role-Based Access:</strong> Different access levels for investigators, case managers, QA reviewers, and administrators</li>
+    <li><strong>Reporting:</strong> Generate investigation reports and status summaries</li>
+  </ul>
+  <h3>1.3 Why Build a Custom DFCMS?</h3>
+  <ul>
+    <li>Full control over the data model and business rules</li>
+    <li>Integration with existing organizational systems</li>
+    <li>No recurring licensing fees</li>
+    <li>Compliance with specific regulatory requirements</li>
+    <li>Complete ownership of the source code</li>
+  </ul>
+  <h3>1.4 Industry Standards</h3>
+  <ul>
+    <li><strong>ISO 27037:</strong> Guidelines for identification, collection, acquisition, and preservation of digital evidence</li>
+    <li><strong>NIST SP 800-86:</strong> Guide to Integrating Forensic Techniques into Incident Response</li>
+    <li><strong>ACPO Good Practice Guide:</strong> Principles for digital evidence handling</li>
+    <li><strong>Chain of Custody:</strong> Maintaining unbroken record of evidence possession</li>
+  </ul>
+  <h3>1.5 Typical Forensic Workflow</h3>
+  <div class="ascii-box"><pre>
++-----------+     +-----------+     +-----------+     +-----------+     +----------+
+|  Case     | --> |  Task     | --> |  Evidence | --> | Analysis | --> | Report   |
+|  Created  |     |  Assigned |     |  Collected|     | &amp; Review |     | Generated|
++-----------+     +-----------+     +-----------+     +-----------+     +----------+
+    |                 |                  |                  |                 |
+    v                 v                  v                  v                 v
+  PENDING          CREATED          INACTIVE          IN_PROGRESS         CLOSED
+  OPEN             IN_PROGRESS      ACTIVE            COMPLETED
+  REJECTED         COMPLETED        DELETED
+  CLOSED           ON_HOLD
+</pre></div>
+  <h3>1.6 About JENE-DFCMS</h3>
+  <p>JENE-DFCMS is the system we will build throughout this book. It is a full-stack web application built with Angular 17 (frontend) and Spring Boot 3 (backend), using H2 as the development database.</p>
+  <div class="callout callout-note"><div class="callout-title">Note</div><p>JENE-DFCMS uses default admin credentials <code>admin / admin123</code> for development. Never use default credentials in production.</p></div>
+</div>
+
+<div class="chapter page-break" id="ch2">
+  <h2>Chapter 2: System Architecture &amp; Design</h2>
+  <h3>2.1 High-Level Architecture</h3>
+  <div class="ascii-box"><pre>
++-------------------------------------------------------------------------+
+|                         JENE-DFCMS Architecture                         |
++-------------------------------------------------------------------------+
+|                                                                         |
+|  +-------------------+    HTTP/REST    +---------------------------+    |
+|  |                   |   (JSON over    |                           |    |
+|  |   Angular 17      | <=============> |   Spring Boot 3.2.0       |    |
+|  |   Frontend        |    HTTPS)       |   Backend                 |    |
+|  |                   |                 |                           |    |
+|  | - Components      |                 | - REST Controllers        |    |
+|  | - Services        |                 | - Service Layer           |    |
+|  | - Routing         |                 | - JPA Repositories        |    |
+|  | - Auth Interceptor|                 | - Security (JWT)          |    |
+|  | - Guards          |                 | - Business Logic          |    |
+|  +-------------------+                 +---------------------------+    |
+|         |                                     |                        |
+|   localhost:4200                        localhost:8080                  |
+|                          +-------------------+                          |
+|                          |   H2 Database     |                          |
+|                          |   (File-based)    |                          |
+|                          |   /h2-console     |                          |
+|                          +-------------------+                          |
+|                     jdbc:h2:file:./data/jene-dfcms-db                   |
++-------------------------------------------------------------------------+
+</pre></div>
+  <h3>2.2 Frontend Architecture</h3>
+  <ul>
+    <li><strong>Components:</strong> Organized by domain (cases, tasks, evidence, users, shared)</li>
+    <li><strong>Services:</strong> HTTP communication layer using HttpClient</li>
+    <li><strong>Auth Interceptor:</strong> Automatically attaches JWT tokens to outgoing requests</li>
+    <li><strong>Route Guards:</strong> Protects routes requiring authentication</li>
+    <li><strong>Models:</strong> TypeScript interfaces matching backend DTOs</li>
+  </ul>
+  <h3>2.3 Backend Architecture</h3>
+  <ul>
+    <li><strong>Controllers:</strong> Handle HTTP requests, delegate to services</li>
+    <li><strong>Services:</strong> Contain business logic, transaction management</li>
+    <li><strong>Repositories:</strong> Spring Data JPA interfaces for data access</li>
+    <li><strong>Models/Entities:</strong> JPA entities mapping to database tables</li>
+    <li><strong>DTOs:</strong> Data Transfer Objects for API communication</li>
+    <li><strong>Config:</strong> Security, CORS, JWT, and application configuration</li>
+  </ul>
+  <h3>2.4 REST API Design Principles</h3>
+  <ul>
+    <li>All endpoints prefixed with <code>/api/</code></li>
+    <li>JSON request/response bodies</li>
+    <li>JWT-based stateless authentication</li>
+    <li>RESTful resource naming (nouns, not verbs)</li>
+    <li>HTTP status codes for result indication</li>
+  </ul>
+  <h3>2.5 Database Schema Overview</h3>
+  <div class="ascii-box"><pre>
++-----------+       +-----------+       +-----------+
+|   users   |       |   cases   |       |   tasks   |
++-----------+       +-----------+       +-----------+
+| id (PK)   |<--+   | id (PK)   |<--+   | id (PK)   |
+| username  |   |   | caseName  |   |   | taskName  |
+| password  |   |   | reference |   |   | case_id   |---->cases.id
+| forename  |   |   | status    |   |   | taskType  |
+| surname   |   |   | classif.  |   |   | status    |
+| email     |   |   | type      |   |   | deadline  |
+| team_id   |   |   | priority  |   +---+ history   |
++-----------+   |   | deadline  |
+    |           |   +-----------+
+    |           |
+    |           |   +-----------+       +------------------+
+    |           |   | evidence  |       | chain_of_custody |
+    |           |   +-----------+       +------------------+
+    |           +-->| id (PK)   |<--+   | id (PK)          |
+    |               | case_id   |   |   | evidence_id      |
+    |               | type      |   +-->| user_id          |
+    |               | status    |       | checkIn          |
+    |               | bagNumber |       | custodian        |
+    |               +-----------+       | dateOfCustody    |
+    |                                   +------------------+
+    +--> +-----------+
+         |   roles   |
+         +-----------+
+         | id (PK)   |
+         | user_id   |---->users.id
+         | role      |
+         +-----------+
+</pre></div>
+  <h3>2.6 Security Model</h3>
+  <p>Authentication uses JWT tokens with BCrypt password encoding:</p>
+  <ol>
+    <li>User submits credentials to <code>POST /api/auth/login</code></li>
+    <li>Server validates credentials via Spring Security's AuthenticationManager</li>
+    <li>On success, a JWT token is generated containing the username and roles</li>
+    <li>Client stores the token in localStorage and attaches it via AuthInterceptor</li>
+    <li>The JwtAuthFilter on the backend validates the token on every request</li>
+  </ol>
+  <h3>2.7 Role-Based Access Control</h3>
+  <table>
+    <tr><th>Role</th><th>Description</th><th>Permissions</th></tr>
+    <tr><td>ADMIN</td><td>System administrator</td><td>Full access to all features, user management</td></tr>
+    <tr><td>CASE_MANAGER</td><td>Senior case manager</td><td>Case authorization, status changes, task assignment</td></tr>
+    <tr><td>INVESTIGATOR</td><td>Forensic examiner</td><td>Task execution, evidence collection, notes</td></tr>
+    <tr><td>QA</td><td>Quality assurance reviewer</td><td>Review tasks, approve findings</td></tr>
+    <tr><td>REQUESTER</td><td>Case requester</td><td>Create cases, view assigned cases</td></tr>
+    <tr><td>AUTHORISER</td><td>Case authoriser</td><td>Authorize case opening</td></tr>
+  </table>
+</div>
+
+<!-- PART II -->
+<div class="chapter page-break" id="ch3">
+  <h2>Chapter 3: Setting Up Spring Boot</h2>
+  <h3>3.1 Maven Project Setup</h3>
+  <p>The backend is a Spring Boot 3.2.0 project built with Maven.</p>
+  <h4>Project Coordinates</h4>
+  <ul>
+    <li><strong>Group ID:</strong> <code>com.foreman</code></li>
+    <li><strong>Artifact ID:</strong> <code>foreman-backend</code></li>
+    <li><strong>Version:</strong> <code>1.0.0</code></li>
+    <li><strong>Java Version:</strong> 17</li>
+    <li><strong>Spring Boot:</strong> 3.2.0</li>
+  </ul>
+  <h3>3.2 Complete pom.xml Dependencies</h3>
+  <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+    &lt;parent&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+        &lt;version&gt;3.2.0&lt;/version&gt;
+        &lt;relativePath/&gt;
+    &lt;/parent&gt;
+
+    &lt;groupId&gt;com.foreman&lt;/groupId&gt;
+    &lt;artifactId&gt;foreman-backend&lt;/artifactId&gt;
+    &lt;version&gt;1.0.0&lt;/version&gt;
+    &lt;name&gt;Foreman Backend&lt;/name&gt;
+
+    &lt;properties&gt;
+        &lt;java.version&gt;17&lt;/java.version&gt;
+        &lt;jjwt.version&gt;0.12.3&lt;/jjwt.version&gt;
+    &lt;/properties&gt;
+
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-security&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-validation&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-mail&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;com.h2database&lt;/groupId&gt;
+            &lt;artifactId&gt;h2&lt;/artifactId&gt;
+            &lt;scope&gt;runtime&lt;/scope&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+            &lt;artifactId&gt;lombok&lt;/artifactId&gt;
+            &lt;optional&gt;true&lt;/optional&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;
+            &lt;artifactId&gt;jjwt-api&lt;/artifactId&gt;
+            &lt;version&gt;${jjwt.version}&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;
+            &lt;artifactId&gt;jjwt-impl&lt;/artifactId&gt;
+            &lt;version&gt;${jjwt.version}&lt;/version&gt;
+            &lt;scope&gt;runtime&lt;/scope&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;
+            &lt;artifactId&gt;jjwt-jackson&lt;/artifactId&gt;
+            &lt;version&gt;${jjwt.version}&lt;/version&gt;
+            &lt;scope&gt;runtime&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/project&gt;</code></pre>
+  <h3>3.3 application.properties</h3>
+  <pre><code>server.port=8080
+
+spring.datasource.url=jdbc:h2:file:./data/jene-dfcms-db;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=false
+
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2-console
+
+jwt.secret=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+jwt.expiration=86400000
+
+spring.servlet.multipart.max-file-size=50MB
+spring.servlet.multipart.max-request-size=50MB
+
+spring.jackson.serialization.fail-on-empty-beans=false
+spring.jpa.properties.hibernate.enable_lazy_load_no_trans=true</code></pre>
+  <div class="callout callout-tip"><div class="callout-title">Tip</div><p><code>spring.jpa.hibernate.ddl-auto=update</code> lets Hibernate auto-create tables. In production, use <code>validate</code> or Flyway/Liquibase.</p></div>
+</div>
+
+<div class="chapter page-break" id="ch4">
+  <h2>Chapter 4: Data Model &amp; JPA Entities</h2>
+  <h3>4.1 Entity Relationship Overview</h3>
+  <div class="ascii-box"><pre>
+  User <---1:N---> Role
+   |
+   |---1:N---> UserCaseRole <---N:1---> Case
+   |---1:N---> UserTaskRole <---N:1---> Task
+   |---1:N---> ChainOfCustody <---N:1---> Evidence
+   |
+  Case <---1:N---> Task
+   |---1:N---> Evidence
+   |---1:N---> CaseStatus
+   |---1:N---> CaseHistory
+   |---N:1---> CaseClassification
+   |---N:1---> CaseType
+   |---N:1---> CasePriority
+   |
+  Task <---1:N---> TaskStatus
+   |---1:N---> TaskNotes
+   |---1:N---> TaskHistory
+   |---N:1---> TaskType
+   |
+  Evidence <---1:N---> EvidenceStatus
+   |---1:N---> EvidenceHistory
+   |---1:N---> ChainOfCustody
+   |---N:1---> EvidenceType
+</pre></div>
+
+  <h3>4.2 Case Entity</h3>
+  <pre><code>@Entity
+@Table(name = "cases")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+public class Case {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String caseName;
+
+    @Column(unique = true)
+    private String reference;
+
+    private String currentStatus = CaseStatus.CREATED;
+    private boolean privateCase = false;
+
+    @Column(columnDefinition = "TEXT")
+    private String background;
+
+    private String location;
+    private LocalDateTime creationDate;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "classification_id")
+    private CaseClassification classification;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "case_type_id")
+    private CaseType caseType;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "case_priority_id")
+    private CasePriority casePriority;
+
+    private LocalDateTime deadline;
+
+    @OneToMany(mappedBy = "caseEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List&lt;Task&gt; tasks = new ArrayList&lt;&gt;();
+
+    @OneToMany(mappedBy = "caseEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List&lt;Evidence&gt; evidence = new ArrayList&lt;&gt;();
+
+    @OneToMany(mappedBy = "caseEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonIgnore
+    private List&lt;CaseStatus&gt; statuses = new ArrayList&lt;&gt;();
+
+    @OneToMany(mappedBy = "caseEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonIgnore
+    private List&lt;CaseHistory&gt; history = new ArrayList&lt;&gt;();
+
+    public void setStatus(String status, User user, String reason) {
+        this.currentStatus = status;
+        CaseStatus caseStatus = new CaseStatus();
+        caseStatus.setCaseEntity(this);
+        caseStatus.setStatus(status);
+        caseStatus.setUser(user);
+        caseStatus.setDateTime(LocalDateTime.now());
+        if (reason != null) caseStatus.setReason(reason);
+        this.statuses.add(caseStatus);
+    }
+
+    public void addChange(User user) {
+        CaseHistory hist = new CaseHistory();
+        hist.setCaseEntity(this);
+        hist.setUser(user);
+        hist.setDateTime(LocalDateTime.now());
+        hist.setCaseName(this.caseName);
+        hist.setReference(this.reference);
+        hist.setBackground(this.background);
+        hist.setPrivateCase(this.privateCase);
+        hist.setLocation(this.location);
+        hist.setClassification(this.classification);
+        hist.setCaseType(this.caseType);
+        hist.setJustification(this.justification);
+        hist.setCasePriority(this.casePriority);
+        hist.setDeadline(this.deadline);
+        this.history.add(hist);
+    }
+    // Getters and Setters omitted for brevity
+}</code></pre>
+
+  <h3>4.3 User Entity</h3>
+  <pre><code>@Entity
+@Table(name = "users")
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true, nullable = false)
+    private String username;
+
+    @Column(nullable = false)
+    @JsonIgnore
+    private String password;
+
+    private String forename;
+    private String surname;
+    private String middleName;
+
+    @Column(unique = true)
+    private String email;
+
+    private String telephone;
+    private String jobTitle;
+    private String photo;
+
+    private boolean active = true;
+    private boolean lockedOut = false;
+    private int numberLoginFails = 0;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "team_id")
+    private Team team;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "manager_id")
+    @JsonIgnore
+    private User manager;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnore
+    private List&lt;Role&gt; roles = new ArrayList&lt;&gt;();
+
+    public String getFullName() {
+        StringBuilder sb = new StringBuilder();
+        if (forename != null &amp;&amp; !forename.isEmpty()) sb.append(forename);
+        if (middleName != null &amp;&amp; !middleName.isEmpty()) {
+            if (sb.length() &gt; 0) sb.append(" ");
+            sb.append(middleName);
+        }
+        if (surname != null &amp;&amp; !surname.isEmpty()) {
+            if (sb.length() &gt; 0) sb.append(" ");
+            sb.append(surname);
+        }
+        return sb.toString();
+    }
+}</code></pre>
+
+  <h3>4.4 Task Entity</h3>
+  <pre><code>@Entity
+@Table(name = "task")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+public class Task {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String taskName;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "case_id", nullable = false)
+    private Case caseEntity;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "task_type_id")
+    private TaskType taskType;
+
+    @Column(columnDefinition = "TEXT")
+    private String background;
+
+    private String currentStatus = TaskStatus.CREATED;
+    private String location;
+    private LocalDateTime creationDate;
+    private LocalDateTime deadline;
+    private boolean princQA = false;
+    private boolean seconQA = false;
+
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonIgnore
+    private List&lt;TaskStatus&gt; statuses = new ArrayList&lt;&gt;();
+
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonIgnore
+    private List&lt;TaskNotes&gt; notes = new ArrayList&lt;&gt;();
+
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonIgnore
+    private List&lt;TaskHistory&gt; history = new ArrayList&lt;&gt;();
+}</code></pre>
+
+  <h3>4.5 Evidence Entity</h3>
+  <pre><code>@Entity
+@Table(name = "evidence")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+public class Evidence {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String reference;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "evidence_type_id")
+    private EvidenceType type;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "case_id", nullable = false)
+    private Case caseEntity;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    private boolean qrCode = false;
+    private String qrCodeText;
+
+    @Column(columnDefinition = "TEXT")
+    private String comment;
+
+    private String originator;
+    private String evidenceBagNumber;
+    private String location;
+    private String currentStatus = EvidenceStatus.INACTIVE;
+
+    private LocalDateTime dateAdded;
+    private LocalDateTime retentionStartDate;
+    private LocalDateTime retentionDate;
+
+    @OneToMany(mappedBy = "evidence", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonIgnore
+    private List&lt;ChainOfCustody&gt; chainOfCustody = new ArrayList&lt;&gt;();
+}</code></pre>
+
+  <h3>4.6 ChainOfCustody &amp; TaskNotes</h3>
+  <pre><code>@Entity
+@Table(name = "chain_of_custody")
+public class ChainOfCustody {
+    private Long id;
+    private Evidence evidence;     // @ManyToOne LAZY
+    private User user;             // @ManyToOne EAGER
+    private LocalDateTime dateRecorded;
+    private LocalDateTime dateOfCustody;
+    private boolean checkIn;       // true=check-in, false=check-out
+    private String comment;
+    private String custodian;
+}
+
+@Entity
+@Table(name = "task_notes")
+public class TaskNotes {
+    private Long id;
+    private Task task;             // @ManyToOne LAZY
+    private User author;           // @ManyToOne EAGER
+    private LocalDateTime dateTime;
+    private String note;
+    private String hash;
+}</code></pre>
+</div>
+
+<div class="chapter page-break" id="ch5">
+  <h2>Chapter 5: Repositories &amp; Data Access</h2>
+  <h3>5.1 Spring Data JPA Repositories</h3>
+  <h4>CaseRepository</h4>
+  <pre><code>@Repository
+public interface CaseRepository extends JpaRepository&lt;Case, Long&gt; {
+    List&lt;Case&gt; findByCurrentStatus(String status);
+    Optional&lt;Case&gt; findByReference(String reference);
+
+    @Query("SELECT c FROM Case c WHERE c.id IN " +
+           "(SELECT ucr.caseEntity.id FROM UserCaseRole ucr WHERE ucr.user.id = :userId)")
+    List&lt;Case&gt; findCasesByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT c FROM Case c WHERE c.currentStatus = :status AND c.id IN " +
+           "(SELECT ucr.caseEntity.id FROM UserCaseRole ucr WHERE ucr.user.id = :userId)")
+    List&lt;Case&gt; findCasesByStatusAndUserId(
+        @Param("status") String status, @Param("userId") Long userId);
+
+    long countByCurrentStatus(String status);
+}</code></pre>
+  <h4>TaskRepository</h4>
+  <pre><code>@Repository
+public interface TaskRepository extends JpaRepository&lt;Task, Long&gt; {
+    List&lt;Task&gt; findByCaseEntityId(Long caseId);
+    long countByCaseEntityId(Long caseId);
+}</code></pre>
+  <h4>EvidenceRepository</h4>
+  <pre><code>@Repository
+public interface EvidenceRepository extends JpaRepository&lt;Evidence, Long&gt; {
+    List&lt;Evidence&gt; findByUserId(Long userId);
+    List&lt;Evidence&gt; findByCaseEntityId(Long caseId);
+    long countByCaseEntityId(Long caseId);
+}</code></pre>
+  <h4>UserRepository</h4>
+  <pre><code>@Repository
+public interface UserRepository extends JpaRepository&lt;User, Long&gt; {
+    Optional&lt;User&gt; findByUsername(String username);
+    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
+}</code></pre>
+  <div class="callout callout-tip"><div class="callout-title">Query Derivation</div><p>Spring Data JPA derives SQL from method names. <code>findByCurrentStatus(String status)</code> generates <code>SELECT * FROM cases WHERE current_status = ?</code>. For complex queries, use <code>@Query</code> with JPQL.</p></div>
+</div>
+
+<div class="chapter page-break" id="ch6">
+  <h2>Chapter 6: Service Layer</h2>
+  <h3>6.1 AuthService</h3>
+  <pre><code>@Service
+public class AuthService {
+
+    @Autowired private UserRepository userRepository;
+    @Autowired private JwtUtil jwtUtil;
+    @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired private AuthenticationManager authenticationManager;
+
+    public LoginResponse login(LoginRequest request) {
+        Authentication auth = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(
+                request.getUsername(), request.getPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        User user = userRepository.findByUsername(request.getUsername())
+            .orElseThrow(() -&gt; new RuntimeException("User not found"));
+
+        List&lt;String&gt; roles = user.getRoles().stream()
+            .filter(r -&gt; !r.isRemoved())
+            .map(Role::getRole)
+            .collect(Collectors.toList());
+
+        String token = jwtUtil.generateToken(user.getUsername(), roles);
+        return new LoginResponse(token, user.getUsername(), roles, user.getId());
+    }
+
+    public UserDTO register(UserDTO dto) {
+        if (userRepository.existsByUsername(dto.getUsername()))
+            throw new RuntimeException("Username already exists");
+
+        User user = new User();
+        user.setUsername(dto.getUsername());
+        user.setPassword(passwordEncoder.encode("password123"));
+        user.setForename(dto.getForename());
+        user.setSurname(dto.getSurname());
+        user.setEmail(dto.getEmail());
+        user.setActive(true);
+        user = userRepository.save(user);
+
+        Role role = new Role(user, "INVESTIGATOR");
+        user.setRoles(List.of(role));
+        userRepository.save(user);
+        return convertToDTO(user);
+    }
+}</code></pre>
+
+  <h3>6.2 CaseService (Key Methods)</h3>
+  <pre><code>@Service
+public class CaseService {
+
+    @Autowired private CaseRepository caseRepository;
+    @Autowired private TaskRepository taskRepository;
+    @Autowired private EvidenceRepository evidenceRepository;
+    @Autowired private UserCaseRoleRepository userCaseRoleRepository;
+    @Autowired private UserRepository userRepository;
+    @Autowired private ForemanOptionsRepository foremanOptionsRepository;
+
+    private static final DateTimeFormatter FORMATTER =
+        DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+    @Transactional
+    public CaseDTO createCase(CaseDTO dto, Long userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -&gt; new RuntimeException("User not found"));
+
+        ForemanOptions options = foremanOptionsRepository
+            .findFirstByOrderByIdAsc().orElse(new ForemanOptions());
+
+        Case caseEntity = new Case();
+        caseEntity.setCaseName(dto.getCaseName());
+
+        long count = caseRepository.count() + 1;
+        String prefix = options.getCaseNames() != null ? options.getCaseNames() : "CASE";
+        caseEntity.setReference(prefix + "-" + String.format("%04d", count));
+
+        caseEntity.setBackground(dto.getBackground());
+        caseEntity.setPrivateCase(dto.isPrivateCase());
+        caseEntity.setLocation(dto.getLocation());
+        caseEntity.setJustification(dto.getJustification());
+        caseEntity.setCreationDate(LocalDateTime.now());
+
+        caseEntity.setStatus(CaseStatus.PENDING, user, "Case created");
+        caseEntity = caseRepository.save(caseEntity);
+
+        UserCaseRole requesterRole = new UserCaseRole(user, caseEntity, UserCaseRole.REQUESTER);
+        userCaseRoleRepository.save(requesterRole);
+        return convertToDTO(caseEntity);
+    }
+
+    @Transactional
+    public CaseDTO changeStatus(Long id, String status, String reason, Long userId) {
+        Case caseEntity = caseRepository.findById(id)
+            .orElseThrow(() -&gt; new RuntimeException("Case not found"));
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -&gt; new RuntimeException("User not found"));
+
+        caseEntity.setStatus(status, user, reason);
+        caseEntity.addChange(user);
+        caseEntity = caseRepository.save(caseEntity);
+        return convertToDTO(caseEntity);
+    }
+}</code></pre>
+
+  <h3>6.3 TaskService (Key Methods)</h3>
+  <pre><code>@Transactional
+public TaskDTO createTask(Long caseId, TaskDTO dto, Long userId) {
+    Case caseEntity = caseRepository.findById(caseId)
+        .orElseThrow(() -&gt; new RuntimeException("Case not found"));
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -&gt; new RuntimeException("User not found"));
+
+    Task task = new Task();
+    task.setTaskName(dto.getTaskName());
+    task.setCaseEntity(caseEntity);
+    task.setCurrentStatus(TaskStatus.CREATED);
+    task.setCreationDate(LocalDateTime.now());
+
+    TaskStatus status = new TaskStatus();
+    status.setTask(task);
+    status.setCaseEntity(caseEntity);
+    status.setStatus(TaskStatus.CREATED);
+    status.setDateTime(LocalDateTime.now());
+    status.setUser(user);
+    task.getStatuses().add(status);
+
+    task = taskRepository.save(task);
+    return convertToDTO(task);
+}</code></pre>
+
+  <h3>6.4 EvidenceService (Chain of Custody)</h3>
+  <pre><code>@Transactional
+public ChainOfCustodyDTO checkIn(Long evidenceId, String custodian,
+        LocalDateTime date, String comment, Long userId) {
+    Evidence evidence = evidenceRepository.findById(evidenceId)
+        .orElseThrow(() -&gt; new RuntimeException("Evidence not found"));
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -&gt; new RuntimeException("User not found"));
+
+    ChainOfCustody coc = new ChainOfCustody();
+    coc.setEvidence(evidence);
+    coc.setUser(user);
+    coc.setCustodian(custodian);
+    coc.setDateOfCustody(date);
+    coc.setCheckIn(true);
+    coc.setComment(comment);
+    coc.setDateRecorded(LocalDateTime.now());
+
+    coc = chainOfCustodyRepository.save(coc);
+    return convertChainToDTO(coc);
+}</code></pre>
+</div>
+
+<div class="chapter page-break" id="ch7">
+  <h2>Chapter 7: REST Controllers &amp; API Design</h2>
+  <h3>7.1 AuthController</h3>
+  <pre><code>@RestController
+@RequestMapping("/api/auth")
+public class AuthController {
+    @Autowired private AuthService authService;
+
+    @PostMapping("/login")
+    public ResponseEntity&lt;LoginResponse&gt; login(@RequestBody LoginRequest request) {
+        return ResponseEntity.ok(authService.login(request));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity&lt;UserDTO&gt; register(@RequestBody UserDTO userDTO) {
+        return ResponseEntity.ok(authService.register(userDTO));
+    }
+}</code></pre>
+
+  <h3>7.2 CaseController</h3>
+  <pre><code>@RestController
+@RequestMapping("/api/cases")
+public class CaseController {
+    @Autowired private CaseService caseService;
+
+    @GetMapping
+    public ResponseEntity&lt;List&lt;CaseDTO&gt;&gt; getAllCases(
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) Long userId) {
+        return ResponseEntity.ok(caseService.getAllCases(status, userId));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity&lt;CaseDTO&gt; getCaseById(@PathVariable Long id) {
+        return ResponseEntity.ok(caseService.getCaseById(id));
+    }
+
+    @PostMapping
+    public ResponseEntity&lt;CaseDTO&gt; createCase(
+            @RequestBody CaseDTO caseDTO, @RequestParam Long userId) {
+        return ResponseEntity.ok(caseService.createCase(caseDTO, userId));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity&lt;CaseDTO&gt; updateCase(
+            @PathVariable Long id, @RequestBody CaseDTO caseDTO,
+            @RequestParam Long userId) {
+        return ResponseEntity.ok(caseService.updateCase(id, caseDTO, userId));
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity&lt;CaseDTO&gt; changeStatus(
+            @PathVariable Long id, @RequestBody Map&lt;String, String&gt; request) {
+        return ResponseEntity.ok(caseService.changeStatus(
+            id, request.get("status"), request.get("reason"),
+            Long.parseLong(request.get("userId"))));
+    }
+
+    @GetMapping("/{id}/tasks")
+    public ResponseEntity&lt;List&lt;Task&gt;&gt; getCaseTasks(@PathVariable Long id) {
+        return ResponseEntity.ok(caseService.getCaseTasks(id));
+    }
+
+    @GetMapping("/{id}/evidence")
+    public ResponseEntity&lt;List&lt;Evidence&gt;&gt; getCaseEvidence(@PathVariable Long id) {
+        return ResponseEntity.ok(caseService.getCaseEvidence(id));
+    }
+
+    @PostMapping("/{id}/tasks")
+    public ResponseEntity&lt;TaskDTO&gt; createTaskForCase(
+            @PathVariable Long id, @RequestBody TaskDTO taskDTO,
+            @RequestParam(defaultValue = "1") Long userId) {
+        return ResponseEntity.ok(taskService.createTask(id, taskDTO, userId));
+    }
+
+    @PostMapping("/{id}/evidence")
+    public ResponseEntity&lt;EvidenceDTO&gt; createEvidenceForCase(
+            @PathVariable Long id, @RequestBody EvidenceDTO evidenceDTO,
+            @RequestParam(defaultValue = "1") Long userId) {
+        return ResponseEntity.ok(evidenceService.createEvidence(id, evidenceDTO, userId));
+    }
+}</code></pre>
+
+  <h3>7.3 Complete REST API Endpoint Table</h3>
+  <table>
+    <tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th></tr>
+    <tr><td colspan="4" style="background:#e8eaf6;font-weight:bold">Authentication</td></tr>
+    <tr><td>POST</td><td>/api/auth/login</td><td>Login and get JWT token</td><td>No</td></tr>
+    <tr><td>POST</td><td>/api/auth/register</td><td>Register new user</td><td>No</td></tr>
+    <tr><td colspan="4" style="background:#e8eaf6;font-weight:bold">Cases</td></tr>
+    <tr><td>GET</td><td>/api/cases</td><td>List all cases (?status=&amp;userId=)</td><td>JWT</td></tr>
+    <tr><td>GET</td><td>/api/cases/{id}</td><td>Get case by ID</td><td>JWT</td></tr>
+    <tr><td>POST</td><td>/api/cases</td><td>Create case (?userId=)</td><td>JWT</td></tr>
+    <tr><td>PUT</td><td>/api/cases/{id}</td><td>Update case (?userId=)</td><td>JWT</td></tr>
+    <tr><td>PUT</td><td>/api/cases/{id}/status</td><td>Change case status</td><td>JWT</td></tr>
+    <tr><td>PUT</td><td>/api/cases/{id}/close</td><td>Close case</td><td>JWT</td></tr>
+    <tr><td>PUT</td><td>/api/cases/{id}/authorize</td><td>Authorize/reject case</td><td>JWT</td></tr>
+    <tr><td>GET</td><td>/api/cases/{id}/history</td><td>Get case audit history</td><td>JWT</td></tr>
+    <tr><td>GET</td><td>/api/cases/{id}/tasks</td><td>Get tasks for case</td><td>JWT</td></tr>
+    <tr><td>GET</td><td>/api/cases/{id}/evidence</td><td>Get evidence for case</td><td>JWT</td></tr>
+    <tr><td>POST</td><td>/api/cases/{id}/tasks</td><td>Create task for case</td><td>JWT</td></tr>
+    <tr><td>POST</td><td>/api/cases/{id}/evidence</td><td>Create evidence for case</td><td>JWT</td></tr>
+    <tr><td>POST</td><td>/api/cases/{id}/link</td><td>Link two cases</td><td>JWT</td></tr>
+    <tr><td>DELETE</td><td>/api/cases/{id}/link/{linkedId}</td><td>Unlink cases</td><td>JWT</td></tr>
+    <tr><td colspan="4" style="background:#e8eaf6;font-weight:bold">Tasks</td></tr>
+    <tr><td>GET</td><td>/api/tasks/case/{caseId}</td><td>Get tasks by case</td><td>JWT</td></tr>
+    <tr><td>GET</td><td>/api/tasks/{id}</td><td>Get task by ID</td><td>JWT</td></tr>
+    <tr><td>POST</td><td>/api/tasks/case/{caseId}</td><td>Create task</td><td>JWT</td></tr>
+    <tr><td>PUT</td><td>/api/tasks/{id}</td><td>Update task</td><td>JWT</td></tr>
+    <tr><td>PUT</td><td>/api/tasks/{id}/status</td><td>Change task status</td><td>JWT</td></tr>
+    <tr><td>PUT</td><td>/api/tasks/{id}/assign-investigator</td><td>Assign investigator</td><td>JWT</td></tr>
+    <tr><td>PUT</td><td>/api/tasks/{id}/assign-qa</td><td>Assign QA reviewer</td><td>JWT</td></tr>
+    <tr><td>GET</td><td>/api/tasks/{id}/notes</td><td>Get task notes</td><td>JWT</td></tr>
+    <tr><td>POST</td><td>/api/tasks/{id}/notes</td><td>Add task note</td><td>JWT</td></tr>
+    <tr><td>GET</td><td>/api/tasks/{id}/history</td><td>Get task history</td><td>JWT</td></tr>
+    <tr><td colspan="4" style="background:#e8eaf6;font-weight:bold">Evidence</td></tr>
+    <tr><td>GET</td><td>/api/evidence</td><td>List all evidence</td><td>JWT</td></tr>
+    <tr><td>GET</td><td>/api/evidence/{id}</td><td>Get evidence by ID</td><td>JWT</td></tr>
+    <tr><td>POST</td><td>/api/evidence/case/{caseId}</td><td>Create evidence</td><td>JWT</td></tr>
+    <tr><td>PUT</td><td>/api/evidence/{id}</td><td>Update evidence</td><td>JWT</td></tr>
+    <tr><td>PUT</td><td>/api/evidence/{id}/status</td><td>Change evidence status</td><td>JWT</td></tr>
+    <tr><td>PUT</td><td>/api/evidence/{id}/check-in</td><td>Evidence check-in</td><td>JWT</td></tr>
+    <tr><td>PUT</td><td>/api/evidence/{id}/check-out</td><td>Evidence check-out</td><td>JWT</td></tr>
+    <tr><td>GET</td><td>/api/evidence/{id}/chain-of-custody</td><td>Get chain of custody</td><td>JWT</td></tr>
+    <tr><td>GET</td><td>/api/evidence/{id}/history</td><td>Get evidence history</td><td>JWT</td></tr>
+    <tr><td colspan="4" style="background:#e8eaf6;font-weight:bold">Users</td></tr>
+    <tr><td>GET</td><td>/api/users</td><td>List all users (?role=)</td><td>JWT</td></tr>
+    <tr><td>POST</td><td>/api/users</td><td>Create user</td><td>JWT</td></tr>
+    <tr><td>GET</td><td>/api/users/{id}</td><td>Get user by ID</td><td>JWT</td></tr>
+    <tr><td>PUT</td><td>/api/users/{id}</td><td>Update user</td><td>JWT</td></tr>
+    <tr><td>PUT</td><td>/api/users/{id}/password</td><td>Change password</td><td>JWT</td></tr>
+  </table>
+</div>
+
+<div class="chapter page-break" id="ch8">
+  <h2>Chapter 8: Security &amp; Authentication</h2>
+  <h3>8.1 SecurityConfig</h3>
+  <pre><code>@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    private final JwtAuthFilter jwtAuthFilter;
+
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
+        this.jwtAuthFilter = jwtAuthFilter;
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(AbstractHttpConfigurer::disable)
+            .cors(cors -&gt; cors.configurationSource(corsConfigurationSource()))
+            .authorizeHttpRequests(auth -&gt; auth
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/h2-console/**").permitAll()
+                .anyRequest().authenticated()
+            )
+            .sessionManagement(session -&gt;
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+            .headers(headers -&gt;
+                headers.frameOptions(frame -&gt; frame.sameOrigin()));
+        return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOriginPatterns(
+            List.of("http://localhost:4200", "http://127.0.0.1:4200"));
+        configuration.setAllowedMethods(
+            Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+        configuration.setExposedHeaders(Arrays.asList("Authorization"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+}</code></pre>
+
+  <div class="callout callout-danger"><div class="callout-title">Critical: The CORS Fix</div>
+    <p>You <strong>must</strong> use <code>setAllowedOriginPatterns()</code> instead of <code>setAllowedOrigins()</code> when <code>allowCredentials</code> is true in Spring Security 6. Using <code>setAllowedOrigins()</code> causes: <em>"When allowCredentials is true, allowedOrigins cannot contain the special value '*'"</em></p>
+  </div>
+
+  <h3>8.2 JwtAuthFilter</h3>
+  <pre><code>@Component
+public class JwtAuthFilter extends OncePerRequestFilter {
+
+    @Autowired private JwtUtil jwtUtil;
+    @Autowired private CustomUserDetailsService userDetailsService;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+            HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+
+        final String authHeader = request.getHeader("Authorization");
+        String username = null;
+        String jwt = null;
+
+        if (authHeader != null &amp;&amp; authHeader.startsWith("Bearer ")) {
+            jwt = authHeader.substring(7);
+            try {
+                username = jwtUtil.extractUsername(jwt);
+            } catch (Exception e) {
+                logger.warn("Invalid JWT token: " + e.getMessage());
+            }
+        }
+
+        if (username != null &amp;&amp;
+                SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails =
+                userDetailsService.loadUserByUsername(username);
+            if (jwtUtil.isTokenValid(jwt, userDetails)) {
+                UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
+                authToken.setDetails(
+                    new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
+        }
+        filterChain.doFilter(request, response);
+    }
+}</code></pre>
+
+  <h3>8.3 JwtUtil</h3>
+  <pre><code>@Component
+public class JwtUtil {
+
+    @Value("${jwt.secret}")
+    private String secretKey;
+
+    @Value("${jwt.expiration}")
+    private long jwtExpiration;
+
+    private SecretKey getSigningKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    public String generateToken(String username, List&lt;String&gt; roles) {
+        Map&lt;String, Object&gt; claims = new HashMap&lt;&gt;();
+        claims.put("roles", roles);
+        return createToken(claims, username);
+    }
+
+    private String createToken(Map&lt;String, Object&gt; claims, String subject) {
+        return Jwts.builder()
+            .claims(claims)
+            .subject(subject)
+            .issuedAt(new Date(System.currentTimeMillis()))
+            .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
+            .signWith(getSigningKey())
+            .compact();
+    }
+
+    public String extractUsername(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+
+    public boolean isTokenValid(String token, UserDetails userDetails) {
+        final String username = extractUsername(token);
+        return (username.equals(userDetails.getUsername()) &amp;&amp; isTokenValid(token));
+    }
+}</code></pre>
+
+  <h3>8.4 DataInitializer</h3>
+  <pre><code>@Component
+public class DataInitializer implements CommandLineRunner {
+
+    @Autowired private UserRepository userRepository;
+    @Autowired private PasswordEncoder passwordEncoder;
+    // ... other repositories
+
+    @Override
+    public void run(String... args) throws Exception {
+        if (userRepository.count() == 0) init();
+    }
+
+    private void init() {
+        Department dept = new Department();
+        dept.setDepartment("Forensics");
+        dept = departmentRepository.save(dept);
+
+        Team team = new Team();
+        team.setTeam("Digital Forensics");
+        team.setDepartment(dept);
+        team = teamRepository.save(team);
+
+        ForemanOptions options = new ForemanOptions();
+        options.setCaseNames("CASE");
+        options.setTaskNames("TASK");
+        options.setCompany("JENE-DFCMS");
+        options.setEvidenceRetention(true);
+        options.setEvidenceRetentionPeriod(365);
+        foremanOptionsRepository.save(options);
+
+        saveClassification("Public");
+        saveClassification("Secret");
+        saveClassification("Confidential");
+
+        saveCaseType("eDiscovery");
+        saveCaseType("Internal Investigation");
+        saveCaseType("Fraud Investigation");
+        saveCaseType("Incident Response");
+
+        savePriority("Low", "#00CCFF", false);
+        savePriority("Normal", "#009900", true);
+        savePriority("High", "#FF9933", false);
+        savePriority("Critical", "#CC0000", false);
+
+        saveEvidenceType("SATA Hard Drive");
+        saveEvidenceType("Mobile Phone");
+        saveEvidenceType("Laptop");
+        saveEvidenceType("USB Media");
+
+        TaskCategory commsCat = saveCategory("Communications Retrieval");
+        TaskCategory computerCat = saveCategory("Computer Forensics");
+        saveTaskType("Email Extraction", commsCat);
+        saveTaskType("Disk Forensics", computerCat);
+
+        User admin = new User();
+        admin.setUsername("admin");
+        admin.setPassword(passwordEncoder.encode("admin123"));
+        admin.setForename("Admin");
+        admin.setSurname("User");
+        admin.setEmail("admin@jene-dfcms.local");
+        admin.setActive(true);
+        admin.setTeam(team);
+        admin = userRepository.save(admin);
+
+        Role adminRole = new Role(admin, "ADMIN");
+        admin.setRoles(List.of(adminRole));
+        userRepository.save(admin);
+    }
+}</code></pre>
+</div>
+
+<!-- PART III -->
+<div class="chapter page-break" id="ch9">
+  <h2>Chapter 9: Setting Up Angular 17</h2>
+  <h3>9.1 Project Structure</h3>
+  <div class="ascii-box"><pre>
+foreman-frontend/
++-- src/
+|   +-- app/
+|   |   +-- components/
+|   |   |   +-- cases/        (case-list, case-detail, case-form)
+|   |   |   +-- tasks/        (task-list, task-detail, task-form)
+|   |   |   +-- evidence/     (evidence-list, evidence-detail, evidence-form)
+|   |   |   +-- users/        (user-list, user-form)
+|   |   |   +-- dashboard/    (dashboard)
+|   |   |   +-- login/        (login)
+|   |   |   +-- shared/       (navbar, sidebar)
+|   |   +-- services/         (auth, case, task, evidence, user, report)
+|   |   +-- models/           (case, task, evidence, user, dashboard)
+|   |   +-- interceptors/     (auth.interceptor.ts)
+|   |   +-- guards/           (auth.guard.ts)
+|   |   +-- app.module.ts
+|   |   +-- app-routing.module.ts
+|   |   +-- app.component.ts
+|   +-- main.ts
+</pre></div>
+
+  <h3>9.2 AppModule Configuration</h3>
+  <pre><code>import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
+
+import { LoginComponent } from './components/login/login.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { CaseListComponent } from './components/cases/case-list/case-list.component';
+import { CaseDetailComponent } from './components/cases/case-detail/case-detail.component';
+import { CaseFormComponent } from './components/cases/case-form/case-form.component';
+import { TaskListComponent } from './components/tasks/task-list/task-list.component';
+import { TaskDetailComponent } from './components/tasks/task-detail/task-detail.component';
+import { TaskFormComponent } from './components/tasks/task-form/task-form.component';
+import { EvidenceListComponent } from './components/evidence/evidence-list/evidence-list.component';
+import { EvidenceDetailComponent } from './components/evidence/evidence-detail/evidence-detail.component';
+import { EvidenceFormComponent } from './components/evidence/evidence-form/evidence-form.component';
+import { UserListComponent } from './components/users/user-list/user-list.component';
+import { UserFormComponent } from './components/users/user-form/user-form.component';
+import { NavbarComponent } from './components/shared/navbar/navbar.component';
+import { SidebarComponent } from './components/shared/sidebar/sidebar.component';
+
+@NgModule({
+  declarations: [
+    AppComponent, LoginComponent, DashboardComponent,
+    CaseListComponent, CaseDetailComponent, CaseFormComponent,
+    TaskListComponent, TaskDetailComponent, TaskFormComponent,
+    EvidenceListComponent, EvidenceDetailComponent, EvidenceFormComponent,
+    UserListComponent, UserFormComponent,
+    NavbarComponent, SidebarComponent
+  ],
+  imports: [
+    BrowserModule, AppRoutingModule, HttpClientModule,
+    FormsModule, ReactiveFormsModule
+  ],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+  ],
+  bootstrap: [AppComponent]
+})
+export class AppModule {}</code></pre>
+
+  <h3>9.3 Routing Configuration</h3>
+  <pre><code>const routes: Routes = [
+  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'cases', component: CaseListComponent, canActivate: [AuthGuard] },
+  { path: 'cases/new', component: CaseFormComponent, canActivate: [AuthGuard] },
+  { path: 'cases/:id', component: CaseDetailComponent, canActivate: [AuthGuard] },
+  { path: 'cases/:id/edit', component: CaseFormComponent, canActivate: [AuthGuard] },
+  { path: 'cases/:id/tasks/new', component: TaskFormComponent, canActivate: [AuthGuard] },
+  { path: 'tasks/:id', component: TaskDetailComponent, canActivate: [AuthGuard] },
+  { path: 'tasks/:id/edit', component: TaskFormComponent, canActivate: [AuthGuard] },
+  { path: 'evidence', component: EvidenceListComponent, canActivate: [AuthGuard] },
+  { path: 'evidence/new', component: EvidenceFormComponent, canActivate: [AuthGuard] },
+  { path: 'evidence/:id', component: EvidenceDetailComponent, canActivate: [AuthGuard] },
+  { path: 'users', component: UserListComponent, canActivate: [AuthGuard] },
+  { path: 'users/new', component: UserFormComponent, canActivate: [AuthGuard] },
+  { path: '**', redirectTo: '/dashboard' }
+];</code></pre>
+</div>
+
+<div class="chapter page-break" id="ch10">
+  <h2>Chapter 10: Authentication &amp; Interceptors</h2>
+  <h3>10.1 AuthService</h3>
+  <pre><code>@Injectable({ providedIn: 'root' })
+export class AuthService {
+  private apiUrl = 'http://localhost:8080/api';
+  private currentUserSubject = new BehaviorSubject&lt;LoginResponse | null&gt;(null);
+  public currentUser$ = this.currentUserSubject.asObservable();
+
+  constructor(private http: HttpClient, private router: Router) {
+    const stored = localStorage.getItem('currentUser');
+    if (stored) this.currentUserSubject.next(JSON.parse(stored));
+  }
+
+  login(credentials: LoginRequest): Observable&lt;LoginResponse&gt; {
+    return this.http.post&lt;LoginResponse&gt;(
+      `${this.apiUrl}/auth/login`, credentials).pipe(
+      tap(response =&gt; {
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('currentUser', JSON.stringify(response));
+        this.currentUserSubject.next(response);
+      })
+    );
+  }
+
+  logout(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('currentUser');
+    this.currentUserSubject.next(null);
+    this.router.navigate(['/login']);
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
+  isLoggedIn(): boolean {
+    return !!this.getToken();
+  }
+
+  isAdmin(): boolean {
+    return this.getRoles().includes('ADMIN');
+  }
+
+  getRoles(): string[] {
+    const user = this.getCurrentUser();
+    return user ? user.roles : [];
+  }
+
+  getCurrentUser(): LoginResponse | null {
+    return this.currentUserSubject.value;
+  }
+}</code></pre>
+
+  <h3>10.2 AuthInterceptor</h3>
+  <pre><code>@Injectable()
+export class AuthInterceptor implements HttpInterceptor {
+  constructor(private authService: AuthService, private router: Router) {}
+
+  intercept(req: HttpRequest&lt;any&gt;, next: HttpHandler): Observable&lt;HttpEvent&lt;any&gt;&gt; {
+    const token = this.authService.getToken();
+    if (token) {
+      req = req.clone({
+        setHeaders: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+    }
+    return next.handle(req).pipe(
+      catchError((error: HttpErrorResponse) =&gt; {
+        if (error.status === 401) {
+          this.authService.logout();
+          this.router.navigate(['/login']);
+        }
+        return throwError(() =&gt; error);
+      })
+    );
+  }
+}</code></pre>
+
+  <h3>10.3 AuthGuard</h3>
+  <pre><code>@Injectable({ providedIn: 'root' })
+export class AuthGuard implements CanActivate {
+  constructor(private authService: AuthService, private router: Router) {}
+
+  canActivate(): boolean {
+    if (this.authService.isLoggedIn()) return true;
+    this.router.navigate(['/login']);
+    return false;
+  }
+}</code></pre>
+
+  <h3>10.4 LoginComponent</h3>
+  <pre><code>@Component({
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
+})
+export class LoginComponent {
+  username = '';
+  password = '';
+  errorMessage = '';
+  loading = false;
+
+  constructor(private authService: AuthService, private router: Router) {
+    if (this.authService.isLoggedIn()) this.router.navigate(['/dashboard']);
+  }
+
+  onSubmit(): void {
+    this.errorMessage = '';
+    this.loading = true;
+    this.authService.login({
+      username: this.username, password: this.password
+    }).subscribe({
+      next: () =&gt; this.router.navigate(['/dashboard']),
+      error: (err) =&gt; {
+        this.loading = false;
+        this.errorMessage = err.error?.message || 'Invalid username or password';
+      }
+    });
+  }
+}</code></pre>
+</div>
+
+<div class="chapter page-break" id="ch11">
+  <h2>Chapter 11: Core Components</h2>
+  <h3>11.1 Component Architecture</h3>
+  <p>Each domain area follows the same pattern with three components:</p>
+  <ul>
+    <li><strong>List Component:</strong> Displays all records in a table/card view</li>
+    <li><strong>Detail Component:</strong> Shows full details of a single record with related data</li>
+    <li><strong>Form Component:</strong> Create or edit a record with form validation</li>
+  </ul>
+  <h3>11.2 Dashboard</h3>
+  <p>Provides system overview with statistics for cases, tasks, and evidence by status. Shows quick-action buttons and recent activity.</p>
+  <h3>11.3 Case Components</h3>
+  <p><strong>Case List:</strong> Filterable table with reference, name, status, priority, assigned manager, creation date. Filter by status and quick navigation.</p>
+  <p><strong>Case Detail:</strong> Complete case info with metadata, assigned personnel, tabbed views for Tasks, Evidence, History, and Linked Cases. Quick actions for status changes, authorization, and closing.</p>
+  <p><strong>Case Form:</strong> Create/edit form with fields for case name, background, classification, type, priority, location, deadline, and justification.</p>
+  <h3>11.4 Task Components</h3>
+  <p><strong>Task Detail:</strong> Task metadata, current status, assigned investigator and QA, notes section with author/timestamps, task history timeline.</p>
+  <h3>11.5 Evidence Components</h3>
+  <p><strong>Evidence Detail:</strong> Evidence metadata, chain of custody log (check-in/check-out records), status history, photos and file uploads.</p>
+  <h3>11.6 Shared Components</h3>
+  <ul>
+    <li><strong>Navbar:</strong> Top navigation bar with user info and logout</li>
+    <li><strong>Sidebar:</strong> Left sidebar with Material Icons for Dashboard, Cases, Tasks, Evidence, Users</li>
+  </ul>
+</div>
+
+<div class="chapter page-break" id="ch12">
+  <h2>Chapter 12: Services &amp; HTTP Communication</h2>
+  <h3>12.1 CaseService</h3>
+  <pre><code>@Injectable({ providedIn: 'root' })
+export class CaseService {
+  private apiUrl = 'http://localhost:8080/api/cases';
+
+  constructor(private http: HttpClient) {}
+
+  getAll(status?: string): Observable&lt;Case[]&gt; {
+    let params = new HttpParams();
+    if (status) params = params.set('status', status);
+    return this.http.get&lt;Case[]&gt;(this.apiUrl, { params });
+  }
+
+  getById(id: number): Observable&lt;Case&gt; {
+    return this.http.get&lt;Case&gt;(`${this.apiUrl}/${id}`);
+  }
+
+  create(caseData: Partial&lt;Case&gt;): Observable&lt;Case&gt; {
+    return this.http.post&lt;Case&gt;(this.apiUrl, caseData);
+  }
+
+  update(id: number, caseData: Partial&lt;Case&gt;): Observable&lt;Case&gt; {
+    return this.http.put&lt;Case&gt;(`${this.apiUrl}/${id}`, caseData);
+  }
+
+  changeStatus(id: number, status: string, reason: string): Observable&lt;any&gt; {
+    return this.http.put(`${this.apiUrl}/${id}/status`, { status, reason });
+  }
+
+  getHistory(id: number): Observable&lt;CaseHistory[]&gt; {
+    return this.http.get&lt;CaseHistory[]&gt;(`${this.apiUrl}/${id}/history`);
+  }
+
+  getTasks(id: number): Observable&lt;Task[]&gt; {
+    return this.http.get&lt;Task[]&gt;(`${this.apiUrl}/${id}/tasks`);
+  }
+
+  getEvidence(id: number): Observable&lt;Evidence[]&gt; {
+    return this.http.get&lt;Evidence[]&gt;(`${this.apiUrl}/${id}/evidence`);
+  }
+}</code></pre>
+
+  <h3>12.2 TaskService</h3>
+  <pre><code>@Injectable({ providedIn: 'root' })
+export class TaskService {
+  private apiUrl = 'http://localhost:8080/api/tasks';
+
+  constructor(private http: HttpClient) {}
+
+  getByCase(caseId: number): Observable&lt;Task[]&gt; {
+    return this.http.get&lt;Task[]&gt;(
+      `http://localhost:8080/api/cases/${caseId}/tasks`);
+  }
+
+  getById(id: number): Observable&lt;Task&gt; {
+    return this.http.get&lt;Task&gt;(`${this.apiUrl}/${id}`);
+  }
+
+  create(caseId: number, task: Partial&lt;Task&gt;): Observable&lt;Task&gt; {
+    return this.http.post&lt;Task&gt;(
+      `http://localhost:8080/api/cases/${caseId}/tasks`, task);
+  }
+
+  changeStatus(id: number, status: string, note: string): Observable&lt;any&gt; {
+    return this.http.put(`${this.apiUrl}/${id}/status`, { status, note });
+  }
+
+  assignInvestigator(id: number, userId: number,
+                     principle: boolean): Observable&lt;any&gt; {
+    return this.http.put(`${this.apiUrl}/${id}/assign-investigator`,
+      { userId, principle });
+  }
+
+  addNote(id: number, note: string): Observable&lt;TaskNote&gt; {
+    return this.http.post&lt;TaskNote&gt;(`${this.apiUrl}/${id}/notes`, { note });
+  }
+}</code></pre>
+
+  <h3>12.3 API URL Patterns</h3>
+  <table>
+    <tr><th>Service</th><th>Base URL</th></tr>
+    <tr><td>AuthService</td><td><code>http://localhost:8080/api/auth</code></td></tr>
+    <tr><td>CaseService</td><td><code>http://localhost:8080/api/cases</code></td></tr>
+    <tr><td>TaskService</td><td><code>http://localhost:8080/api/tasks</code></td></tr>
+    <tr><td>EvidenceService</td><td><code>http://localhost:8080/api/evidence</code></td></tr>
+    <tr><td>UserService</td><td><code>http://localhost:8080/api/users</code></td></tr>
+  </table>
+</div>
+
+<div class="chapter page-break" id="ch13">
+  <h2>Chapter 13: Styling &amp; UI Design</h2>
+  <h3>13.1 Color Theme</h3>
+  <table>
+    <tr><th>Color</th><th>Hex Code</th><th>Usage</th></tr>
+    <tr><td>Navy Blue (Primary)</td><td><code>#1a237e</code></td><td>Navbar, sidebar, headers, table headers</td></tr>
+    <tr><td>Orange (Accent)</td><td><code>#ff6f00</code></td><td>Buttons, links, highlights, code borders</td></tr>
+    <tr><td>Dark Navy</td><td><code>#0d1642</code></td><td>Dark backgrounds, cover page</td></tr>
+    <tr><td>Light Navy</td><td><code>#283593</code></td><td>Hover states, secondary elements</td></tr>
+    <tr><td>White</td><td><code>#ffffff</code></td><td>Content backgrounds, cards</td></tr>
+    <tr><td>Light Gray</td><td><code>#f5f5f5</code></td><td>Page background</td></tr>
+  </table>
+  <h3>13.2 CSS Variables</h3>
+  <pre><code>:root {
+  --navy: #1a237e;
+  --navy-light: #283593;
+  --navy-dark: #0d1642;
+  --orange: #ff6f00;
+  --orange-light: #ff9800;
+  --orange-dark: #e65100;
+  --bg: #f5f5f5;
+  --text: #212121;
+  --code-bg: #1e1e2e;
+  --code-text: #cdd6f4;
+  --border: #ddd;
+}</code></pre>
+  <h3>13.3 Material Icons</h3>
+  <pre><code>&lt;link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"&gt;</code></pre>
+  <p>Usage in templates:</p>
+  <pre><code>&lt;span class="material-icons"&gt;dashboard&lt;/span&gt;
+&lt;span class="material-icons"&gt;folder&lt;/span&gt;
+&lt;span class="material-icons"&gt;assignment&lt;/span&gt;
+&lt;span class="material-icons"&gt;security&lt;/span&gt;
+&lt;span class="material-icons"&gt;people&lt;/span&gt;</code></pre>
+  <h3>13.4 Responsive Design</h3>
+  <ul>
+    <li>Sidebar: Fixed 250px width on desktop, collapsible on mobile</li>
+    <li>Content: Fluid width with max-width for readability</li>
+    <li>Tables: Horizontal scroll on small screens</li>
+    <li>Forms: Stack vertically on mobile</li>
+  </ul>
+</div>
+
+<!-- PART IV -->
+<div class="chapter page-break" id="ch14">
+  <h2>Chapter 14: End-to-End Integration</h2>
+  <h3>14.1 The Login Flow</h3>
+  <div class="ascii-box"><pre>
+Angular Frontend                  Spring Boot Backend
+     |                                   |
+     |  POST /api/auth/login             |
+     |  { username, password }           |
+     |  ===============================&gt; |
+     |                                   |  AuthenticationManager.authenticate()
+     |                                   |  JwtUtil.generateToken()
+     |  200 OK                           |
+     |  { token, username, roles, id }   |
+     |  &lt;=============================== |
+     |                                   |
+     |  Store token in localStorage      |
+     |                                   |
+     |  GET /api/cases                   |
+     |  Authorization: Bearer &lt;token&gt;   |
+     |  ===============================&gt; |
+     |                                   |  JwtAuthFilter.doFilterInternal()
+     |                                   |  Extract &amp; validate token
+     |                                   |  Set SecurityContext
+     |  200 OK [ cases data ]            |
+     |  &lt;=============================== |
+</pre></div>
+  <h3>14.2 CORS Configuration</h3>
+  <p>The frontend (localhost:4200) and backend (localhost:8080) run on different ports, requiring CORS. The system has two CORS configs:</p>
+  <ul>
+    <li><strong>CorsConfig.java:</strong> WebMvcConfigurer-based CORS</li>
+    <li><strong>SecurityConfig.java:</strong> Spring Security CORS (takes precedence)</li>
+  </ul>
+  <div class="callout callout-warning"><div class="callout-title">Important</div><p>When using Spring Security, the CORS configuration in SecurityConfig takes precedence over CorsConfig.java.</p></div>
+  <h3>14.3 JWT Token Flow</h3>
+  <ol>
+    <li>Login: <code>POST /api/auth/login</code> returns JWT token</li>
+    <li>Frontend stores token: <code>localStorage.setItem('token', token)</code></li>
+    <li>AuthInterceptor attaches: <code>Authorization: Bearer &lt;token&gt;</code></li>
+    <li>Backend JwtAuthFilter extracts and validates the token</li>
+    <li>On 401 error, interceptor clears token and redirects to login</li>
+  </ol>
+</div>
+
+<div class="chapter page-break" id="ch15">
+  <h2>Chapter 15: Testing</h2>
+  <h3>15.1 E2E API Testing Approach</h3>
+  <p>JENE-DFCMS uses 42 automated tests covering all major API endpoints and business operations.</p>
+  <h3>15.2 Test Categories</h3>
+  <table>
+    <tr><th>Module</th><th>Tests</th><th>What They Verify</th></tr>
+    <tr><td>Authentication</td><td>5</td><td>Login, register, token validation, invalid credentials, duplicate username</td></tr>
+    <tr><td>Case Management</td><td>8</td><td>CRUD operations, status changes, authorization, close, history</td></tr>
+    <tr><td>Task Management</td><td>8</td><td>CRUD, status changes, investigator/QA assignment, notes</td></tr>
+    <tr><td>Evidence Management</td><td>8</td><td>CRUD, status changes, check-in/check-out, chain of custody</td></tr>
+    <tr><td>User Management</td><td>5</td><td>CRUD, password change, role filtering</td></tr>
+    <tr><td>Dashboard</td><td>3</td><td>Statistics aggregation, counts by status</td></tr>
+    <tr><td>Integration</td><td>5</td><td>Cross-module operations, case-task-evidence linking</td></tr>
+  </table>
+  <h3>15.3 Sample Test Scenarios</h3>
+  <ol>
+    <li><strong>Login with valid credentials</strong> &rarr; 200 OK with JWT token</li>
+    <li><strong>Login with invalid password</strong> &rarr; 401 Unauthorized</li>
+    <li><strong>Create a case</strong> &rarr; 200 OK with auto-generated reference</li>
+    <li><strong>Change case status</strong> &rarr; Status updated, history recorded</li>
+    <li><strong>Authorize a case</strong> &rarr; Case moves from PENDING to OPEN</li>
+    <li><strong>Create task for case</strong> &rarr; Task linked to case</li>
+    <li><strong>Assign investigator</strong> &rarr; UserTaskRole created</li>
+    <li><strong>Add evidence</strong> &rarr; Evidence linked to case with auto reference</li>
+    <li><strong>Evidence check-in</strong> &rarr; ChainOfCustody record created</li>
+    <li><strong>Get case with all relations</strong> &rarr; Tasks and evidence returned</li>
+  </ol>
+</div>
+
+<div class="chapter page-break" id="ch16">
+  <h2>Chapter 16: Common Issues &amp; Solutions</h2>
+  <h3>16.1 H2 In-Memory Database Wipe</h3>
+  <div class="callout callout-danger"><div class="callout-title">Problem</div><p>All data disappears every time the Spring Boot application restarts.</p></div>
+  <p><strong>Cause:</strong> Using <code>jdbc:h2:mem:</code> instead of <code>jdbc:h2:file:</code>.</p>
+  <p><strong>Solution:</strong></p>
+  <pre><code># BEFORE (in-memory - data lost on restart)
+spring.datasource.url=jdbc:h2:mem:jenedb
+
+# AFTER (file-based - data persists)
+spring.datasource.url=jdbc:h2:file:./data/jene-dfcms-db;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE</code></pre>
+
+  <h3>16.2 CORS setAllowedOriginPatterns Fix</h3>
+  <div class="callout callout-danger"><div class="callout-title">Problem</div><p>Browser blocks all cross-origin requests: <em>"When allowCredentials is true, allowedOrigins cannot contain '*'"</em></p></div>
+  <p><strong>Solution:</strong></p>
+  <pre><code># BEFORE (causes error)
+configuration.setAllowedOrigins(List.of("http://localhost:4200"));
+
+# AFTER (works correctly)
+configuration.setAllowedOriginPatterns(
+    List.of("http://localhost:4200", "http://127.0.0.1:4200"));</code></pre>
+
+  <h3>16.3 Hibernate Lazy Proxy Serialization Error</h3>
+  <div class="callout callout-danger"><div class="callout-title">Problem</div><p><em>"Could not write JSON: No serializer found for class org.hibernate.proxy.HibernateProxy"</em></p></div>
+  <p><strong>Solution (two-part fix):</strong></p>
+  <p>1. Add <code>@JsonIgnoreProperties</code> to entity classes:</p>
+  <pre><code>@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+public class Case { ... }</code></pre>
+  <p>2. Enable lazy loading in application.properties:</p>
+  <pre><code>spring.jpa.properties.hibernate.enable_lazy_load_no_trans=true</code></pre>
+
+  <h3>16.4 Missing POST Endpoints</h3>
+  <div class="callout callout-danger"><div class="callout-title">Problem</div><p>Frontend <code>create()</code> calls fail with 405 Method Not Allowed.</p></div>
+  <p><strong>Solution:</strong> Add <code>@PostMapping</code> endpoints to controllers:</p>
+  <pre><code>@PostMapping
+public ResponseEntity&lt;CaseDTO&gt; createCase(
+        @RequestBody CaseDTO caseDTO, @RequestParam Long userId) {
+    return ResponseEntity.ok(caseService.createCase(caseDTO, userId));
+}</code></pre>
+
+  <h3>16.5 mappedBy Errors</h3>
+  <div class="callout callout-danger"><div class="callout-title">Problem</div><p><em>"mappedBy reference an unknown target entity property"</em></p></div>
+  <p><strong>Solution:</strong> Ensure <code>mappedBy</code> matches the field name on the owning side:</p>
+  <pre><code>// In Case.java
+@OneToMany(mappedBy = "caseEntity", ...)
+private List&lt;Task&gt; tasks;
+
+// In Task.java (field must match "caseEntity")
+@ManyToOne(...)
+@JoinColumn(name = "case_id")
+private Case caseEntity;</code></pre>
+
+  <h3>16.6 Additional Issues</h3>
+  <table>
+    <tr><th>Issue</th><th>Symptom</th><th>Fix</th></tr>
+    <tr><td>frame-options block</td><td>H2 console Refused</td><td><code>.headers(h -&gt; h.frameOptions(f -&gt; f.sameOrigin()))</code></td></tr>
+    <tr><td>BCrypt mismatch</td><td>Login always fails</td><td>Use <code>passwordEncoder.encode()</code> on registration</td></tr>
+    <tr><td>Empty JSON response</td><td>500 error</td><td><code>spring.jackson.serialization.fail-on-empty-beans=false</code></td></tr>
+    <tr><td>Circular reference</td><td>Stack overflow</td><td>Add <code>@JsonIgnore</code> on back-references</td></tr>
+  </table>
+</div>
+
+<div class="chapter page-break" id="ch17">
+  <h2>Chapter 17: Deployment &amp; Production Considerations</h2>
+  <h3>17.1 Switching to PostgreSQL</h3>
+  <pre><code>&lt;!-- pom.xml - Replace H2 with PostgreSQL --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.postgresql&lt;/groupId&gt;
+    &lt;artifactId&gt;postgresql&lt;/artifactId&gt;
+    &lt;scope&gt;runtime&lt;/scope&gt;
+&lt;/dependency&gt;
+
+# application-prod.properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/jene_dfcms
+spring.datasource.username=foreman_user
+spring.datasource.password=secure_password
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect</code></pre>
+
+  <h3>17.2 Docker Deployment</h3>
+  <pre><code># docker-compose.yml
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: jene_dfcms
+      POSTGRES_USER: foreman_user
+      POSTGRES_PASSWORD: secure_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build: ./foreman-backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/jene_dfcms
+      JWT_SECRET: your-production-secret-key
+    depends_on:
+      - postgres
+
+  frontend:
+    build: ./foreman-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:</code></pre>
+
+  <h3>17.3 Environment Variables</h3>
+  <table>
+    <tr><th>Variable</th><th>Development</th><th>Production</th></tr>
+    <tr><td>DATABASE_URL</td><td><code>jdbc:h2:file:./data/jene-dfcms-db</code></td><td><code>jdbc:postgresql://db:5432/jene_dfcms</code></td></tr>
+    <tr><td>JWT_SECRET</td><td>Default dev secret</td><td>Strong 256-bit key</td></tr>
+    <tr><td>SPRING_PROFILES_ACTIVE</td><td><code>default</code></td><td><code>prod</code></td></tr>
+    <tr><td>DDL_AUTO</td><td><code>update</code></td><td><code>validate</code></td></tr>
+    <tr><td>H2_CONSOLE</td><td><code>true</code></td><td><code>false</code></td></tr>
+  </table>
+
+  <h3>17.4 Security Hardening</h3>
+  <ul>
+    <li>Disable H2 console in production</li>
+    <li>Use strong JWT secrets (256-bit minimum)</li>
+    <li>Enable HTTPS/TLS for all communications</li>
+    <li>Implement rate limiting on auth endpoints</li>
+    <li>Add input validation on all endpoints</li>
+    <li>Use environment-specific configuration profiles</li>
+    <li>Log security events (failed logins, unauthorized access)</li>
+  </ul>
+</div>
+
+<!-- APPENDICES -->
+<div class="chapter page-break" id="appA">
+  <h2>Appendix A: Complete Database Schema</h2>
+  <h3>users</h3>
+  <table>
+    <tr><th>Column</th><th>Type</th><th>Constraints</th></tr>
+    <tr><td>id</td><td>BIGINT</td><td>PK, AUTO_INCREMENT</td></tr>
+    <tr><td>username</td><td>VARCHAR(255)</td><td>UNIQUE, NOT NULL</td></tr>
+    <tr><td>password</td><td>VARCHAR(255)</td><td>NOT NULL</td></tr>
+    <tr><td>forename</td><td>VARCHAR(255)</td><td></td></tr>
+    <tr><td>surname</td><td>VARCHAR(255)</td><td></td></tr>
+    <tr><td>middle_name</td><td>VARCHAR(255)</td><td></td></tr>
+    <tr><td>email</td><td>VARCHAR(255)</td><td>UNIQUE</td></tr>
+    <tr><td>telephone</td><td>VARCHAR(255)</td><td></td></tr>
+    <tr><td>job_title</td><td>VARCHAR(255)</td><td></td></tr>
+    <tr><td>photo</td><td>VARCHAR(255)</td><td></td></tr>
+    <tr><td>active</td><td>BOOLEAN</td><td>DEFAULT true</td></tr>
+    <tr><td>locked_out</td><td>BOOLEAN</td><td>DEFAULT false</td></tr>
+    <tr><td>number_login_fails</td><td>INT</td><td>DEFAULT 0</td></tr>
+    <tr><td>validated</td><td>BOOLEAN</td><td>DEFAULT false</td></tr>
+    <tr><td>team_id</td><td>BIGINT</td><td>FK -&gt; teams.id</td></tr>
+    <tr><td>manager_id</td><td>BIGINT</td><td>FK -&gt; users.id</td></tr>
+  </table>
+  <h3>role</h3>
+  <table>
+    <tr><th>Column</th><th>Type</th><th>Constraints</th></tr>
+    <tr><td>id</td><td>BIGINT</td><td>PK, AUTO_INCREMENT</td></tr>
+    <tr><td>user_id</td><td>BIGINT</td><td>FK -&gt; users.id, NOT NULL</td></tr>
+    <tr><td>role</td><td>VARCHAR(255)</td><td>NOT NULL</td></tr>
+    <tr><td>removed</td><td>BOOLEAN</td><td>DEFAULT false</td></tr>
+  </table>
+  <h3>cases</h3>
+  <table>
+    <tr><th>Column</th><th>Type</th><th>Constraints</th></tr>
+    <tr><td>id</td><td>BIGINT</td><td>PK, AUTO_INCREMENT</td></tr>
+    <tr><td>case_name</td><td>VARCHAR(255)</td><td>NOT NULL</td></tr>
+    <tr><td>reference</td><td>VARCHAR(255)</td><td>UNIQUE</td></tr>
+    <tr><td>current_status</td><td>VARCHAR(255)</td><td></td></tr>
+    <tr><td>private_case</td><td>BOOLEAN</td><td>DEFAULT false</td></tr>
+    <tr><td>background</td><td>TEXT</td><td></td></tr>
+    <tr><td>location</td><td>VARCHAR(255)</td><td></td></tr>
+    <tr><td>creation_date</td><td>TIMESTAMP</td><td></td></tr>
+    <tr><td>classification_id</td><td>BIGINT</td><td>FK -&gt; case_classification.id</td></tr>
+    <tr><td>case_type_id</td><td>BIGINT</td><td>FK -&gt; case_type.id</td></tr>
+    <tr><td>case_priority_id</td><td>BIGINT</td><td>FK -&gt; case_priority.id</td></tr>
+    <tr><td>deadline</td><td>TIMESTAMP</td><td></td></tr>
+    <tr><td>justification</td><td>TEXT</td><td></td></tr>
+  </table>
+  <h3>task</h3>
+  <table>
+    <tr><th>Column</th><th>Type</th><th>Constraints</th></tr>
+    <tr><td>id</td><td>BIGINT</td><td>PK, AUTO_INCREMENT</td></tr>
+    <tr><td>task_name</td><td>VARCHAR(255)</td><td>NOT NULL</td></tr>
+    <tr><td>case_id</td><td>BIGINT</td><td>FK -&gt; cases.id, NOT NULL</td></tr>
+    <tr><td>task_type_id</td><td>BIGINT</td><td>FK -&gt; task_type.id</td></tr>
+    <tr><td>background</td><td>TEXT</td><td></td></tr>
+    <tr><td>current_status</td><td>VARCHAR(255)</td><td></td></tr>
+    <tr><td>location</td><td>VARCHAR(255)</td><td></td></tr>
+    <tr><td>creation_date</td><td>TIMESTAMP</td><td></td></tr>
+    <tr><td>deadline</td><td>TIMESTAMP</td><td></td></tr>
+  </table>
+  <h3>evidence</h3>
+  <table>
+    <tr><th>Column</th><th>Type</th><th>Constraints</th></tr>
+    <tr><td>id</td><td>BIGINT</td><td>PK, AUTO_INCREMENT</td></tr>
+    <tr><td>reference</td><td>VARCHAR(255)</td><td></td></tr>
+    <tr><td>evidence_type_id</td><td>BIGINT</td><td>FK -&gt; evidence_type.id</td></tr>
+    <tr><td>case_id</td><td>BIGINT</td><td>FK -&gt; cases.id, NOT NULL</td></tr>
+    <tr><td>user_id</td><td>BIGINT</td><td>FK -&gt; users.id</td></tr>
+    <tr><td>qr_code</td><td>BOOLEAN</td><td>DEFAULT false</td></tr>
+    <tr><td>comment</td><td>TEXT</td><td></td></tr>
+    <tr><td>originator</td><td>VARCHAR(255)</td><td></td></tr>
+    <tr><td>evidence_bag_number</td><td>VARCHAR(255)</td><td></td></tr>
+    <tr><td>location</td><td>VARCHAR(255)</td><td></td></tr>
+    <tr><td>current_status</td><td>VARCHAR(255)</td><td></td></tr>
+    <tr><td>date_added</td><td>TIMESTAMP</td><td></td></tr>
+    <tr><td>retention_start_date</td><td>TIMESTAMP</td><td></td></tr>
+    <tr><td>retention_date</td><td>TIMESTAMP</td><td></td></tr>
+  </table>
+  <h3>chain_of_custody</h3>
+  <table>
+    <tr><th>Column</th><th>Type</th><th>Constraints</th></tr>
+    <tr><td>id</td><td>BIGINT</td><td>PK, AUTO_INCREMENT</td></tr>
+    <tr><td>evidence_id</td><td>BIGINT</td><td>FK -&gt; evidence.id, NOT NULL</td></tr>
+    <tr><td>user_id</td><td>BIGINT</td><td>FK -&gt; users.id</td></tr>
+    <tr><td>date_recorded</td><td>TIMESTAMP</td><td></td></tr>
+    <tr><td>date_of_custody</td><td>TIMESTAMP</td><td></td></tr>
+    <tr><td>check_in</td><td>BOOLEAN</td><td></td></tr>
+    <tr><td>comment</td><td>TEXT</td><td></td></tr>
+    <tr><td>custodian</td><td>VARCHAR(255)</td><td></td></tr>
+  </table>
+  <h3>task_notes</h3>
+  <table>
+    <tr><th>Column</th><th>Type</th><th>Constraints</th></tr>
+    <tr><td>id</td><td>BIGINT</td><td>PK, AUTO_INCREMENT</td></tr>
+    <tr><td>task_id</td><td>BIGINT</td><td>FK -&gt; task.id, NOT NULL</td></tr>
+    <tr><td>author_id</td><td>BIGINT</td><td>FK -&gt; users.id</td></tr>
+    <tr><td>date_time</td><td>TIMESTAMP</td><td></td></tr>
+    <tr><td>note</td><td>TEXT</td><td></td></tr>
+    <tr><td>hash</td><td>VARCHAR(255)</td><td></td></tr>
+  </table>
+  <h3>Additional Lookup Tables</h3>
+  <ul>
+    <li><strong>case_classification:</strong> id, classification</li>
+    <li><strong>case_type:</strong> id, case_type</li>
+    <li><strong>case_priority:</strong> id, case_priority, colour, is_default</li>
+    <li><strong>task_type:</strong> id, task_type, category_id (FK)</li>
+    <li><strong>task_category:</strong> id, category</li>
+    <li><strong>evidence_type:</strong> id, evidence_type</li>
+    <li><strong>department:</strong> id, department</li>
+    <li><strong>team:</strong> id, team, department_id (FK)</li>
+    <li><strong>foreman_options:</strong> id, date_format, default_location, case_names, task_names, company, department, evidence_retention, evidence_retention_period</li>
+  </ul>
+</div>
+
+<div class="chapter page-break" id="appB">
+  <h2>Appendix B: Complete REST API Reference</h2>
+  <h3>Authentication Endpoints</h3>
+  <pre><code>POST /api/auth/login
+  Request:  { "username": "admin", "password": "admin123" }
+  Response: { "token": "eyJhbG...", "username": "admin",
+              "roles": ["ADMIN"], "id": 1 }
+
+POST /api/auth/register
+  Request:  { "username": "newuser", "forename": "John",
+              "surname": "Doe", "email": "john@example.com" }
+  Response: { "id": 2, "username": "newuser", ... }</code></pre>
+  <h3>Case Endpoints</h3>
+  <pre><code>GET  /api/cases?status=PENDING&amp;userId=1
+  Response: [ { "id": 1, "caseName": "...", "reference": "CASE-0001", ... } ]
+
+GET  /api/cases/{id}
+  Response: { "id": 1, "caseName": "...", "tasks": [...], "evidence": [...] }
+
+POST /api/cases?userId=1
+  Request:  { "caseName": "Investigation Alpha", "background": "..." }
+  Response: { "id": 1, "reference": "CASE-0001", ... }
+
+PUT  /api/cases/{id}?userId=1
+  Request:  { "caseName": "Updated Name", "background": "..." }
+
+PUT  /api/cases/{id}/status
+  Request:  { "status": "OPEN", "reason": "Authorized", "userId": "1" }
+
+PUT  /api/cases/{id}/authorize
+  Request:  { "authorize": true, "reason": "Approved", "userId": "1" }
+
+GET  /api/cases/{id}/tasks
+  Response: [ { "id": 1, "taskName": "...", ... } ]
+
+GET  /api/cases/{id}/evidence
+  Response: [ { "id": 1, "reference": "EVD-0001", ... } ]
+
+POST /api/cases/{id}/tasks?userId=1
+  Request:  { "taskName": "Disk Forensics", "background": "..." }</code></pre>
+  <h3>Task Endpoints</h3>
+  <pre><code>GET  /api/tasks/case/{caseId}
+GET  /api/tasks/{id}
+POST /api/tasks/case/{caseId}?userId=1
+PUT  /api/tasks/{id}?userId=1
+PUT  /api/tasks/{id}/status     { "status": "IN_PROGRESS", "note": "...", "userId": "1" }
+PUT  /api/tasks/{id}/assign-investigator  { "userId": 2, "principle": true }
+PUT  /api/tasks/{id}/assign-qa            { "userId": 3, "principle": true }
+GET  /api/tasks/{id}/notes
+POST /api/tasks/{id}/notes       { "note": "Analysis started", "authorId": "1" }
+GET  /api/tasks/{id}/history</code></pre>
+  <h3>Evidence Endpoints</h3>
+  <pre><code>GET  /api/evidence?userId=1
+GET  /api/evidence/{id}
+POST /api/evidence/case/{caseId}?userId=1
+PUT  /api/evidence/{id}?userId=1
+PUT  /api/evidence/{id}/status    { "status": "ACTIVE", "note": "...", "userId": "1" }
+PUT  /api/evidence/{id}/check-in  { "custodian": "John", "comment": "..." }
+PUT  /api/evidence/{id}/check-out { "custodian": "Jane", "comment": "..." }
+GET  /api/evidence/{id}/chain-of-custody
+GET  /api/evidence/{id}/history</code></pre>
+  <h3>User Endpoints</h3>
+  <pre><code>GET  /api/users?role=INVESTIGATOR
+POST /api/users
+GET  /api/users/{id}
+PUT  /api/users/{id}
+PUT  /api/users/{id}/password  { "oldPassword": "admin123", "newPassword": "new123" }</code></pre>
+</div>
+
+<div class="chapter page-break" id="appC">
+  <h2>Appendix C: Complete File Listing</h2>
+  <h3>Backend (foreman-backend)</h3>
+  <h4>Config</h4>
+  <ul>
+    <li><code>src/main/java/com/foreman/config/SecurityConfig.java</code></li>
+    <li><code>src/main/java/com/foreman/config/JwtAuthFilter.java</code></li>
+    <li><code>src/main/java/com/foreman/config/JwtUtil.java</code></li>
+    <li><code>src/main/java/com/foreman/config/CorsConfig.java</code></li>
+    <li><code>src/main/java/com/foreman/config/DataInitializer.java</code></li>
+  </ul>
+  <h4>Models</h4>
+  <ul>
+    <li><code>model/Case.java</code></li>
+    <li><code>model/User.java</code></li>
+    <li><code>model/Task.java</code></li>
+    <li><code>model/Evidence.java</code></li>
+    <li><code>model/Role.java</code></li>
+    <li><code>model/ChainOfCustody.java</code></li>
+    <li><code>model/TaskNotes.java</code></li>
+    <li><code>model/CaseStatus.java</code></li>
+    <li><code>model/CaseHistory.java</code></li>
+    <li><code>model/CaseClassification.java</code></li>
+    <li><code>model/CaseType.java</code></li>
+    <li><code>model/CasePriority.java</code></li>
+    <li><code>model/TaskType.java</code></li>
+    <li><code>model/TaskCategory.java</code></li>
+    <li><code>model/TaskStatus.java</code></li>
+    <li><code>model/TaskHistory.java</code></li>
+    <li><code>model/EvidenceType.java</code></li>
+    <li><code>model/EvidenceStatus.java</code></li>
+    <li><code>model/EvidenceHistory.java</code></li>
+    <li><code>model/UserCaseRole.java</code></li>
+    <li><code>model/UserTaskRole.java</code></li>
+    <li><code>model/Department.java</code></li>
+    <li><code>model/Team.java</code></li>
+    <li><code>model/FileUpload.java</code></li>
+    <li><code>model/ForemanOptions.java</code></li>
+  </ul>
+  <h4>DTOs</h4>
+  <ul>
+    <li><code>dto/LoginRequest.java</code></li>
+    <li><code>dto/LoginResponse.java</code></li>
+    <li><code>dto/CaseDTO.java</code></li>
+    <li><code>dto/TaskDTO.java</code></li>
+    <li><code>dto/EvidenceDTO.java</code></li>
+    <li><code>dto/UserDTO.java</code></li>
+    <li><code>dto/DashboardDTO.java</code></li>
+    <li><code>dto/ChainOfCustodyDTO.java</code></li>
+  </ul>
+  <h4>Repositories</h4>
+  <ul>
+    <li><code>repository/CaseRepository.java</code></li>
+    <li><code>repository/UserRepository.java</code></li>
+    <li><code>repository/TaskRepository.java</code></li>
+    <li><code>repository/EvidenceRepository.java</code></li>
+    <li><code>repository/RoleRepository.java</code></li>
+    <li><code>repository/ChainOfCustodyRepository.java</code></li>
+    <li><code>repository/TaskNotesRepository.java</code></li>
+    <li><code>repository/UserCaseRoleRepository.java</code></li>
+    <li><code>repository/UserTaskRoleRepository.java</code></li>
+    <li><code>repository/CaseClassificationRepository.java</code></li>
+    <li><code>repository/CaseTypeRepository.java</code></li>
+    <li><code>repository/CasePriorityRepository.java</code></li>
+    <li><code>repository/TaskTypeRepository.java</code></li>
+    <li><code>repository/TaskCategoryRepository.java</code></li>
+    <li><code>repository/EvidenceTypeRepository.java</code></li>
+    <li><code>repository/DepartmentRepository.java</code></li>
+    <li><code>repository/TeamRepository.java</code></li>
+    <li><code>repository/FileUploadRepository.java</code></li>
+    <li><code>repository/ForemanOptionsRepository.java</code></li>
+    <li><code>repository/CaseTimeSheetRepository.java</code></li>
+    <li><code>repository/TaskTimeSheetRepository.java</code></li>
+  </ul>
+  <h4>Services</h4>
+  <ul>
+    <li><code>service/AuthService.java</code></li>
+    <li><code>service/CaseService.java</code></li>
+    <li><code>service/TaskService.java</code></li>
+    <li><code>service/EvidenceService.java</code></li>
+    <li><code>service/UserService.java</code></li>
+    <li><code>service/ReportService.java</code></li>
+    <li><code>security/CustomUserDetailsService.java</code></li>
+  </ul>
+  <h4>Controllers</h4>
+  <ul>
+    <li><code>controller/AuthController.java</code></li>
+    <li><code>controller/CaseController.java</code></li>
+    <li><code>controller/TaskController.java</code></li>
+    <li><code>controller/EvidenceController.java</code></li>
+    <li><code>controller/UserController.java</code></li>
+    <li><code>controller/DashboardController.java</code></li>
+    <li><code>controller/ReportController.java</code></li>
+  </ul>
+  <h3>Frontend (foreman-frontend)</h3>
+  <h4>Core</h4>
+  <ul>
+    <li><code>src/main.ts</code></li>
+    <li><code>src/app/app.module.ts</code></li>
+    <li><code>src/app/app.component.ts</code></li>
+    <li><code>src/app/app-routing.module.ts</code></li>
+  </ul>
+  <h4>Services</h4>
+  <ul>
+    <li><code>src/app/services/auth.service.ts</code></li>
+    <li><code>src/app/services/case.service.ts</code></li>
+    <li><code>src/app/services/task.service.ts</code></li>
+    <li><code>src/app/services/evidence.service.ts</code></li>
+    <li><code>src/app/services/user.service.ts</code></li>
+    <li><code>src/app/services/report.service.ts</code></li>
+  </ul>
+  <h4>Models</h4>
+  <ul>
+    <li><code>src/app/models/case.model.ts</code></li>
+    <li><code>src/app/models/task.model.ts</code></li>
+    <li><code>src/app/models/evidence.model.ts</code></li>
+    <li><code>src/app/models/user.model.ts</code></li>
+    <li><code>src/app/models/dashboard.model.ts</code></li>
+  </ul>
+  <h4>Interceptors &amp; Guards</h4>
+  <ul>
+    <li><code>src/app/interceptors/auth.interceptor.ts</code></li>
+    <li><code>src/app/guards/auth.guard.ts</code></li>
+  </ul>
+  <h4>Components</h4>
+  <ul>
+    <li><code>src/app/components/login/login.component.ts</code></li>
+    <li><code>src/app/components/dashboard/dashboard.component.ts</code></li>
+    <li><code>src/app/components/cases/case-list/case-list.component.ts</code></li>
+    <li><code>src/app/components/cases/case-detail/case-detail.component.ts</code></li>
+    <li><code>src/app/components/cases/case-form/case-form.component.ts</code></li>
+    <li><code>src/app/components/tasks/task-list/task-list.component.ts</code></li>
+    <li><code>src/app/components/tasks/task-detail/task-detail.component.ts</code></li>
+    <li><code>src/app/components/tasks/task-form/task-form.component.ts</code></li>
+    <li><code>src/app/components/evidence/evidence-list/evidence-list.component.ts</code></li>
+    <li><code>src/app/components/evidence/evidence-detail/evidence-detail.component.ts</code></li>
+    <li><code>src/app/components/evidence/evidence-form/evidence-form.component.ts</code></li>
+    <li><code>src/app/components/users/user-list/user-list.component.ts</code></li>
+    <li><code>src/app/components/users/user-form/user-form.component.ts</code></li>
+    <li><code>src/app/components/shared/navbar/navbar.component.ts</code></li>
+    <li><code>src/app/components/shared/sidebar/sidebar.component.ts</code></li>
+  </ul>
+</div>
+
+<!-- AUTHOR PAGE -->
+<div class="author-page page-break" id="authorpage">
+  <h2>About the Author</h2>
+  <div class="author-name">Sukhvinder Chhoker</div>
+  <p><strong>Senior Forensic Expert</strong></p>
+  <p>Sukhvinder Chhoker is a seasoned digital forensics professional with extensive experience in building forensic tools and case management systems. With a deep understanding of both the technical and procedural aspects of digital investigations, Sukhvinder has designed JENE-DFCMS to bridge the gap between forensic methodology and modern software engineering.</p>
+  <p style="margin-top: 30px; opacity: 0.7;">Written by Sukhvinder Chhoker, Senior Forensic Expert</p>
+  <p style="margin-top: 10px; opacity: 0.5;">JENE-DFCMS v1.0 &mdash; June 2026</p>
+</div>
+
+</body>
+</html>

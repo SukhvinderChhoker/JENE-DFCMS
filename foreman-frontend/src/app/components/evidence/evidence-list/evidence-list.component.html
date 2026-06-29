@@ -1,0 +1,33 @@
+<div class="evidence-list-page">
+  <div class="page-header">
+    <h1>Evidence</h1>
+    <a routerLink="/evidence/new" class="btn-primary">
+      <span class="material-icons">add</span> Add Evidence
+    </a>
+  </div>
+
+  <div class="evidence-grid" *ngIf="evidenceItems.length > 0">
+    <div class="evidence-card" *ngFor="let ev of evidenceItems">
+      <a [routerLink]="['/evidence', ev.id]" class="card-link">
+        <div class="card-icon">
+          <span class="material-icons">{{ getTypeIcon(ev.type) }}</span>
+        </div>
+        <div class="card-content">
+          <h3>{{ ev.reference }}</h3>
+          <p class="card-type">{{ ev.type }}</p>
+          <p class="card-case" *ngIf="ev.caseName">{{ ev.caseName }}</p>
+          <span class="status-badge" [ngClass]="getStatusClass(ev.currentStatus)">{{ ev.currentStatus }}</span>
+        </div>
+        <div class="card-meta">
+          <span class="material-icons" *ngIf="ev.qrCode">qr_code_2</span>
+          <span class="card-location">{{ ev.location }}</span>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="evidenceItems.length === 0 && !loading">
+    <span class="material-icons">fingerprint</span>
+    <p>No evidence items found</p>
+  </div>
+</div>
