@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { HttpClient } from '@angular/common/http';
 import { CaseService } from '../../../services/case.service';
 import { TaskService } from '../../../services/task.service';
 import { EvidenceService } from '../../../services/evidence.service';
@@ -31,6 +32,7 @@ export class CaseDetailComponent implements OnInit {
 
   showViewer = false;
   viewerUrl: SafeResourceUrl = '';
+  viewerFileName = '';
 
   tabs = [
     { label: 'Overview', icon: 'info' },
@@ -48,7 +50,8 @@ export class CaseDetailComponent implements OnInit {
     private taskService: TaskService,
     private evidenceService: EvidenceService,
     public authService: AuthService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
@@ -164,15 +167,31 @@ export class CaseDetailComponent implements OnInit {
     window.open('http://localhost:8080' + location, '_blank');
   }
 
-  viewFile(location: string): void {
+  viewFile(location: string, fileName?: string): void {
     const url = 'http://localhost:8080' + location;
-    this.viewerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-    this.showViewer = true;
+    this.viewerFileName = fileName || 'File';
+    this.http.get(url, { responseType: 'blob' }).subscribe({
+      next: (blob) => {
+        const blobUrl = URL.createObjectURL(blob);
+        this.viewerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(blobUrl);
+        this.showViewer = true;
+      },
+      error: () => {
+        window.open(url, '_blank');
+      }
+    });
   }
 
   closeViewer(): void {
+    if (this.viewerUrl) {
+      const url = (this.viewerUrl as any).changingThisBreaksApplicationSecurity;
+      if (url && url.startsWith('blob:')) {
+        URL.revokeObjectURL(url);
+      }
+    }
     this.showViewer = false;
     this.viewerUrl = '';
+    this.viewerFileName = '';
   }
 
   isImageFile(filename: string): boolean {

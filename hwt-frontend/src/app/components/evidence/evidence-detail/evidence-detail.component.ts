@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { HttpClient } from '@angular/common/http';
 import { EvidenceService } from '../../../services/evidence.service';
 import { AuthService } from '../../../services/auth.service';
 import { Evidence, ChainOfCustody } from '../../../models/evidence.model';
@@ -30,12 +31,15 @@ export class EvidenceDetailComponent implements OnInit {
   showViewer = false;
   viewerUrl: SafeResourceUrl = '';
 
+  viewerFileName = '';
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private evidenceService: EvidenceService,
     public authService: AuthService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
@@ -162,15 +166,31 @@ export class EvidenceDetailComponent implements OnInit {
     });
   }
 
-  viewFile(location: string): void {
+  viewFile(location: string, fileName: string): void {
     const url = 'http://localhost:8080' + location;
-    this.viewerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-    this.showViewer = true;
+    this.viewerFileName = fileName || 'File';
+    this.http.get(url, { responseType: 'blob' }).subscribe({
+      next: (blob) => {
+        const blobUrl = URL.createObjectURL(blob);
+        this.viewerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(blobUrl);
+        this.showViewer = true;
+      },
+      error: () => {
+        window.open(url, '_blank');
+      }
+    });
   }
 
   closeViewer(): void {
+    if (this.viewerUrl) {
+      const url = (this.viewerUrl as any).changingThisBreaksApplicationSecurity;
+      if (url && url.startsWith('blob:')) {
+        URL.revokeObjectURL(url);
+      }
+    }
     this.showViewer = false;
     this.viewerUrl = '';
+    this.viewerFileName = '';
   }
 
   isImageFile(filename: string): boolean {

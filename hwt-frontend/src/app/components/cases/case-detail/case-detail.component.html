@@ -194,7 +194,7 @@
           <td>{{ formatDate(f.dateTime) }}</td>
           <td>{{ f.note || '-' }}</td>
           <td class="actions-cell">
-            <button class="btn-icon" (click)="viewFile(f.uploadLocation)" title="View">
+            <button class="btn-icon" (click)="viewFile(f.uploadLocation, f.fileName)" title="View">
               <span class="material-icons">visibility</span>
             </button>
             <button class="btn-icon" (click)="downloadFile(f.uploadLocation)" title="Download">
@@ -256,7 +256,7 @@
     <div class="viewer-container" (click)="$event.stopPropagation()">
       <div class="viewer-header">
         <span class="material-icons">description</span>
-        <span class="viewer-title">File Viewer</span>
+        <span class="viewer-title">{{ viewerFileName || 'File Viewer' }}</span>
         <button class="btn-icon" (click)="closeViewer()" title="Close">
           <span class="material-icons">close</span>
         </button>

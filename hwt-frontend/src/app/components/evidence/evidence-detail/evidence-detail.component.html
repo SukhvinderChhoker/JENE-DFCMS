@@ -122,7 +122,7 @@
           <td>{{ doc.dateTime | date:'medium' }}</td>
           <td>{{ doc.note || '-' }}</td>
           <td>
-            <button class="btn-icon" (click)="viewFile(doc.uploadLocation)" title="View">
+            <button class="btn-icon" (click)="viewFile(doc.uploadLocation, doc.fileName)" title="View">
               <span class="material-icons">visibility</span>
             </button>
           </td>
@@ -205,7 +205,7 @@
     <div class="viewer-container" (click)="$event.stopPropagation()">
       <div class="viewer-header">
         <span class="material-icons">description</span>
-        <span class="viewer-title">File Viewer</span>
+        <span class="viewer-title">{{ viewerFileName || 'File Viewer' }}</span>
         <a [href]="viewerUrl" target="_blank" class="btn-icon" title="Open in new tab">
           <span class="material-icons">open_in_new</span>
         </a>

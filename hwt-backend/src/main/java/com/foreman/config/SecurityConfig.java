@@ -42,8 +42,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
             .headers(headers -> headers
-                .frameOptions(frame -> frame.deny())
-                .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'; frame-ancestors 'none'"))
+                .frameOptions(frame -> frame.sameOrigin())
                 .contentTypeOptions(contentType -> {})
                 .httpStrictTransportSecurity(hsts -> hsts
                     .includeSubDomains(true)
