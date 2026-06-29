@@ -1,9 +1,14 @@
 <div class="evidence-list-page">
   <div class="page-header">
     <h1>Evidence</h1>
-    <a routerLink="/evidence/new" class="btn-primary">
-      <span class="material-icons">add</span> Add Evidence
-    </a>
+    <div class="header-actions">
+      <button class="btn-secondary" (click)="openImportModal()" *ngIf="authService.canManageEvidence()">
+        <span class="material-icons">upload_file</span> Import from Excel
+      </button>
+      <a routerLink="/evidence/new" class="btn-primary">
+        <span class="material-icons">add</span> Add Evidence
+      </a>
+    </div>
   </div>
 
   <div class="evidence-grid" *ngIf="evidenceItems.length > 0">
@@ -29,5 +34,82 @@
   <div class="empty-state" *ngIf="evidenceItems.length === 0 && !loading">
     <span class="material-icons">fingerprint</span>
     <p>No evidence items found</p>
+  </div>
+
+  <div class="modal-overlay" *ngIf="showImportModal" (click)="closeImportModal()">
+    <div class="modal import-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Import Evidence from Excel</h2>
+        <button class="btn-icon" (click)="closeImportModal()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+
+      <div class="modal-body" *ngIf="!importResult">
+        <div class="import-info">
+          <span class="material-icons info-icon">info</span>
+          <div>
+            <p><strong>How to import evidence:</strong></p>
+            <ol>
+              <li>Download the template Excel file below</li>
+              <li>It contains 12 dummy rows covering all evidence types (PC, Laptop, Ext HDD/SSD, Mobile, Smart Device, OM)</li>
+              <li>All fields from the Add Evidence form are included</li>
+              <li>Modify rows or add new ones as needed, then upload</li>
+            </ol>
+          </div>
+        </div>
+
+        <button class="btn-download" (click)="downloadTemplate()">
+          <span class="material-icons">download</span>
+          Download Template with Dummy Data (XLSX)
+        </button>
+
+        <div class="upload-zone" (click)="fileInput.click()">
+          <input type="file" #fileInput accept=".xlsx,.xls" (change)="onImportFileSelected($event)" style="display:none">
+          <span class="material-icons upload-icon">upload_file</span>
+          <p *ngIf="!importFile">Click to select Excel file (.xlsx)</p>
+          <p *ngIf="importFile" class="file-selected">
+            <span class="material-icons">description</span>
+            {{ importFile.name }}
+          </p>
+        </div>
+      </div>
+
+      <div class="modal-body" *ngIf="importResult">
+        <div class="result-summary">
+          <div class="result-stat success">
+            <span class="material-icons">check_circle</span>
+            <span class="count">{{ importResult.successCount }}</span>
+            <span class="label">Imported</span>
+          </div>
+          <div class="result-stat error" *ngIf="importResult.errorCount > 0">
+            <span class="material-icons">error</span>
+            <span class="count">{{ importResult.errorCount }}</span>
+            <span class="label">Failed</span>
+          </div>
+        </div>
+
+        <div class="result-details" *ngIf="importResult.results">
+          <div class="result-item" *ngFor="let r of importResult.results"
+               [class.success]="r.success" [class.error]="!r.success">
+            <span class="material-icons">{{ r.success ? 'check_circle' : 'cancel' }}</span>
+            <span class="result-text">
+              <strong>Row {{ r.row }}:</strong>
+              <span *ngIf="r.success">{{ r.reference }} - Imported</span>
+              <span *ngIf="!r.success">{{ r.error }}</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="closeImportModal()">
+          {{ importResult ? 'Close' : 'Cancel' }}
+        </button>
+        <button class="btn-primary" *ngIf="!importResult" (click)="importEvidence()" [disabled]="!importFile || importing">
+          {{ importing ? 'Importing...' : 'Import Evidence' }}
+        </button>
+      </div>
+    </div>
   </div>
 </div>

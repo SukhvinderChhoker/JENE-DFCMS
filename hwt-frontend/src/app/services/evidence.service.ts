@@ -64,4 +64,14 @@ export class EvidenceService {
   getDocuments(id: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/${id}/documents`);
   }
+
+  importEvidence(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post(`${this.apiUrl}/import`, formData);
+  }
+
+  downloadTemplate(): string {
+    return `${this.apiUrl}/import/template`;
+  }
 }

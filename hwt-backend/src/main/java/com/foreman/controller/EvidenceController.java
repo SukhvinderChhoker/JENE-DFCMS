@@ -6,13 +6,16 @@ import com.foreman.dto.EvidenceDTO;
 import com.foreman.model.ChainOfCustody;
 import com.foreman.model.EvidenceHistory;
 import com.foreman.model.User;
+import com.foreman.service.EvidenceImportService;
 import com.foreman.service.EvidenceService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +26,9 @@ public class EvidenceController {
 
     @Autowired
     private EvidenceService evidenceService;
+
+    @Autowired
+    private EvidenceImportService evidenceImportService;
 
     @Autowired
     private RoleHelper roleHelper;
@@ -160,5 +166,29 @@ public class EvidenceController {
             HttpServletRequest request) {
         requireAuth(request);
         return ResponseEntity.ok(evidenceService.getDocuments(id));
+    }
+
+    @GetMapping("/import/template")
+    public void downloadTemplate(HttpServletResponse response) throws IOException {
+        evidenceImportService.generateTemplate(response);
+    }
+
+    @PostMapping("/import")
+    public ResponseEntity<Map<String, Object>> importEvidence(
+            @RequestParam("file") MultipartFile file,
+            HttpServletRequest request) {
+        User user = requireAuth(request);
+        if (!roleHelper.canManageEvidence(user)) {
+            throw new RuntimeException("Access denied: Cannot import evidence");
+        }
+        List<Map<String, Object>> results = evidenceImportService.importFromExcel(file, user.getId());
+        long successCount = results.stream().filter(r -> (boolean) r.get("success")).count();
+        long errorCount = results.size() - successCount;
+        return ResponseEntity.ok(Map.of(
+            "totalRows", results.size(),
+            "successCount", successCount,
+            "errorCount", errorCount,
+            "results", results
+        ));
     }
 }
