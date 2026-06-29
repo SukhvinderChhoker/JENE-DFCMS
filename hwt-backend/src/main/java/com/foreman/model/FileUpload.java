@@ -45,7 +45,7 @@ public class FileUpload {
     }
 
     public enum FileType {
-        CASE, TASK, EVIDENCE
+        CASE, TASK, EVIDENCE, FINAL_REPORT
     }
 
     public Long getId() { return id; }

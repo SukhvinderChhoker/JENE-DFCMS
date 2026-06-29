@@ -25,6 +25,7 @@ import { SidebarComponent } from './components/shared/sidebar/sidebar.component'
 import { SearchComponent } from './components/search/search.component';
 import { QuizComponent } from './components/quiz/quiz.component';
 import { QuizResultComponent } from './components/quiz/quiz-result.component';
+import { FinalReportsComponent } from './components/final-reports/final-reports.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { QuizResultComponent } from './components/quiz/quiz-result.component';
     SidebarComponent,
     SearchComponent,
     QuizComponent,
-    QuizResultComponent
+    QuizResultComponent,
+    FinalReportsComponent
   ],
   imports: [
     BrowserModule,

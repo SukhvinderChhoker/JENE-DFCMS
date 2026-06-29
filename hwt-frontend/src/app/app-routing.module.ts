@@ -16,6 +16,7 @@ import { UserFormComponent } from './components/users/user-form/user-form.compon
 import { SearchComponent } from './components/search/search.component';
 import { QuizComponent } from './components/quiz/quiz.component';
 import { QuizResultComponent } from './components/quiz/quiz-result.component';
+import { FinalReportsComponent } from './components/final-reports/final-reports.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -24,6 +25,7 @@ const routes: Routes = [
   { path: 'search', component: SearchComponent, canActivate: [AuthGuard] },
   { path: 'quiz', component: QuizComponent, canActivate: [AuthGuard] },
   { path: 'quiz/result', component: QuizResultComponent, canActivate: [AuthGuard] },
+  { path: 'final-reports', component: FinalReportsComponent, canActivate: [AuthGuard] },
   { path: 'cases', component: CaseListComponent, canActivate: [AuthGuard] },
   { path: 'cases/new', component: CaseFormComponent, canActivate: [AuthGuard] },
   { path: 'cases/:id', component: CaseDetailComponent, canActivate: [AuthGuard] },

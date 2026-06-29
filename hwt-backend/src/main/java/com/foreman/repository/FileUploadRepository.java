@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface FileUploadRepository extends JpaRepository<FileUpload, Long> {
@@ -12,4 +13,6 @@ public interface FileUploadRepository extends JpaRepository<FileUpload, Long> {
     List<FileUpload> findByTaskIdAndDeletedFalse(Long taskId);
     List<FileUpload> findByEvidenceIdAndDeletedFalse(Long evidenceId);
     List<FileUpload> findByUploaderId(Long userId);
+    List<FileUpload> findByCaseEntityIdAndFileTypeAndDeletedFalse(Long caseId, FileUpload.FileType fileType);
+    Optional<FileUpload> findByIdAndDeletedFalse(Long id);
 }

@@ -213,4 +213,119 @@ public class FileUploadController {
         }
         return ResponseEntity.ok(result);
     }
+
+    @PostMapping("/case/{caseId}/final-report")
+    public ResponseEntity<Map<String, Object>> uploadFinalReport(
+            @PathVariable Long caseId,
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "reportType", required = false) String reportType,
+            @RequestParam(value = "summary", required = false) String summary,
+            HttpServletRequest request) {
+        User user = requireAuth(request);
+        if (!roleHelper.canManageCases(user)) {
+            throw new RuntimeException("Access denied: Only Case Managers and Admins can upload final reports");
+        }
+        Case caseEntity = caseRepository.findById(caseId)
+                .orElseThrow(() -> new RuntimeException("Case not found"));
+
+        String ext = validateAndExtractExtension(file.getOriginalFilename());
+
+        try {
+            String uploadDir = "uploads/final-reports/" + caseId + "/";
+            Files.createDirectories(Paths.get(uploadDir));
+
+            String safeName = sanitizeFilename(file.getOriginalFilename());
+            String fileName = "final_report_" + caseId + "_" + UUID.randomUUID().toString().substring(0, 8) + ext;
+            Path filePath = Paths.get(uploadDir, fileName);
+            Files.write(filePath, file.getBytes());
+
+            FileUpload fileUpload = new FileUpload();
+            fileUpload.setFileTitle(safeName);
+            fileUpload.setFileName(fileName);
+            fileUpload.setUploadLocation("/uploads/final-reports/" + caseId + "/" + fileName);
+            fileUpload.setFileType(FileUpload.FileType.FINAL_REPORT);
+            fileUpload.setCaseEntity(caseEntity);
+            fileUpload.setUploader(user);
+            fileUpload.setFileNote((reportType != null ? reportType + ": " : "") + (summary != null ? summary : ""));
+            fileUpload.setDateTime(LocalDateTime.now());
+            fileUploadRepository.save(fileUpload);
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("id", fileUpload.getId());
+            result.put("fileName", fileUpload.getFileTitle());
+            result.put("uploadLocation", fileUpload.getUploadLocation());
+            result.put("reportType", reportType);
+            result.put("summary", summary);
+            result.put("note", fileUpload.getFileNote());
+            result.put("dateTime", fileUpload.getDateTime().toString());
+            result.put("uploaderName", user.getFullName());
+            result.put("message", "Final forensic report uploaded successfully");
+            return ResponseEntity.ok(result);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to upload final report");
+        }
+    }
+
+    @GetMapping("/case/{caseId}/final-report")
+    public ResponseEntity<List<Map<String, Object>>> getFinalReports(
+            @PathVariable Long caseId,
+            HttpServletRequest request) {
+        requireAuth(request);
+        List<FileUpload> files = fileUploadRepository.findByCaseEntityIdAndFileTypeAndDeletedFalse(caseId, FileUpload.FileType.FINAL_REPORT);
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (FileUpload f : files) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", f.getId());
+            map.put("fileName", f.getFileTitle());
+            map.put("uploadLocation", f.getUploadLocation());
+            map.put("note", f.getFileNote());
+            map.put("dateTime", f.getDateTime() != null ? f.getDateTime().toString() : null);
+            map.put("uploaderName", f.getUploader() != null ? f.getUploader().getFullName() : "Unknown");
+            map.put("fileSize", f.getFileName() != null ? new java.io.File("uploads/final-reports/" + caseId + "/" + f.getFileName()).length() : 0);
+            result.add(map);
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    @DeleteMapping("/final-report/{id}")
+    public ResponseEntity<Map<String, Object>> deleteFinalReport(
+            @PathVariable Long id,
+            HttpServletRequest request) {
+        User user = requireAuth(request);
+        if (!roleHelper.canManageCases(user)) {
+            throw new RuntimeException("Access denied: Only Case Managers and Admins can delete final reports");
+        }
+        FileUpload fileUpload = fileUploadRepository.findByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new RuntimeException("Final report not found"));
+
+        fileUpload.setDeleted(true);
+        fileUpload.setDateDeleted(LocalDateTime.now());
+        fileUpload.setDeleter(user);
+        fileUploadRepository.save(fileUpload);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("message", "Final report deleted successfully");
+        result.put("id", id);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/case/{caseId}/final-report/all")
+    public ResponseEntity<List<Map<String, Object>>> getAllFinalReportsForCase(
+            @PathVariable Long caseId,
+            HttpServletRequest request) {
+        requireAuth(request);
+        List<FileUpload> files = fileUploadRepository.findByCaseEntityIdAndFileTypeAndDeletedFalse(caseId, FileUpload.FileType.FINAL_REPORT);
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (FileUpload f : files) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", f.getId());
+            map.put("fileName", f.getFileTitle());
+            map.put("uploadLocation", f.getUploadLocation());
+            map.put("note", f.getFileNote());
+            map.put("dateTime", f.getDateTime() != null ? f.getDateTime().toString() : null);
+            map.put("uploaderName", f.getUploader() != null ? f.getUploader().getFullName() : "Unknown");
+            result.add(map);
+        }
+        return ResponseEntity.ok(result);
+    }
 }

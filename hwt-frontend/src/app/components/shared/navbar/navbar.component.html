@@ -16,6 +16,9 @@
     <a routerLink="/evidence" routerLinkActive="active" *ngIf="authService.canManageEvidence()">
       <span class="material-icons">fingerprint</span> Evidence
     </a>
+    <a routerLink="/final-reports" routerLinkActive="active" *ngIf="authService.canManageCases()">
+      <span class="material-icons">description</span> Reports
+    </a>
     <a routerLink="/quiz" routerLinkActive="active">
       <span class="material-icons">school</span> Quiz
     </a>

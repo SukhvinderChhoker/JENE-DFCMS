@@ -1,0 +1,123 @@
+<div class="final-reports-page">
+  <div class="page-header">
+    <div class="header-left">
+      <h1><span class="material-icons">description</span> Final Forensic Reports</h1>
+      <p>Upload, manage, and download final forensic investigation reports</p>
+    </div>
+    <button class="btn btn-primary" (click)="toggleUploadForm()" *ngIf="selectedCaseId">
+      <span class="material-icons">{{ showUploadForm ? 'close' : 'upload_file' }}</span>
+      {{ showUploadForm ? 'Cancel' : 'Upload Report' }}
+    </button>
+  </div>
+
+  <!-- Success / Error Messages -->
+  <div class="alert alert-success" *ngIf="successMsg">
+    <span class="material-icons">check_circle</span> {{ successMsg }}
+  </div>
+  <div class="alert alert-error" *ngIf="errorMsg">
+    <span class="material-icons">error</span> {{ errorMsg }}
+  </div>
+
+  <!-- Case Selector -->
+  <div class="case-selector">
+    <label>Select Case:</label>
+    <select [(ngModel)]="selectedCaseId" (change)="onCaseSelect()">
+      <option [value]="0">-- Choose a Case --</option>
+      <option *ngFor="let c of cases" [value]="c.id">
+        {{ c.reference }} - {{ c.caseName }}
+      </option>
+    </select>
+  </div>
+
+  <!-- Upload Form -->
+  <div class="upload-form" *ngIf="showUploadForm">
+    <h3><span class="material-icons">cloud_upload</span> Upload Final Forensic Report</h3>
+
+    <div class="form-group">
+      <label>Report Type *</label>
+      <select [(ngModel)]="reportType">
+        <option value="">-- Select Report Type --</option>
+        <option *ngFor="let type of reportTypes" [value]="type">{{ type }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Summary / Notes</label>
+      <textarea [(ngModel)]="reportSummary" rows="3"
+        placeholder="Brief description of the report contents..."></textarea>
+    </div>
+
+    <div class="drop-zone" [class.drag-over]="dragOver"
+      (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)" (click)="fileInput.click()">
+      <input #fileInput type="file" (change)="onFileSelect($event)"
+        accept=".pdf,.doc,.docx,.txt,.rtf,.xls,.xlsx,.csv,.ppt,.pptx,.html,.xml,.zip"
+        style="display:none">
+      <span class="material-icons upload-icon">cloud_upload</span>
+      <p *ngIf="!selectedFile">Drag & drop report file here or <strong>click to browse</strong></p>
+      <p *ngIf="selectedFile" class="file-selected">
+        <span class="material-icons">description</span>
+        {{ selectedFile.name }} ({{ formatFileSize(selectedFile.size) }})
+      </p>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn-primary" (click)="uploadReport()"
+        [disabled]="uploading || !selectedFile || !reportType">
+        <span class="material-icons" *ngIf="!uploading">upload</span>
+        <span class="spinner" *ngIf="uploading"></span>
+        {{ uploading ? 'Uploading...' : 'Upload Report' }}
+      </button>
+      <button class="btn btn-secondary" (click)="clearForm()">Clear</button>
+    </div>
+  </div>
+
+  <!-- Reports List -->
+  <div class="reports-section" *ngIf="selectedCaseId">
+    <h3>
+      <span class="material-icons">folder_open</span>
+      Reports for {{ getCaseName(selectedCaseId) }}
+      <span class="count-badge" *ngIf="reports.length">{{ reports.length }}</span>
+    </h3>
+
+    <div class="loading" *ngIf="loading">
+      <span class="spinner"></span> Loading reports...
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && reports.length === 0">
+      <span class="material-icons">note_add</span>
+      <p>No final forensic reports uploaded for this case yet.</p>
+    </div>
+
+    <div class="report-cards" *ngIf="!loading && reports.length > 0">
+      <div class="report-card" *ngFor="let report of reports">
+        <div class="report-icon">
+          <span class="material-icons">description</span>
+        </div>
+        <div class="report-info">
+          <h4>{{ report.fileName }}</h4>
+          <p class="report-note" *ngIf="report.note">{{ report.note }}</p>
+          <div class="report-meta">
+            <span><span class="material-icons">person</span> {{ report.uploaderName }}</span>
+            <span><span class="material-icons">schedule</span> {{ report.dateTime }}</span>
+          </div>
+        </div>
+        <div class="report-actions">
+          <button class="btn-icon btn-download" (click)="downloadReport(report)" title="Download">
+            <span class="material-icons">download</span>
+          </button>
+          <button class="btn-icon btn-delete" (click)="deleteReport(report)" title="Delete"
+            *ngIf="authService.canManageCases()">
+            <span class="material-icons">delete</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Case Selected -->
+  <div class="empty-state" *ngIf="!selectedCaseId">
+    <span class="material-icons">folder_open</span>
+    <p>Select a case above to view and manage final forensic reports.</p>
+  </div>
+</div>
