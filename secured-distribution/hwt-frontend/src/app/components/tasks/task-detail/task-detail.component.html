@@ -1,0 +1,109 @@
+<div class="task-detail" *ngIf="task">
+  <div class="page-header">
+    <div class="header-left">
+      <a [routerLink]="['/cases', task.caseId]" class="back-link">
+        <span class="material-icons">arrow_back</span> {{ task.caseName }}
+      </a>
+      <h1>{{ task.taskName }}</h1>
+      <div class="header-meta">
+        <span class="status-badge" [ngClass]="getStatusClass(task.currentStatus)">{{ task.currentStatus }}</span>
+        <span class="task-type">{{ task.taskType }}</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a [routerLink]="['/tasks', task.id, 'edit']" class="btn-secondary">
+        <span class="material-icons">edit</span> Edit
+      </a>
+    </div>
+  </div>
+
+  <div class="detail-grid">
+    <div class="detail-card">
+      <h3>Task Information</h3>
+      <div class="info-row"><span class="label">Status</span><span class="status-badge" [ngClass]="getStatusClass(task.currentStatus)">{{ task.currentStatus }}</span></div>
+      <div class="info-row"><span class="label">Type</span><span>{{ task.taskType }}</span></div>
+      <div class="info-row"><span class="label">Location</span><span>{{ task.location || '-' }}</span></div>
+      <div class="info-row"><span class="label">Created</span><span>{{ task.creationDate | date:'medium' }}</span></div>
+      <div class="info-row"><span class="label">Deadline</span><span>{{ task.deadline | date:'medium' || '-' }}</span></div>
+      <div class="info-row"><span class="label">Investigator</span><span>{{ task.principleInvestigator || '-' }}</span></div>
+      <div class="info-row"><span class="label">QA</span><span>{{ task.principleQA || '-' }}</span></div>
+    </div>
+
+    <div class="detail-card">
+      <h3>Status Actions</h3>
+      <div class="action-buttons">
+        <button *ngFor="let action of statusActions"
+                class="action-btn"
+                [style.border-left-color]="action.color"
+                (click)="changeStatus(action.status)">
+          <span class="material-icons">{{ action.icon }}</span> {{ action.label }}
+        </button>
+      </div>
+      <div class="assign-buttons">
+        <button class="btn-outline" (click)="openAssignModal('investigator')">
+          <span class="material-icons">person_add</span> Assign Investigator
+        </button>
+        <button class="btn-outline" (click)="openAssignModal('qa')">
+          <span class="material-icons">person_add</span> Assign QA
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes-section">
+    <h3>Notes</h3>
+    <div class="note-form">
+      <textarea [(ngModel)]="newNote" placeholder="Add a note..." rows="3"></textarea>
+      <button class="btn-primary" (click)="addNote()" [disabled]="!newNote.trim()">Add Note</button>
+    </div>
+    <div class="notes-list">
+      <div class="note-item" *ngFor="let note of notes">
+        <div class="note-header">
+          <strong>{{ note.authorFullname }}</strong>
+          <span class="note-date">{{ note.date_time | date:'medium' }}</span>
+        </div>
+        <p>{{ note.note }}</p>
+        <div class="note-hash">Hash: {{ note.hash }}</div>
+      </div>
+      <div class="empty-state" *ngIf="notes.length === 0">
+        <p>No notes yet</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="showStatusModal" (click)="showStatusModal = false">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h3>Change Status to {{ statusForm.status }}</h3>
+      <div class="form-group">
+        <label>Note</label>
+        <textarea [(ngModel)]="statusForm.note" rows="3" placeholder="Enter a note..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="showStatusModal = false">Cancel</button>
+        <button class="btn-primary" (click)="confirmStatusChange()">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="showAssignModal" (click)="showAssignModal = false">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h3>Assign {{ assignType === 'investigator' ? 'Investigator' : 'QA' }}</h3>
+      <div class="form-group">
+        <label>User</label>
+        <select [(ngModel)]="selectedUserId">
+          <option value="0">Select user...</option>
+          <option *ngFor="let u of users" [value]="u.id">{{ u.forename }} {{ u.surname }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input type="checkbox" [(ngModel)]="isPrinciple"> Principle
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="showAssignModal = false">Cancel</button>
+        <button class="btn-primary" (click)="confirmAssign()">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>

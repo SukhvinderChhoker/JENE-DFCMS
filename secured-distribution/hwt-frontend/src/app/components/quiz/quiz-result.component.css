@@ -1,0 +1,211 @@
+.result-page { max-width: 800px; margin: 0 auto; }
+
+.result-header {
+  text-align: center;
+  padding: 40px 20px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  color: white;
+}
+
+.result-header.passed { background: linear-gradient(135deg, #2e7d32, #4caf50); }
+.result-header.failed { background: linear-gradient(135deg, #c62828, #ef5350); }
+
+.result-icon { font-size: 56px; margin-bottom: 10px; }
+
+.result-header h1 { font-size: 28px; margin: 0 0 8px; }
+.result-subtitle { font-size: 16px; opacity: 0.95; margin: 0; }
+
+.score-ring-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.score-ring {
+  position: relative;
+  width: 140px;
+  height: 140px;
+}
+
+.score-ring svg { width: 100%; height: 100%; }
+
+.score-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.score-number { display: block; font-size: 32px; font-weight: 800; }
+.score-label { font-size: 12px; font-weight: 700; color: #666; letter-spacing: 1px; }
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.stat-box {
+  background: white;
+  border-radius: 10px;
+  padding: 18px;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+.stat-val { display: block; font-size: 28px; font-weight: 800; color: #333; }
+.stat-lbl { font-size: 12px; color: #888; margin-top: 4px; display: block; }
+.correct-color { color: #4caf50; }
+.wrong-color { color: #f44336; }
+
+.actions-row {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 30px;
+}
+
+.btn-primary, .btn-secondary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.btn-primary { background: #1a237e; color: white; }
+.btn-primary:hover { background: #0d47a1; }
+.btn-secondary { background: #f5f5f5; color: #333; border: 1px solid #ddd; }
+.btn-secondary:hover { background: #eee; }
+
+.toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a237e;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: all 0.2s;
+}
+
+.toggle-btn:hover { background: #f0f4ff; }
+
+.explanations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.explanation-item {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  border-left: 4px solid #e0e0e0;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.explanation-item.correct { border-left-color: #4caf50; }
+.explanation-item.incorrect { border-left-color: #f44336; }
+
+.q-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.q-num {
+  font-weight: 700;
+  font-size: 13px;
+  color: #888;
+}
+
+.q-status { font-size: 20px; }
+.explanation-item.correct .q-status { color: #4caf50; }
+.explanation-item.incorrect .q-status { color: #f44336; }
+
+.q-text {
+  font-size: 15px;
+  color: #333;
+  line-height: 1.5;
+  margin: 0 0 12px;
+  font-weight: 500;
+}
+
+.q-options {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.q-opt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #555;
+  background: #f8f9fa;
+}
+
+.q-opt.correct-opt {
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+.q-opt.wrong-opt {
+  background: #ffebee;
+  color: #c62828;
+  text-decoration: line-through;
+}
+
+.opt-letter {
+  font-weight: 700;
+  width: 22px;
+}
+
+.q-explanation {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #fff8e1;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.q-explanation .material-icons { color: #ff8f00; font-size: 20px; margin-top: 2px; }
+
+.q-explanation p {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.no-result {
+  text-align: center;
+  padding: 60px 20px;
+  color: #888;
+}
+
+.no-result .material-icons { font-size: 48px; margin-bottom: 12px; display: block; }
+.no-result p { font-size: 16px; margin-bottom: 16px; }

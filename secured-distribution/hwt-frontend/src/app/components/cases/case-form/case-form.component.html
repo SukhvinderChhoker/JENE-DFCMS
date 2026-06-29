@@ -1,0 +1,143 @@
+<div class="case-form-page">
+  <div class="page-header">
+    <a routerLink="/cases" class="back-link">
+      <span class="material-icons">arrow_back</span> Cases
+    </a>
+    <h1>{{ isEdit ? 'Edit Case' : 'New Case' }}</h1>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-card">
+    <div class="form-grid">
+      <div class="form-group full-width">
+        <label for="caseName">Case Name *</label>
+        <input type="text" id="caseName" formControlName="caseName" placeholder="Enter case name">
+        <div class="error" *ngIf="form.get('caseName')?.touched && form.get('caseName')?.invalid">
+          Case name is required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="reference">Reference</label>
+        <input type="text" id="reference" formControlName="reference" placeholder="Enter reference">
+      </div>
+
+      <div class="form-group">
+        <label for="caseType">Case Type</label>
+        <select id="caseType" formControlName="caseType">
+          <option *ngFor="let t of caseTypes" [value]="t">{{ t }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="classification">Classification</label>
+        <select id="classification" formControlName="classification">
+          <option *ngFor="let c of classifications" [value]="c">{{ c }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="casePriority">Priority *</label>
+        <select id="casePriority" formControlName="casePriority">
+          <option *ngFor="let p of priorities" [value]="p">{{ p }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="location">Location</label>
+        <input type="text" id="location" formControlName="location" placeholder="Enter location">
+      </div>
+
+      <div class="form-group">
+        <label for="deadline">Deadline</label>
+        <input type="datetime-local" id="deadline" formControlName="deadline">
+      </div>
+
+      <div class="form-group">
+        <label for="authoriser">Authoriser</label>
+        <select id="authoriser" formControlName="authoriser">
+          <option value="">None</option>
+          <option *ngFor="let u of users" [value]="u.forename + ' ' + u.surname">
+            {{ u.forename }} {{ u.surname }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group checkbox-group">
+        <label>
+          <input type="checkbox" formControlName="privateCase">
+          Private Case
+        </label>
+      </div>
+
+      <div class="form-group full-width">
+        <label for="justification">Justification</label>
+        <textarea id="justification" formControlName="justification" rows="2" placeholder="Enter justification..."></textarea>
+      </div>
+
+      <div class="form-group full-width">
+        <label for="background">Background</label>
+        <textarea id="background" formControlName="background" rows="4" placeholder="Enter background details..."></textarea>
+      </div>
+    </div>
+
+    <div class="document-checklist-section" *ngIf="!isEdit">
+      <h3>
+        <span class="material-icons">verified</span>
+        Document Checklist
+      </h3>
+      <p class="checklist-description">Check the boxes for documents received with this case:</p>
+      <div class="checklist-grid">
+        <label class="checklist-item" *ngFor="let item of documentChecklist">
+          <input type="checkbox" [(ngModel)]="item.checked" [ngModelOptions]="{standalone: true}">
+          <span class="checkmark"></span>
+          <span class="checklist-label">{{ item.label }}</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="upload-section">
+      <h3>
+        <span class="material-icons">upload_file</span>
+        Case Documents
+      </h3>
+      <p class="upload-desc">Upload essential case-related documents: seizure memos, warrants, consent forms, forensic tool logs, investigation reports, agency letters, authority letters, or any supporting files.</p>
+      <div class="doc-upload-area">
+        <label class="upload-dropzone" for="caseDocInput">
+          <span class="material-icons">cloud_upload</span>
+          <span>Click to select documents</span>
+          <span class="upload-hint">PDF, DOC, DOCX, TXT, XLS, ZIP, images up to 25MB each</span>
+        </label>
+        <input type="file" id="caseDocInput" accept=".pdf,.doc,.docx,.txt,.xls,.xlsx,.zip,.rar,.7z,.csv,.json,.xml,.log,.jpg,.jpeg,.png,.gif" (change)="onDocumentsSelected($event)" hidden multiple>
+      </div>
+      <div class="doc-note-field" *ngIf="selectedDocuments.length > 0">
+        <label for="caseDocNote">Document Note (optional)</label>
+        <input type="text" id="caseDocNote" [(ngModel)]="documentNote" [ngModelOptions]="{standalone: true}" placeholder="e.g. Search warrant for premises at...">
+      </div>
+      <div class="selected-docs" *ngIf="selectedDocuments.length > 0">
+        <div class="doc-item" *ngFor="let doc of selectedDocuments; let i = index">
+          <span class="material-icons">description</span>
+          <span class="doc-name">{{ doc.name }}</span>
+          <span class="doc-size">{{ (doc.size / 1024 / 1024).toFixed(2) }} MB</span>
+          <button type="button" class="remove-doc-btn" (click)="removeDocument(i)">
+            <span class="material-icons">close</span>
+          </button>
+        </div>
+      </div>
+      <div class="uploaded-docs" *ngIf="uploadedDocuments.length > 0">
+        <h4>Previously Uploaded</h4>
+        <div class="doc-item uploaded" *ngFor="let doc of uploadedDocuments">
+          <span class="material-icons">description</span>
+          <span class="doc-name">{{ doc.fileName }}</span>
+          <span class="doc-uploader">by {{ doc.uploaderName }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <a routerLink="/cases" class="btn-secondary">Cancel</a>
+      <button type="submit" class="btn-primary" [disabled]="submitting">
+        {{ submitting ? 'Saving...' : (isEdit ? 'Update Case' : 'Create Case') }}
+      </button>
+    </div>
+  </form>
+</div>

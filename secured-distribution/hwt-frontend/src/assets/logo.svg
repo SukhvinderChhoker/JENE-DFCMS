@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#a01010"/>
+      <stop offset="100%" stop-color="#6b0000"/>
+    </radialGradient>
+  </defs>
+  <circle cx="250" cy="250" r="245" fill="url(#bg)" stroke="#fff" stroke-width="5"/>
+  <circle cx="250" cy="250" r="220" fill="none" stroke="#fff" stroke-width="3"/>
+  <circle cx="250" cy="250" r="200" fill="none" stroke="#fff" stroke-width="1.5" stroke-dasharray="8,4"/>
+  <circle cx="250" cy="250" r="140" fill="#6b0000" stroke="#fff" stroke-width="2.5"/>
+  <circle cx="250" cy="250" r="120" fill="none" stroke="#fff" stroke-width="1"/>
+  <text x="250" y="70" text-anchor="middle" fill="#fff" font-size="36" font-weight="bold" font-family="Arial, sans-serif">Raksha</text>
+  <text x="250" y="115" text-anchor="middle" fill="#fff" font-size="36" font-weight="bold" font-family="Arial, sans-serif">Cyber</text>
+  <text x="250" y="160" text-anchor="middle" fill="#fff" font-size="36" font-weight="bold" font-family="Arial, sans-serif">Agency</text>
+  <polygon points="80,250 95,232 110,250 95,268" fill="#fff"/>
+  <polygon points="390,250 405,232 420,250 405,268" fill="#fff"/>
+  <g transform="translate(250,245)">
+    <path d="M0,-60 L-15,-30 L-40,-15 L-35,10 L-15,25 L0,45 L15,25 L35,10 L40,-15 L15,-30 Z" fill="#fff" opacity="0.9"/>
+    <circle cx="0" cy="-35" r="10" fill="#6b0000"/>
+    <line x1="-20" y1="0" x2="20" y2="0" stroke="#6b0000" stroke-width="2"/>
+    <line x1="0" y1="-15" x2="0" y2="15" stroke="#6b0000" stroke-width="2"/>
+  </g>
+  <line x1="195" y1="195" x2="170" y2="215" stroke="#fff" stroke-width="2.5"/>
+  <line x1="305" y1="195" x2="330" y2="215" stroke="#fff" stroke-width="2.5"/>
+  <path d="M210,310 Q250,340 290,310" fill="none" stroke="#fff" stroke-width="2.5"/>
+  <text x="250" y="440" text-anchor="middle" fill="#fff" font-size="28" font-weight="bold" font-family="Arial, sans-serif">Raksha</text>
+  <text x="250" y="475" text-anchor="middle" fill="#fff" font-size="22" font-family="Arial, sans-serif">Rakshita</text>
+  <text x="250" y="498" text-anchor="middle" fill="#fff" font-size="22" font-family="Arial, sans-serif">Rakshati</text>
+</svg>

@@ -1,0 +1,45 @@
+<nav class="navbar">
+  <div class="navbar-brand">
+    <img src="assets/logo.svg" alt="Logo" class="navbar-logo">
+    <span class="brand-text">JENE-DFCMS</span>
+  </div>
+  <div class="navbar-links">
+    <a routerLink="/dashboard" routerLinkActive="active">
+      <span class="material-icons">dashboard</span> Dashboard
+    </a>
+    <a routerLink="/cases" routerLinkActive="active" *ngIf="authService.canCreateCases() || authService.canManageCases()">
+      <span class="material-icons">folder</span> Cases
+    </a>
+    <a routerLink="/search" routerLinkActive="active">
+      <span class="material-icons">search</span> Search
+    </a>
+    <a routerLink="/evidence" routerLinkActive="active" *ngIf="authService.canManageEvidence()">
+      <span class="material-icons">fingerprint</span> Evidence
+    </a>
+    <a routerLink="/final-reports" routerLinkActive="active" *ngIf="authService.canManageCases()">
+      <span class="material-icons">description</span> Reports
+    </a>
+    <a routerLink="/quiz" routerLinkActive="active">
+      <span class="material-icons">school</span> Quiz
+    </a>
+    <a routerLink="/users" routerLinkActive="active" *ngIf="authService.canManageUsers()">
+      <span class="material-icons">people</span> Users
+    </a>
+  </div>
+  <div class="navbar-user">
+    <span class="role-badge" [ngClass]="getRoleBadgeClass()">{{ getRoleLabel() }}</span>
+    <button class="user-btn" (click)="toggleUserMenu()">
+      <span class="material-icons">account_circle</span>
+      {{ authService.getCurrentUser()?.username }}
+      <span class="material-icons">arrow_drop_down</span>
+    </button>
+    <div class="user-dropdown" *ngIf="userMenuOpen">
+      <a (click)="navigate('/users/' + authService.getCurrentUser()?.userId + '/edit')">
+        <span class="material-icons">person</span> Profile
+      </a>
+      <a (click)="logout()">
+        <span class="material-icons">logout</span> Logout
+      </a>
+    </div>
+  </div>
+</nav>

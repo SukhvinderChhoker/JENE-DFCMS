@@ -1,0 +1,21 @@
+{
+  "license": {
+    "licenseId": "2EC1F976-6BC0-47DA-AD69-FAB7FC727F1B",
+    "appName": "JENE-DFCMS",
+    "version": "1.0",
+    "customerName": "Sukhvinder Chhoker - Annual License",
+    "licenseType": "annual",
+    "issueDate": "2026-06-29T18:00:49Z",
+    "expiryDate": "2027-06-29T18:00:49Z",
+    "hardwareId": "bcdfa5b60a3aa3d5",
+    "maxUsers": 50,
+    "features": [
+      "cases",
+      "evidence",
+      "tasks",
+      "reports",
+      "quiz"
+    ]
+  },
+  "signature": "ZgEYalwmP89CynyBSZrCsIOlqkNuSk9/ugeoIhZk+ok/C1gGWvtG8S54sXouv9r8jMoorXegEp6ypdqlR9X+pxL8TpVOF8fTl42bPeqmLTeAxssWHweDLIOmYTtf/k+R9eUFWKAxsXOLRjbVwpPBDU3imjoeDxfHJP5c3Zzyb+CUJk5MWPEtjnwkBfKVlsbIZy5X/rYtEV9z6eDj2HYHzGhW4/2Wh4EgnmBffZugouWfEvTcT1voyVpm3UiJGQQxRnKuEQ2Jv+ZpkO+vlh1Nh8OUXFfI76yBTwCP75XjCJCMp7iCSkYWjsxXRnNLKMzYS/fGDFpo8NkwVSSe/ScGaA=="
+}

@@ -1,0 +1,242 @@
+<div class="evidence-detail" *ngIf="evidence">
+  <div class="page-header">
+    <div class="header-left">
+      <a routerLink="/evidence" class="back-link">
+        <span class="material-icons">arrow_back</span> Evidence
+      </a>
+      <h1>{{ evidence.reference }}</h1>
+      <div class="header-meta">
+        <span class="status-badge" [ngClass]="getStatusClass(evidence.currentStatus)">{{ evidence.currentStatus }}</span>
+        <span class="evidence-type">{{ evidence.type }}</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a [routerLink]="['/evidence', evidence.id, 'edit']" class="btn-secondary">
+        <span class="material-icons">edit</span> Edit
+      </a>
+    </div>
+  </div>
+
+  <div class="detail-grid">
+    <div class="detail-card">
+      <h3>Evidence Information</h3>
+      <div class="info-row"><span class="label">Reference</span><span>{{ evidence.reference }}</span></div>
+      <div class="info-row"><span class="label">Type</span><span>{{ evidence.type }}</span></div>
+      <div class="info-row"><span class="label">Status</span><span class="status-badge" [ngClass]="getStatusClass(evidence.currentStatus)">{{ evidence.currentStatus }}</span></div>
+      <div class="info-row"><span class="label">Storage Location</span><span>{{ evidence.location }}</span></div>
+      <div class="info-row"><span class="label">Date of Induction</span><span>{{ evidence.dateOfInduction | date:'mediumDate' || '-' }}</span></div>
+      <div class="info-row"><span class="label">Description</span><span>{{ evidence.evidenceDescription || '-' }}</span></div>
+      <div class="info-row"><span class="label">QR Code</span><span>{{ evidence.qrCode ? 'Yes' : 'No' }}</span></div>
+      <div class="info-row"><span class="label">Bag Number</span><span>{{ evidence.evidenceBagNumber || '-' }}</span></div>
+      <div class="info-row"><span class="label">Case</span><span>{{ evidence.caseName || '-' }}</span></div>
+      <div class="info-row"><span class="label">Date Added</span><span>{{ evidence.dateAdded | date:'medium' }}</span></div>
+      <div class="info-row" *ngIf="evidence.comment"><span class="label">Comments</span><span>{{ evidence.comment }}</span></div>
+    </div>
+
+    <div class="detail-card">
+      <h3>Device Details</h3>
+      <div class="info-row"><span class="label">Manufacturer</span><span>{{ evidence.manufacturerName || '-' }}</span></div>
+      <div class="info-row"><span class="label">Make / Model</span><span>{{ evidence.makeModelNo || '-' }}</span></div>
+      <div class="info-row"><span class="label">Serial Number</span><span>{{ evidence.serialNumber || '-' }}</span></div>
+      <div class="info-row"><span class="label">OS Type</span><span>{{ evidence.osType || '-' }}</span></div>
+      <div class="info-row"><span class="label">Storage Capacity</span><span>{{ evidence.storageCapacity || '-' }}</span></div>
+      <div class="info-row"><span class="label">Device Locked</span><span>{{ evidence.deviceLocked === true ? 'Yes' : (evidence.deviceLocked === false ? 'No' : '-') }}</span></div>
+      <div class="info-row"><span class="label">Condition at Receipt</span><span>{{ evidence.conditionAtReceipt || '-' }}</span></div>
+      <div class="info-row"><span class="label">Sealed Status</span><span>{{ evidence.sealedStatus === true ? 'Sealed' : (evidence.sealedStatus === false ? 'Unsealed' : '-') }}</span></div>
+    </div>
+
+    <div class="detail-card">
+      <h3>Originator & Custody Details</h3>
+      <div class="info-row"><span class="label">Originator</span><span>{{ evidence.originator || '-' }}</span></div>
+      <div class="info-row" *ngIf="evidence.originatorUnit"><span class="label">Unit Name</span><span>{{ evidence.originatorUnit }}</span></div>
+      <div class="info-row"><span class="label">Depositor Name</span><span>{{ evidence.depositorName || '-' }}</span></div>
+      <div class="info-row"><span class="label">Depositor Contact</span><span>{{ evidence.depositorContact || '-' }}</span></div>
+    </div>
+
+    <div class="detail-card">
+      <h3>Actions</h3>
+      <div class="action-buttons">
+        <button class="action-btn check-in" (click)="openCheckIn()">
+          <span class="material-icons">login</span> Check In
+        </button>
+        <button class="action-btn check-out" (click)="openCheckOut()">
+          <span class="material-icons">logout</span> Check Out
+        </button>
+        <button class="action-btn status-change" (click)="showStatusModal = true">
+          <span class="material-icons">swap_horiz</span> Change Status
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="chain-section">
+    <h3>Chain of Custody</h3>
+    <div class="timeline" *ngIf="chainOfCustody.length > 0">
+      <div class="timeline-item" *ngFor="let entry of chainOfCustody">
+        <div class="timeline-dot" [class.check-in]="entry.checkIn" [class.check-out]="!entry.checkIn"></div>
+        <div class="timeline-content">
+          <div class="timeline-header">
+            <strong>{{ entry.custodian }}</strong>
+            <span class="timeline-action">{{ entry.checkIn ? 'Checked In' : 'Checked Out' }}</span>
+          </div>
+          <p class="timeline-user">Recorded by: {{ entry.userFullname }}</p>
+          <p class="timeline-date">{{ entry.dateOfCustody | date:'medium' }}</p>
+          <p class="timeline-comment" *ngIf="entry.comment">{{ entry.comment }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="empty-state" *ngIf="chainOfCustody.length === 0">
+      <p>No chain of custody records</p>
+    </div>
+  </div>
+
+  <div class="files-section" *ngIf="authService.canManageEvidence()">
+    <h3>Evidence Photo</h3>
+    <div class="photo-display" *ngIf="evidence?.photoUrl">
+      <img [src]="'http://localhost:8080' + evidence!.photoUrl" alt="Evidence photo" class="evidence-photo">
+    </div>
+    <div class="upload-area" (click)="photoInput.click()">
+      <input type="file" #photoInput accept="image/*" (change)="onPhotoSelected($event)" style="display:none">
+      <span class="material-icons">add_a_photo</span>
+      <p>Click to upload evidence photo</p>
+    </div>
+    <div *ngIf="selectedPhoto" class="selected-files">
+      <p>{{ selectedPhoto.name }}</p>
+      <button class="btn-primary btn-sm" (click)="uploadPhoto()" [disabled]="uploadingPhoto">
+        {{ uploadingPhoto ? 'Uploading...' : 'Upload Photo' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="files-section" *ngIf="authService.canManageEvidence()">
+    <h3>Evidence Documents</h3>
+    <div class="upload-area" (click)="docInput.click()">
+      <input type="file" #docInput (change)="onDocSelected($event)" style="display:none">
+      <span class="material-icons">attach_file</span>
+      <p>Click to upload document</p>
+    </div>
+    <div *ngIf="selectedDoc" class="selected-files">
+      <p>{{ selectedDoc.name }}</p>
+      <input type="text" [(ngModel)]="docNote" placeholder="Add a note (optional)">
+      <button class="btn-primary btn-sm" (click)="uploadDocument()" [disabled]="uploadingDoc">
+        {{ uploadingDoc ? 'Uploading...' : 'Upload Document' }}
+      </button>
+    </div>
+    <table class="data-table" *ngIf="evidenceDocuments.length > 0">
+      <thead>
+        <tr>
+          <th>File Name</th>
+          <th>Uploaded By</th>
+          <th>Date</th>
+          <th>Note</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let doc of evidenceDocuments">
+          <td>
+            <span class="material-icons file-icon" *ngIf="isImageFile(doc.fileName)">image</span>
+            <span class="material-icons file-icon" *ngIf="!isImageFile(doc.fileName)">description</span>
+            {{ doc.fileName }}
+          </td>
+          <td>{{ doc.uploaderName }}</td>
+          <td>{{ doc.dateTime | date:'medium' }}</td>
+          <td>{{ doc.note || '-' }}</td>
+          <td>
+            <button class="btn-icon" (click)="viewFile(doc.uploadLocation, doc.fileName)" title="View">
+              <span class="material-icons">visibility</span>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="empty-state" *ngIf="evidenceDocuments.length === 0">
+      <p>No documents uploaded</p>
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="showCheckInModal" (click)="showCheckInModal = false">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h3>Check In Evidence</h3>
+      <div class="form-group">
+        <label>Custodian</label>
+        <input type="text" [(ngModel)]="checkForm.custodian" placeholder="Enter custodian name">
+      </div>
+      <div class="form-group">
+        <label>Date</label>
+        <input type="datetime-local" [(ngModel)]="checkForm.date">
+      </div>
+      <div class="form-group">
+        <label>Comment</label>
+        <textarea [(ngModel)]="checkForm.comment" rows="2" placeholder="Optional comment..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="showCheckInModal = false">Cancel</button>
+        <button class="btn-primary" (click)="confirmCheckIn()">Check In</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="showCheckOutModal" (click)="showCheckOutModal = false">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h3>Check Out Evidence</h3>
+      <div class="form-group">
+        <label>Custodian</label>
+        <input type="text" [(ngModel)]="checkForm.custodian" placeholder="Enter custodian name">
+      </div>
+      <div class="form-group">
+        <label>Date</label>
+        <input type="datetime-local" [(ngModel)]="checkForm.date">
+      </div>
+      <div class="form-group">
+        <label>Comment</label>
+        <textarea [(ngModel)]="checkForm.comment" rows="2" placeholder="Optional comment..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="showCheckOutModal = false">Cancel</button>
+        <button class="btn-primary" (click)="confirmCheckOut()">Check Out</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="showStatusModal" (click)="showStatusModal = false">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h3>Change Status</h3>
+      <div class="form-group">
+        <label>New Status</label>
+        <select [(ngModel)]="statusForm.status">
+          <option value="CREATED">Created</option>
+          <option value="CHECKED_IN">Checked In</option>
+          <option value="CHECKED_OUT">Checked Out</option>
+          <option value="DISPOSED">Disposed</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Note</label>
+        <textarea [(ngModel)]="statusForm.note" rows="3" placeholder="Enter reason..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="showStatusModal = false">Cancel</button>
+        <button class="btn-primary" (click)="changeStatus()">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="viewer-overlay" *ngIf="showViewer" (click)="closeViewer()">
+    <div class="viewer-container" (click)="$event.stopPropagation()">
+      <div class="viewer-header">
+        <span class="material-icons">description</span>
+        <span class="viewer-title">{{ viewerFileName || 'File Viewer' }}</span>
+        <a [href]="viewerUrl" target="_blank" class="btn-icon" title="Open in new tab">
+          <span class="material-icons">open_in_new</span>
+        </a>
+        <button class="btn-icon" (click)="closeViewer()" title="Close">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <div class="viewer-body">
+        <iframe *ngIf="viewerUrl" [src]="viewerUrl" class="file-iframe"></iframe>
+      </div>
+    </div>
+  </div>
+</div>

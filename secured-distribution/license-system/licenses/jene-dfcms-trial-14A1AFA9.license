@@ -1,0 +1,21 @@
+{
+  "license": {
+    "licenseId": "14A1AFA9-16AE-4FC4-B3D5-BF5A02139DA9",
+    "appName": "JENE-DFCMS",
+    "version": "1.0",
+    "customerName": "Sukhvinder Chhoker - Demo Trial",
+    "licenseType": "trial",
+    "issueDate": "2026-06-29T18:00:43Z",
+    "expiryDate": "2026-07-19T18:00:43Z",
+    "hardwareId": "bcdfa5b60a3aa3d5",
+    "maxUsers": 5,
+    "features": [
+      "cases",
+      "evidence",
+      "tasks",
+      "reports",
+      "quiz"
+    ]
+  },
+  "signature": "dEew66uViHKc5T26Zn3UE1/cejkRSOGhdQ5S3P5PGbGTly8Xt/VghplUR+B+ILmwfcebyK6+ftQlBz1cWZP0UFJJ6JCNjj6jxcwRtDq4V5qF9eBY0JPfUHAIom/qCxxNuy5+q8Hohnv8/XZWMKbu10LTZ6ekZ8dnaMne2m5YzkJwPFZuMtMHMquexa/mSXsoIFZ09vjGQtSexVWzY/gVUorX2TkUNIr+h3xhSNBv+z2qFak0BXb+U8jqwUxOVq9PM3sHfueT/RolJJgdvl4HpGYFpRekopS1TBZ55ZoKQhjkXmfDz09sxHLW6aHCKgTS6R+PoQ6baEY4r0Mt0wcrMQ=="
+}

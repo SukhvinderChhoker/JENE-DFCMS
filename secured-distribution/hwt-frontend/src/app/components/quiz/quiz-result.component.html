@@ -1,0 +1,89 @@
+<div class="result-page" *ngIf="result">
+  <div class="result-header" [class.passed]="result.passed" [class.failed]="!result.passed">
+    <span class="result-icon material-icons">{{ result.passed ? 'emoji_events' : 'sentiment_dissatisfied' }}</span>
+    <h1>{{ result.passed ? 'Congratulations!' : 'Keep Learning!' }}</h1>
+    <p class="result-subtitle">
+      You scored <strong>{{ result.correctAnswers }}/{{ result.totalQuestions }}</strong> in
+      <strong>{{ categoryName }}</strong> ({{ levelName }})
+    </p>
+  </div>
+
+  <div class="score-ring-section">
+    <div class="score-ring">
+      <svg viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="52" fill="none" stroke="#e0e0e0" stroke-width="8"/>
+        <circle cx="60" cy="60" r="52" fill="none" [attr.stroke]="scoreColor" stroke-width="8"
+                stroke-linecap="round" stroke-dasharray="326.7" [attr.stroke-dashoffset]="326.7 - (326.7 * result.score / 100)"
+                transform="rotate(-90 60 60)"/>
+      </svg>
+      <div class="score-text">
+        <span class="score-number" [style.color]="scoreColor">{{ result.score }}%</span>
+        <span class="score-label">{{ result.passed ? 'PASSED' : 'FAILED' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-box">
+      <span class="stat-val correct-color">{{ result.correctAnswers }}</span>
+      <span class="stat-lbl">Correct</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-val wrong-color">{{ result.totalQuestions - result.correctAnswers }}</span>
+      <span class="stat-lbl">Incorrect</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-val">{{ result.totalQuestions }}</span>
+      <span class="stat-lbl">Total</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-val" [style.color]="scoreColor">{{ result.score }}%</span>
+      <span class="stat-lbl">Score</span>
+    </div>
+  </div>
+
+  <div class="actions-row">
+    <button class="btn-secondary" (click)="retryQuiz()">
+      <span class="material-icons">replay</span> Try Again
+    </button>
+    <button class="btn-primary" (click)="goHome()">
+      <span class="material-icons">home</span> Dashboard
+    </button>
+  </div>
+
+  <div class="explanations-section">
+    <button class="toggle-btn" (click)="toggleExplanations()">
+      <span class="material-icons">{{ showExplanations ? 'visibility_off' : 'visibility' }}</span>
+      {{ showExplanations ? 'Hide' : 'Show' }} Detailed Explanations
+    </button>
+
+    <div class="explanations-list" *ngIf="showExplanations">
+      <div class="explanation-item" *ngFor="let item of result.answers; let i = index"
+           [class.correct]="item.correct" [class.incorrect]="!item.correct">
+        <div class="q-header">
+          <span class="q-num">Q{{ i + 1 }}</span>
+          <span class="q-status material-icons">{{ item.correct ? 'check_circle' : 'cancel' }}</span>
+        </div>
+        <p class="q-text">{{ item.question.question }}</p>
+        <div class="q-options">
+          <div class="q-opt" *ngFor="let opt of item.question.options; let j = index"
+               [class.correct-opt]="j === item.question.correctIndex"
+               [class.wrong-opt]="j === item.selectedIndex && !item.correct">
+            <span class="opt-letter">{{ ['A','B','C','D'][j] }}</span>
+            {{ opt }}
+          </div>
+        </div>
+        <div class="q-explanation">
+          <span class="material-icons">lightbulb</span>
+          <p>{{ item.question.explanation }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="no-result" *ngIf="!result">
+  <span class="material-icons">info</span>
+  <p>No quiz result found.</p>
+  <button class="btn-primary" (click)="retryQuiz()">Take a Quiz</button>
+</div>

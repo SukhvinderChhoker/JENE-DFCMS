@@ -1,0 +1,94 @@
+<div class="quiz-page">
+  <!-- SELECTION SCREEN -->
+  <div class="selection-screen" *ngIf="!quizStarted">
+    <div class="quiz-header">
+      <span class="material-icons school-icon">school</span>
+      <div>
+        <h1>Forensic Knowledge Center</h1>
+        <p>Test your digital forensic skills across 12 categories and 4 difficulty levels</p>
+      </div>
+    </div>
+
+    <div class="level-selection">
+      <h2>Select Difficulty Level</h2>
+      <div class="level-grid">
+        <div class="level-card" *ngFor="let level of levels"
+             [class.selected]="selectedLevel === level.id"
+             (click)="selectedLevel = level.id"
+             [style.border-color]="level.color">
+          <div class="level-badge" [style.background]="level.color">{{ level.name.split(' ')[0] }}</div>
+          <p>{{ level.description }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="category-selection">
+      <h2>Select Category</h2>
+      <div class="category-grid">
+        <div class="category-card" *ngFor="let cat of categories"
+             [class.selected]="selectedCategory === cat.id"
+             (click)="selectedCategory = cat.id">
+          <span class="material-icons cat-icon">{{ cat.icon }}</span>
+          <h3>{{ cat.name }}</h3>
+          <p>{{ cat.description }}</p>
+          <div class="cat-stats">
+            <span *ngFor="let level of levels" class="stat-pill"
+                  [style.background]="level.color + '22'" [style.color]="level.color">
+              {{ level.name.split(' ')[0] }}: {{ getCategoryQuestionCount(cat.id, level.id) }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="start-section" *ngIf="canStartQuiz()">
+      <div class="selected-info">
+        <span class="material-icons">check_circle</span>
+        <strong>{{ quizService.getCategoryName(selectedCategory) }}</strong> &mdash;
+        <span [style.color]="getLevelColor(selectedLevel)">{{ quizService.getLevelName(selectedLevel) }}</span>
+        &mdash; {{ questionCount }} Questions
+      </div>
+      <button class="start-btn" (click)="startQuiz()">
+        <span class="material-icons">play_arrow</span> Start Exam
+      </button>
+    </div>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div class="quiz-screen" *ngIf="quizStarted && !quizCompleted">
+    <div class="quiz-progress-bar">
+      <div class="progress-fill" [style.width.%]="progress"></div>
+    </div>
+
+    <div class="quiz-top-bar">
+      <span class="question-counter">Question {{ currentQuestionIndex + 1 }} of {{ questions.length }}</span>
+      <span class="quiz-level-badge" [style.background]="getLevelColor(selectedLevel)">
+        {{ quizService.getLevelName(selectedLevel) }}
+      </span>
+    </div>
+
+    <div class="question-card" *ngIf="currentQuestion">
+      <h2 class="question-text">{{ currentQuestion.question }}</h2>
+
+      <div class="options-list">
+        <div class="option-item" *ngFor="let option of currentQuestion.options; let i = index"
+             [class.selected]="selectedOption === i"
+             (click)="selectOption(i)">
+          <span class="option-letter">{{ ['A','B','C','D'][i] }}</span>
+          <span class="option-text">{{ option }}</span>
+          <span class="material-icons check-icon" *ngIf="selectedOption === i">check_circle</span>
+        </div>
+      </div>
+
+      <div class="quiz-actions">
+        <button class="btn-back" (click)="goBack()">
+          <span class="material-icons">arrow_back</span> Quit
+        </button>
+        <button class="btn-next" (click)="nextQuestion()" [disabled]="selectedOption === -1">
+          {{ currentQuestionIndex === questions.length - 1 ? 'Finish' : 'Next' }}
+          <span class="material-icons">{{ currentQuestionIndex === questions.length - 1 ? 'done_all' : 'arrow_forward' }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

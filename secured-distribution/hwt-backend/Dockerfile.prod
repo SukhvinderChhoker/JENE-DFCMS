@@ -1,0 +1,42 @@
+# ============================================================
+# JENE-DFCMS Backend - PRODUCTION Dockerfile (Hardened)
+# Multi-stage build: Maven compile -> JRE 17 runtime
+# ============================================================
+
+# ---- Stage 1: Build ----
+FROM maven:3.9-eclipse-temurin-17 AS build
+WORKDIR /build
+
+COPY pom.xml .
+RUN mvn dependency:go-offline -B -q
+
+COPY src ./src
+RUN mvn package -DskipTests -B -q
+
+# ---- Stage 2: Runtime ----
+FROM eclipse-temurin:17-jre-jammy
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+RUN groupadd -r jene && useradd -r -g jene -d /app -s /sbin/nologin jene
+
+WORKDIR /app
+
+COPY --from=build /build/target/*.jar app.jar
+
+RUN mkdir -p /app/uploads /app/data /app/license /app/logs \
+    && chown -R jene:jene /app
+
+USER jene
+
+EXPOSE 8080
+
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=60s \
+    CMD curl -sf http://localhost:8080/api/auth/login -o /dev/null || exit 1
+
+ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0 -Djava.security.egd=file:/dev/./urandom -Dfile.encoding=UTF-8"
+
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

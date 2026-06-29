@@ -1,0 +1,38 @@
+# ============================================================
+# JENE-DFCMS Frontend - PRODUCTION Dockerfile (Hardened)
+# Multi-stage build: Node 20 compile -> Nginx Alpine serve
+# ============================================================
+
+# ---- Stage 1: Build Angular ----
+FROM node:20-alpine AS build
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm ci --silent
+
+COPY . .
+RUN npx ng build --configuration production
+
+# ---- Stage 2: Serve ----
+FROM nginx:alpine
+
+RUN apk add --no-cache curl \
+    && rm /etc/nginx/conf.d/default.conf
+
+COPY nginx.prod.conf /etc/nginx/conf.d/default.conf
+
+COPY --from=build /app/dist/hwt-frontend/browser /usr/share/nginx/html
+
+RUN chown -R nginx:nginx /usr/share/nginx/html \
+    && chown -R nginx:nginx /var/cache/nginx \
+    && chown -R nginx:nginx /var/run \
+    && chmod -R 755 /usr/share/nginx/html
+
+USER nginx
+
+EXPOSE 80
+
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
+    CMD curl -sf http://localhost:80/ -o /dev/null || exit 1
+
+CMD ["nginx", "-g", "daemon off;"]

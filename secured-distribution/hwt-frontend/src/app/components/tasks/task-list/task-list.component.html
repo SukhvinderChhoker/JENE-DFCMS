@@ -1,0 +1,22 @@
+<div class="task-list">
+  <table class="data-table" *ngIf="tasks.length > 0">
+    <thead>
+      <tr>
+        <th>Task Name</th>
+        <th>Type</th>
+        <th>Status</th>
+        <th>Investigator</th>
+        <th>Deadline</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let task of tasks">
+        <td><a [routerLink]="['/tasks', task.id]">{{ task.taskName }}</a></td>
+        <td>{{ task.taskType }}</td>
+        <td><span class="status-badge" [ngClass]="getStatusClass(task.currentStatus)">{{ task.currentStatus }}</span></td>
+        <td>{{ task.principleInvestigator || '-' }}</td>
+        <td>{{ task.deadline | date:'short' || '-' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
