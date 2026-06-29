@@ -56,7 +56,16 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("http://localhost:4200", "http://127.0.0.1:4200"));
+        List<String> origins = new java.util.ArrayList<>(List.of(
+            "http://localhost:4200",
+            "http://127.0.0.1:4200",
+            "http://localhost"
+        ));
+        String prodOrigin = System.getenv("CORS_ORIGIN");
+        if (prodOrigin != null && !prodOrigin.isEmpty()) {
+            origins.add(prodOrigin);
+        }
+        configuration.setAllowedOriginPatterns(origins);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "Origin", "X-Requested-With", "Cache-Control", "Pragma", "boundary"));
         configuration.setAllowCredentials(true);
