@@ -17,6 +17,7 @@ export class UserFormComponent implements OnInit {
 
   allRoles = ['ADMIN', 'CASE_MANAGER', 'INVESTIGATOR', 'QA', 'REQUESTER', 'AUTHORISER'];
   teams = ['Digital Forensics', 'Cybercrime', 'Intelligence', 'Operations', 'Management'];
+  errorMessage = '';
 
   constructor(
     private fb: FormBuilder,
@@ -26,7 +27,7 @@ export class UserFormComponent implements OnInit {
   ) {
     this.form = this.fb.group({
       username: ['', Validators.required],
-      password: [''],
+      password: ['', this.isEdit ? [] : [Validators.required, Validators.minLength(8)]],
       forename: ['', Validators.required],
       surname: ['', Validators.required],
       middleName: [''],
@@ -84,6 +85,7 @@ export class UserFormComponent implements OnInit {
   }
 
   onSubmit(): void {
+    this.errorMessage = '';
     if (this.form.valid) {
       this.submitting = true;
       const data = { ...this.form.value };
@@ -95,12 +97,18 @@ export class UserFormComponent implements OnInit {
       if (this.isEdit) {
         this.userService.update(this.userId, data).subscribe({
           next: () => this.router.navigate(['/users']),
-          error: () => this.submitting = false
+          error: (err) => {
+            this.errorMessage = err.error?.message || 'Failed to update user';
+            this.submitting = false;
+          }
         });
       } else {
         this.userService.create(data).subscribe({
           next: () => this.router.navigate(['/users']),
-          error: () => this.submitting = false
+          error: (err) => {
+            this.errorMessage = err.error?.message || 'Failed to create user';
+            this.submitting = false;
+          }
         });
       }
     }
