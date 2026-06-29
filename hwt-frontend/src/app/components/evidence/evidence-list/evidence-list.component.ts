@@ -89,7 +89,14 @@ export class EvidenceListComponent implements OnInit {
         }
       },
       error: (err) => {
-        this.importResult = { errorCount: 1, successCount: 0, results: [{ success: false, error: err.error?.error || 'Import failed' }] };
+        let msg = 'Import failed';
+        if (err.error) {
+          if (typeof err.error === 'string') msg = err.error;
+          else if (err.error.error) msg = err.error.error;
+          else if (err.error.message) msg = err.error.message;
+        }
+        if (msg === 'Import failed' && err.message) msg = err.message;
+        this.importResult = { errorCount: 1, successCount: 0, results: [{ success: false, error: msg }] };
         this.importing = false;
       }
     });
