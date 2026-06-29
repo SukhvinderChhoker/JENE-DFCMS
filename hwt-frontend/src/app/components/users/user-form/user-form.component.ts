@@ -45,6 +45,8 @@ export class UserFormComponent implements OnInit {
     if (id) {
       this.isEdit = true;
       this.userId = Number(id);
+      this.form.get('password')?.clearValidators();
+      this.form.get('password')?.updateValueAndValidity();
       this.loadUser();
     }
   }

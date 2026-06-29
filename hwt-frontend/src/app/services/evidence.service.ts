@@ -8,6 +8,7 @@ import { Evidence, ChainOfCustody } from '../models/evidence.model';
 })
 export class EvidenceService {
   private apiUrl = 'http://localhost:8080/api/evidence';
+  private casesUrl = 'http://localhost:8080/api/cases';
 
   constructor(private http: HttpClient) {}
 
@@ -20,7 +21,7 @@ export class EvidenceService {
   }
 
   create(caseId: number, evidence: Partial<Evidence>): Observable<Evidence> {
-    return this.http.post<Evidence>(`http://localhost:8080/api/cases/${caseId}/evidence`, evidence);
+    return this.http.post<Evidence>(`${this.casesUrl}/${caseId}/evidence`, evidence);
   }
 
   update(id: number, evidence: Partial<Evidence>): Observable<Evidence> {

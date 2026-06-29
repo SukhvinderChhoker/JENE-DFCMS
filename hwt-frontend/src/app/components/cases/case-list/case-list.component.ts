@@ -43,13 +43,14 @@ export class CaseListComponent implements OnInit {
   }
 
   setFilter(filter: string): void {
+    if (this.activeFilter === filter) return;
     this.activeFilter = filter;
     this.applyFilter();
   }
 
   applyFilter(): void {
     if (this.activeFilter === 'all') {
-      this.filteredCases = this.cases;
+      this.filteredCases = [...this.cases];
     } else {
       this.filteredCases = this.cases.filter(c => c.currentStatus === this.activeFilter);
     }
@@ -61,5 +62,9 @@ export class CaseListComponent implements OnInit {
 
   getPriorityClass(priority: string): string {
     return 'priority-' + priority.toLowerCase();
+  }
+
+  trackById(index: number, item: Case): number {
+    return item.id;
   }
 }

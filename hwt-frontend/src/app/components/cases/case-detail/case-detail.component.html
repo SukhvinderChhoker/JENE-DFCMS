@@ -146,9 +146,68 @@
   </div>
 
   <div class="tab-content" *ngIf="activeTab === 'Files'">
-    <div class="empty-state">
+    <div class="section-header">
+      <h2>Case Documents</h2>
+    </div>
+
+    <div class="upload-section" *ngIf="authService.canManageCases()">
+      <div class="upload-area" (click)="fileInput.click()">
+        <input type="file" #fileInput multiple (change)="onFilesSelected($event)" style="display:none">
+        <span class="material-icons">cloud_upload</span>
+        <p>Click to select files or drag and drop</p>
+        <small>PDF, DOC, DOCX, TXT, JPG, PNG, ZIP — Max multiple files</small>
+      </div>
+      <div class="selected-files" *ngIf="selectedFiles.length > 0">
+        <div class="file-item" *ngFor="let f of selectedFiles; let i = index">
+          <span class="material-icons">description</span>
+          <span>{{ f.name }} ({{ formatFileSize(f.size) }})</span>
+        </div>
+        <div class="form-group">
+          <input type="text" [(ngModel)]="uploadNote" placeholder="Add a note (optional)">
+        </div>
+        <button class="btn-primary" (click)="uploadFiles()" [disabled]="uploading">
+          <span class="material-icons">upload</span> {{ uploading ? 'Uploading...' : 'Upload ' + selectedFiles.length + ' file(s)' }}
+        </button>
+      </div>
+    </div>
+
+    <table class="data-table" *ngIf="caseFiles.length > 0">
+      <thead>
+        <tr>
+          <th>File Name</th>
+          <th>Type</th>
+          <th>Uploaded By</th>
+          <th>Date</th>
+          <th>Note</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let f of caseFiles">
+          <td>
+            <span class="material-icons file-icon" *ngIf="isImageFile(f.fileName)">image</span>
+            <span class="material-icons file-icon" *ngIf="!isImageFile(f.fileName)">description</span>
+            {{ f.fileName }}
+          </td>
+          <td>{{ f.fileType }}</td>
+          <td>{{ f.uploaderName }}</td>
+          <td>{{ formatDate(f.dateTime) }}</td>
+          <td>{{ f.note || '-' }}</td>
+          <td class="actions-cell">
+            <button class="btn-icon" (click)="viewFile(f.uploadLocation)" title="View">
+              <span class="material-icons">visibility</span>
+            </button>
+            <button class="btn-icon" (click)="downloadFile(f.uploadLocation)" title="Download">
+              <span class="material-icons">download</span>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="empty-state" *ngIf="caseFiles.length === 0">
       <span class="material-icons">folder_open</span>
-      <p>File management coming soon</p>
+      <p>No documents uploaded yet</p>
     </div>
   </div>
 
@@ -189,6 +248,21 @@
       <div class="modal-actions">
         <button class="btn-secondary" (click)="showStatusModal = false">Cancel</button>
         <button class="btn-primary" (click)="changeStatus()">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="viewer-overlay" *ngIf="showViewer" (click)="closeViewer()">
+    <div class="viewer-container" (click)="$event.stopPropagation()">
+      <div class="viewer-header">
+        <span class="material-icons">description</span>
+        <span class="viewer-title">File Viewer</span>
+        <button class="btn-icon" (click)="closeViewer()" title="Close">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <div class="viewer-body">
+        <iframe *ngIf="viewerUrl" [src]="viewerUrl" class="file-iframe"></iframe>
       </div>
     </div>
   </div>

@@ -10,6 +10,7 @@ import { Evidence } from '../models/evidence.model';
 })
 export class CaseService {
   private apiUrl = 'http://localhost:8080/api/cases';
+  private uploadsUrl = 'http://localhost:8080/api/uploads';
 
   constructor(private http: HttpClient) {}
 
@@ -69,10 +70,29 @@ export class CaseService {
     const formData = new FormData();
     formData.append('file', file);
     if (note) formData.append('note', note);
-    return this.http.post(`http://localhost:8080/api/uploads/case/${caseId}`, formData);
+    return this.http.post(`${this.uploadsUrl}/case/${caseId}`, formData);
+  }
+
+  uploadDocuments(caseId: number, files: File[], note: string): Observable<any[]> {
+    const uploads: Observable<any>[] = [];
+    for (const file of files) {
+      uploads.push(this.uploadDocument(caseId, file, note));
+    }
+    return new Observable<any[]>(subscriber => {
+      let completed = 0;
+      const results: any[] = [];
+      uploads.forEach(obs => obs.subscribe({
+        next: (res) => { results.push(res); completed++; if (completed === uploads.length) subscriber.next(results); },
+        error: (err) => subscriber.error(err)
+      }));
+    });
   }
 
   getDocuments(caseId: number): Observable<any[]> {
-    return this.http.get<any[]>(`http://localhost:8080/api/uploads/case/${caseId}`);
+    return this.http.get<any[]>(`${this.uploadsUrl}/case/${caseId}`);
+  }
+
+  deleteDocument(fileId: number): Observable<any> {
+    return this.http.delete(`${this.uploadsUrl}/final-report/${fileId}`);
   }
 }

@@ -69,6 +69,71 @@
     </div>
   </div>
 
+  <div class="files-section" *ngIf="authService.canManageEvidence()">
+    <h3>Evidence Photo</h3>
+    <div class="photo-display" *ngIf="evidence?.photoUrl">
+      <img [src]="'http://localhost:8080' + evidence!.photoUrl" alt="Evidence photo" class="evidence-photo">
+    </div>
+    <div class="upload-area" (click)="photoInput.click()">
+      <input type="file" #photoInput accept="image/*" (change)="onPhotoSelected($event)" style="display:none">
+      <span class="material-icons">add_a_photo</span>
+      <p>Click to upload evidence photo</p>
+    </div>
+    <div *ngIf="selectedPhoto" class="selected-files">
+      <p>{{ selectedPhoto.name }}</p>
+      <button class="btn-primary btn-sm" (click)="uploadPhoto()" [disabled]="uploadingPhoto">
+        {{ uploadingPhoto ? 'Uploading...' : 'Upload Photo' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="files-section" *ngIf="authService.canManageEvidence()">
+    <h3>Evidence Documents</h3>
+    <div class="upload-area" (click)="docInput.click()">
+      <input type="file" #docInput (change)="onDocSelected($event)" style="display:none">
+      <span class="material-icons">attach_file</span>
+      <p>Click to upload document</p>
+    </div>
+    <div *ngIf="selectedDoc" class="selected-files">
+      <p>{{ selectedDoc.name }}</p>
+      <input type="text" [(ngModel)]="docNote" placeholder="Add a note (optional)">
+      <button class="btn-primary btn-sm" (click)="uploadDocument()" [disabled]="uploadingDoc">
+        {{ uploadingDoc ? 'Uploading...' : 'Upload Document' }}
+      </button>
+    </div>
+    <table class="data-table" *ngIf="evidenceDocuments.length > 0">
+      <thead>
+        <tr>
+          <th>File Name</th>
+          <th>Uploaded By</th>
+          <th>Date</th>
+          <th>Note</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let doc of evidenceDocuments">
+          <td>
+            <span class="material-icons file-icon" *ngIf="isImageFile(doc.fileName)">image</span>
+            <span class="material-icons file-icon" *ngIf="!isImageFile(doc.fileName)">description</span>
+            {{ doc.fileName }}
+          </td>
+          <td>{{ doc.uploaderName }}</td>
+          <td>{{ doc.dateTime | date:'medium' }}</td>
+          <td>{{ doc.note || '-' }}</td>
+          <td>
+            <button class="btn-icon" (click)="viewFile(doc.uploadLocation)" title="View">
+              <span class="material-icons">visibility</span>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="empty-state" *ngIf="evidenceDocuments.length === 0">
+      <p>No documents uploaded</p>
+    </div>
+  </div>
+
   <div class="modal-overlay" *ngIf="showCheckInModal" (click)="showCheckInModal = false">
     <div class="modal" (click)="$event.stopPropagation()">
       <h3>Check In Evidence</h3>
@@ -132,6 +197,24 @@
       <div class="modal-actions">
         <button class="btn-secondary" (click)="showStatusModal = false">Cancel</button>
         <button class="btn-primary" (click)="changeStatus()">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="viewer-overlay" *ngIf="showViewer" (click)="closeViewer()">
+    <div class="viewer-container" (click)="$event.stopPropagation()">
+      <div class="viewer-header">
+        <span class="material-icons">description</span>
+        <span class="viewer-title">File Viewer</span>
+        <a [href]="viewerUrl" target="_blank" class="btn-icon" title="Open in new tab">
+          <span class="material-icons">open_in_new</span>
+        </a>
+        <button class="btn-icon" (click)="closeViewer()" title="Close">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <div class="viewer-body">
+        <iframe *ngIf="viewerUrl" [src]="viewerUrl" class="file-iframe"></iframe>
       </div>
     </div>
   </div>

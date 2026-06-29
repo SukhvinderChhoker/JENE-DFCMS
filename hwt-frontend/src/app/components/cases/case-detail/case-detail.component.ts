@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { CaseService } from '../../../services/case.service';
 import { TaskService } from '../../../services/task.service';
 import { EvidenceService } from '../../../services/evidence.service';
@@ -23,6 +24,14 @@ export class CaseDetailComponent implements OnInit {
   showStatusModal = false;
   statusForm = { status: '', reason: '' };
 
+  caseFiles: any[] = [];
+  selectedFiles: File[] = [];
+  uploadNote = '';
+  uploading = false;
+
+  showViewer = false;
+  viewerUrl: SafeResourceUrl = '';
+
   tabs = [
     { label: 'Overview', icon: 'info' },
     { label: 'Tasks', icon: 'task' },
@@ -38,7 +47,8 @@ export class CaseDetailComponent implements OnInit {
     private caseService: CaseService,
     private taskService: TaskService,
     private evidenceService: EvidenceService,
-    public authService: AuthService
+    public authService: AuthService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -48,6 +58,7 @@ export class CaseDetailComponent implements OnInit {
       this.loadTasks(id);
       this.loadEvidence(id);
       this.loadHistory(id);
+      this.loadCaseFiles(id);
     }
   }
 
@@ -117,5 +128,67 @@ export class CaseDetailComponent implements OnInit {
 
   objectKeys(obj: any): string[] {
     return Object.keys(obj || {});
+  }
+
+  loadCaseFiles(caseId: number): void {
+    this.caseService.getDocuments(caseId).subscribe({
+      next: (data) => this.caseFiles = data
+    });
+  }
+
+  onFilesSelected(event: any): void {
+    const files: FileList = event.target.files;
+    this.selectedFiles = [];
+    for (let i = 0; i < files.length; i++) {
+      this.selectedFiles.push(files[i]);
+    }
+  }
+
+  uploadFiles(): void {
+    if (this.selectedFiles.length === 0 || !this.case) return;
+    this.uploading = true;
+    this.caseService.uploadDocuments(this.case.id, this.selectedFiles, this.uploadNote).subscribe({
+      next: () => {
+        this.loadCaseFiles(this.case!.id);
+        this.selectedFiles = [];
+        this.uploadNote = '';
+        this.uploading = false;
+      },
+      error: () => {
+        this.uploading = false;
+      }
+    });
+  }
+
+  downloadFile(location: string): void {
+    window.open('http://localhost:8080' + location, '_blank');
+  }
+
+  viewFile(location: string): void {
+    const url = 'http://localhost:8080' + location;
+    this.viewerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    this.showViewer = true;
+  }
+
+  closeViewer(): void {
+    this.showViewer = false;
+    this.viewerUrl = '';
+  }
+
+  isImageFile(filename: string): boolean {
+    return /\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(filename);
+  }
+
+  formatFileSize(bytes: number): string {
+    if (!bytes) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  }
+
+  formatDate(dateStr: string): string {
+    if (!dateStr) return '';
+    return new Date(dateStr).toLocaleString();
   }
 }

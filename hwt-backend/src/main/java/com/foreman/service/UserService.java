@@ -88,7 +88,29 @@ public class UserService {
         user.setJobTitle(dto.getJobTitle());
         user.setActive(dto.isActive());
 
+        if (dto.getTeam() != null && !dto.getTeam().isEmpty()) {
+            teamRepository.findByTeam(dto.getTeam()).ifPresent(user::setTeam);
+        } else {
+            user.setTeam(null);
+        }
+
         user = userRepository.save(user);
+
+        if (dto.getRoles() != null) {
+            List<Role> currentRoles = user.getRoles();
+            for (Role r : currentRoles) {
+                if (!r.isRemoved()) {
+                    r.setRemoved(true);
+                }
+            }
+            for (String roleName : dto.getRoles()) {
+                Role role = new Role(user, roleName);
+                currentRoles.add(role);
+            }
+            user.setRoles(currentRoles);
+            userRepository.save(user);
+        }
+
         return convertToDTO(user);
     }
 

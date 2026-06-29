@@ -38,8 +38,11 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<UserDTO>> getAllUsers(@RequestParam(required = false) String role, HttpServletRequest request) {
         User user = requireAuth(request);
-        if (!roleHelper.canManageUsers(user)) {
-            throw new RuntimeException("Access denied: Only Admins can list all users");
+        if (roleHelper.canManageUsers(user)) {
+            if (role != null && !role.isEmpty()) {
+                return ResponseEntity.ok(userService.getUsersByRole(role));
+            }
+            return ResponseEntity.ok(userService.getAllUsers());
         }
         if (role != null && !role.isEmpty()) {
             return ResponseEntity.ok(userService.getUsersByRole(role));
