@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JENE-DFCMS - Complete Workflow & Role-Based Access Control</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; color: #333; line-height: 1.7; }
+
+  .header {
+    background: linear-gradient(135deg, #1a237e 0%, #0d47a1 50%, #01579b 100%);
+    color: white; padding: 50px 40px; text-align: center;
+  }
+  .header h1 { font-size: 32px; margin-bottom: 8px; }
+  .header .subtitle { font-size: 16px; opacity: 0.9; }
+  .header .meta { font-size: 13px; opacity: 0.7; margin-top: 12px; }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+
+  .section { background: white; border-radius: 12px; padding: 30px; margin-bottom: 28px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .section h2 { font-size: 22px; color: #1a237e; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #e8eaf6; }
+  .section h3 { font-size: 17px; color: #333; margin: 20px 0 12px; }
+  .section h4 { font-size: 15px; color: #1a237e; margin: 16px 0 8px; }
+  .section p, .section li { font-size: 14px; color: #555; }
+  .section ul { margin-left: 20px; margin-bottom: 12px; }
+  .section li { margin-bottom: 4px; }
+
+  /* Workflow Diagram */
+  .workflow-diagram {
+    background: #fafafa; border: 1px solid #e0e0e0; border-radius: 12px;
+    padding: 30px; margin: 20px 0; overflow-x: auto;
+  }
+  .workflow-lanes {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 0;
+    min-width: 1000px;
+  }
+  .lane-label {
+    background: #1a237e; color: white; padding: 16px 12px;
+    font-weight: 700; font-size: 13px; text-align: center;
+    border-right: 2px solid #0d47a1;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 80px;
+  }
+  .lane-content {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 16px; border-bottom: 1px solid #eee;
+    min-height: 80px; flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+  .step {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 14px; border-radius: 8px;
+    font-size: 12px; font-weight: 500; white-space: nowrap;
+    border: 1px solid #ddd; background: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    min-width: fit-content;
+  }
+  .step .num {
+    width: 22px; height: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: white; flex-shrink: 0;
+  }
+  .step-admin .num { background: #c62828; }
+  .step-cm .num { background: #1565c0; }
+  .step-inv .num { background: #2e7d32; }
+  .step-qa .num { background: #f57f17; }
+  .step-auth .num { background: #6a1b9a; }
+  .step-req .num { background: #00695c; }
+  .arrow { color: #999; font-size: 16px; flex-shrink: 0; }
+
+  .lane-admin .lane-label { background: #c62828; border-right-color: #b71c1c; }
+  .lane-admin .step { border-color: #ffcdd2; background: #fff5f5; }
+  .lane-cm .lane-label { background: #1565c0; border-right-color: #0d47a1; }
+  .lane-cm .step { border-color: #bbdefb; background: #f5f9ff; }
+  .lane-inv .lane-label { background: #2e7d32; border-right-color: #1b5e20; }
+  .lane-inv .step { border-color: #c8e6c9; background: #f5fff5; }
+  .lane-qa .lane-label { background: #f57f17; border-right-color: #e65100; }
+  .lane-qa .step { border-color: #fff9c4; background: #fffde7; }
+  .lane-auth .lane-label { background: #6a1b9a; border-right-color: #4a148c; }
+  .lane-auth .step { border-color: #e1bee7; background: #fcf5ff; }
+  .lane-req .lane-label { background: #00695c; border-right-color: #004d40; }
+  .lane-req .step { border-color: #b2dfdb; background: #f0fffd; }
+
+  /* Role Cards */
+  .role-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 20px 0; }
+  .role-card {
+    border-radius: 10px; padding: 20px; border: 1px solid #e0e0e0;
+    transition: box-shadow 0.2s;
+  }
+  .role-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .role-card h4 { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .role-card .role-icon {
+    width: 36px; height: 36px; border-radius: 8px; display: flex;
+    align-items: center; justify-content: center; color: white; font-size: 18px;
+  }
+  .role-card ul { font-size: 13px; margin-left: 16px; }
+  .role-card li { margin-bottom: 3px; }
+
+  .rc-admin { border-top: 3px solid #c62828; }
+  .rc-admin .role-icon { background: #c62828; }
+  .rc-cm { border-top: 3px solid #1565c0; }
+  .rc-cm .role-icon { background: #1565c0; }
+  .rc-inv { border-top: 3px solid #2e7d32; }
+  .rc-inv .role-icon { background: #2e7d32; }
+  .rc-qa { border-top: 3px solid #f57f17; }
+  .rc-qa .role-icon { background: #f57f17; }
+  .rc-auth { border-top: 3px solid #6a1b9a; }
+  .rc-auth .role-icon { background: #6a1b9a; }
+  .rc-req { border-top: 3px solid #00695c; }
+  .rc-req .role-icon { background: #00695c; }
+
+  /* Permission Matrix */
+  .perm-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 16px 0; }
+  .perm-table th { background: #1a237e; color: white; padding: 10px 12px; text-align: center; font-weight: 500; }
+  .perm-table th:first-child { text-align: left; min-width: 200px; }
+  .perm-table td { padding: 8px 12px; border-bottom: 1px solid #eee; text-align: center; }
+  .perm-table td:first-child { text-align: left; font-weight: 500; }
+  .perm-table tr:hover { background: #f8f9fa; }
+  .perm-yes { color: #2e7d32; font-weight: 700; }
+  .perm-no { color: #ccc; }
+  .perm-owner { color: #e65100; font-size: 11px; }
+
+  /* Status Flow */
+  .status-flow {
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    margin: 16px 0; padding: 16px; background: #fafafa; border-radius: 8px;
+  }
+  .status-badge {
+    padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+  }
+  .status-created { background: #e3f2fd; color: #1565c0; }
+  .status-pending { background: #fff3e0; color: #e65100; }
+  .status-open { background: #e8f5e9; color: #2e7d32; }
+  .status-progress { background: #e0f7fa; color: #00695c; }
+  .status-qa { background: #fff8e1; color: #f57f17; }
+  .status-delivery { background: #f3e5f5; color: #6a1b9a; }
+  .status-complete { background: #e8f5e9; color: #1b5e20; }
+  .status-closed { background: #eceff1; color: #546e7a; }
+  .status-rejected { background: #ffebee; color: #c62828; }
+  .flow-arrow { color: #999; font-size: 14px; }
+
+  .footer { text-align: center; padding: 30px; color: #999; font-size: 12px; }
+  @media print { .container { padding: 10px; } .section { break-inside: avoid; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>JENE-DFCMS - Complete Workflow & RBAC Guide</h1>
+  <div class="subtitle">Digital Forensic Case Management System - Operational Workflow</div>
+  <div class="meta">Author: Sukhvinder Chhoker | Version: 2.0 | Date: 29 June 2026</div>
+</div>
+
+<div class="container">
+
+<!-- SECTION 1: SYSTEM OVERVIEW -->
+<div class="section">
+  <h2>1. System Overview</h2>
+  <p>JENE-DFCMS follows a strict chain-of-custody workflow where each role has defined responsibilities. The system enforces RBAC at both frontend (UI visibility) and backend (API enforcement) levels.</p>
+
+  <h3>Core Principle</h3>
+  <ul>
+    <li><strong>Admin</strong> sets up the system (users, teams, settings)</li>
+    <li><strong>Case Manager</strong> receives requests, creates cases, assigns tasks, monitors progress</li>
+    <li><strong>Investigator</strong> performs forensic work, uploads evidence and findings</li>
+    <li><strong>QA</strong> reviews investigation quality before delivery</li>
+    <li><strong>Authoriser</strong> approves/rejects case closure and authorization</li>
+    <li><strong>Requester</strong> submits investigation requests and receives final reports</li>
+  </ul>
+</div>
+
+<!-- SECTION 2: DETAILED WORKFLOW DIAGRAM -->
+<div class="section">
+  <h2>2. End-to-End Workflow Diagram</h2>
+  <p>The diagram below shows the complete flow from system setup to case closure, organized by role lanes.</p>
+
+  <div class="workflow-diagram">
+    <div class="workflow-lanes">
+
+      <!-- ADMIN LANE -->
+      <div class="lane-label lane-admin" style="background:#c62828; border-right-color:#b71c1c;">
+        <div>
+          <div style="font-size:20px; margin-bottom:4px;">&#9881;</div>
+          ADMIN<br><small>System Setup</small>
+        </div>
+      </div>
+      <div class="lane-content lane-admin">
+        <div class="step step-admin"><span class="num">1</span> Setup Teams & Departments</div>
+        <span class="arrow">&#10132;</span>
+        <div class="step step-admin"><span class="num">2</span> Create User Accounts</div>
+        <span class="arrow">&#10132;</span>
+        <div class="step step-admin"><span class="num">3</span> Assign Roles to Users</div>
+        <span class="arrow">&#10132;</span>
+        <div class="step step-admin"><span class="num">4</span> Configure System Settings</div>
+        <span class="arrow">&#10132;</span>
+        <div class="step step-admin"><span class="num">5</span> Monitor All Activity</div>
+      </div>
+
+      <!-- REQUESTER LANE -->
+      <div class="lane-label" style="background:#00695c; border-right-color:#004d40;">
+        <div>
+          <div style="font-size:20px; margin-bottom:4px;">&#9993;</div>
+          REQUESTER<br><small>Case Request</small>
+        </div>
+      </div>
+      <div class="lane-content" style="border-bottom:1px solid #eee;">
+        <div class="step step-req"><span class="num">6</span> Submit Investigation Request</div>
+        <span class="arrow">&#10132;</span>
+        <div class="step step-req"><span class="num">7</span> Provide Case Background & Justification</div>
+        <span class="arrow">&#10132;</span>
+        <div class="step step-req" style="border-style:dashed;"><span class="num">...</span> (wait for results)</div>
+        <span class="arrow">&#10132;</span>
+        <div class="step step-req"><span class="num">22</span> Receive Final Report</div>
+      </div>
+
+      <!-- CASE MANAGER LANE -->
+      <div class="lane-label" style="background:#1565c0; border-right-color:#0d47a1;">
+        <div>
+          <div style="font-size:20px; margin-bottom:4px;">&#128196;</div>
+          CASE MANAGER<br><small>Case Management</small>
+        </div>
+      </div>
+      <div class="lane-content" style="border-bottom:1px solid #eee;">
+        <div class="step step-cm"><span class="num">8</span> Review Request</div>
+        <span class="arrow">&#10132;</span>
+        <div class="step step-cm"><span class="num">9</span> Create Case (set priority, classification, type)</div>
+        <span class="arrow">&#10132;</span>
+        <div class="step step-cm"><span class="num">10</span> Upload Documents (COC, letters, forms)</div>
+        <span class="arrow">&#10132;</span>
+        <div class="step step-cm"><span class="num">11</span> Create Tasks & Assign to Investigators</div>
+        <span class="arrow">&#10132;</span>
+        <div class="step step-cm"><span class="num">12</span> Set Status: OPEN</div>
+        <span class="arrow">&#10132;</span>
+        <div class="step step-cm" style="border-style:dashed;"><span class="num">...</span> (monitor progress)</div>
+        <span class="arrow">&#10132;</span>
+        <div class="step step-cm"><span class="num">20</span> Upload Final Report</div>
+        <span class="arrow">&#10132;</span>
+        <div class="step step-cm"><span class="num">21</span> Request Authorization</div>
+      </div>
+
+      <!-- INVESTIGATOR LANE -->
+      <div class="lane-label" style="background:#2e7d32; border-right-color:#1b5e20;">
+        <div>
+          <div style="font-size:20px; margin-bottom:4px;">&#128270;</div>
+          INVESTIGATOR<br><small>Forensic Work</small>
+        </div>
+      </div>
+      <div class="lane-content" style="border-bottom:1px solid #eee;">
+        <div class="step step-inv"><span class="num">13</span> Review Assigned Tasks</div>
+        <span class="arrow">&#10132;</span>
+        <div class="step step-inv"><span class="num">14</span> Upload Evidence (photos, devices, media)</div>
+        <span class="arrow">&#10132;</span>
+        <div class="step step-inv"><span class="num">15</span> Perform Forensic Examination</div>
+        <span class="arrow">&#10132;</span>
+        <div class="step step-inv"><span class="num">16</span> Record Findings in Task Notes</div>
+        <span class="arrow">&#10132;</span>
+        <div class="step step-inv"><span class="num">17</span> Upload Examination Documents</div>
+        <span class="arrow">&#10132;</span>
+        <div class="step step-inv"><span class="num">18</span> Set Task Status: COMPLETE</div>
+      </div>
+
+      <!-- QA LANE -->
+      <div class="lane-label" style="background:#f57f17; border-right-color:#e65100;">
+        <div>
+          <div style="font-size:20px; margin-bottom:4px;">&#10003;</div>
+          QA<br><small>Quality Review</small>
+        </div>
+      </div>
+      <div class="lane-content" style="border-bottom:1px solid #eee;">
+        <div class="step step-qa"><span class="num">19a</span> Review Task Quality</div>
+        <span class="arrow">&#10132;</span>
+        <div class="step step-qa"><span class="num">19b</span> Verify Evidence Integrity</div>
+        <span class="arrow">&#10132;</span>
+        <div class="step step-qa"><span class="num">19c</span> Approve or Return for Revision</div>
+      </div>
+
+      <!-- AUTHORISER LANE -->
+      <div class="lane-label" style="background:#6a1b9a; border-right-color:#4a148c;">
+        <div>
+          <div style="font-size:20px; margin-bottom:4px;">&#9989;</div>
+          AUTHORISER<br><small>Approval</small>
+        </div>
+      </div>
+      <div class="lane-content">
+        <div class="step step-auth"><span class="num">23</span> Review Final Report & Findings</div>
+        <span class="arrow">&#10132;</span>
+        <div class="step step-auth"><span class="num">24</span> AUTHORISE or REJECT Case</div>
+        <span class="arrow">&#10132;</span>
+        <div class="step step-auth"><span class="num">25</span> Case Status: CLOSED or REJECTED</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 3: STATUS FLOWS -->
+<div class="section">
+  <h2>3. Status Workflows</h2>
+
+  <h3>Case Status Flow</h3>
+  <div class="status-flow">
+    <span class="status-badge status-created">CREATED</span>
+    <span class="flow-arrow">&#10132;</span>
+    <span class="status-badge status-pending">PENDING</span>
+    <span class="flow-arrow">&#10132;</span>
+    <span class="status-badge status-open">OPEN</span>
+    <span class="flow-arrow">&#10132;</span>
+    <span class="status-badge status-closed">CLOSED</span>
+    <span class="flow-arrow">or</span>
+    <span class="status-badge status-rejected">REJECTED</span>
+    <span class="flow-arrow">or</span>
+    <span class="status-badge status-closed">ARCHIVED</span>
+  </div>
+  <ul>
+    <li><strong>CREATED</strong> - Initial state when case is first created by Case Manager</li>
+    <li><strong>PENDING</strong> - Awaiting authorization or additional information</li>
+    <li><strong>OPEN</strong> - Active investigation in progress</li>
+    <li><strong>CLOSED</strong> - Investigation complete, authorized by Authoriser</li>
+    <li><strong>REJECTED</strong> - Case rejected by Authoriser (returns to OPEN)</li>
+    <li><strong>ARCHIVED</strong> - Long-term storage after closure</li>
+  </ul>
+
+  <h3>Task Status Flow</h3>
+  <div class="status-flow">
+    <span class="status-badge status-created">CREATED</span>
+    <span class="flow-arrow">&#10132;</span>
+    <span class="status-badge status-pending">QUEUED</span>
+    <span class="flow-arrow">&#10132;</span>
+    <span class="status-badge" style="background:#e0f2f1;color:#00695c;">ALLOCATED</span>
+    <span class="flow-arrow">&#10132;</span>
+    <span class="status-badge status-progress">PROGRESS</span>
+    <span class="flow-arrow">&#10132;</span>
+    <span class="status-badge status-qa">QA</span>
+    <span class="flow-arrow">&#10132;</span>
+    <span class="status-badge status-delivery">DELIVERY</span>
+    <span class="flow-arrow">&#10132;</span>
+    <span class="status-badge status-complete">COMPLETE</span>
+  </div>
+  <ul>
+    <li><strong>CREATED</strong> - Task defined by Case Manager</li>
+    <li><strong>QUEUED</strong> - Awaiting investigator assignment</li>
+    <li><strong>ALLOCATED</strong> - Assigned to specific investigator</li>
+    <li><strong>PROGRESS</strong> - Forensic examination in progress</li>
+    <li><strong>QA</strong> - Submitted for quality assurance review</li>
+    <li><strong>DELIVERY</strong> - QA approved, delivering to Case Manager</li>
+    <li><strong>COMPLETE</strong> - Task finished and accepted</li>
+  </ul>
+
+  <h3>Evidence Status Flow</h3>
+  <div class="status-flow">
+    <span class="status-badge status-created">INACTIVE</span>
+    <span class="flow-arrow">&#10132;</span>
+    <span class="status-badge status-open">ACTIVE</span>
+    <span class="flow-arrow">&#10132;</span>
+    <span class="status-badge status-closed">ARCHIVED</span>
+    <span class="flow-arrow">or</span>
+    <span class="status-badge status-rejected">DESTROYED</span>
+  </div>
+</div>
+
+<!-- SECTION 4: ROLE DETAILS -->
+<div class="section">
+  <h2>4. Detailed Role Responsibilities</h2>
+
+  <div class="role-grid">
+    <div class="role-card rc-admin">
+      <h4><span class="role-icon">&#9881;</span> ADMIN</h4>
+      <p><strong>Purpose:</strong> System administrator. Sets up and maintains the entire system.</p>
+      <ul>
+        <li>Create/manage departments and teams</li>
+        <li>Create user accounts with roles</li>
+        <li>Enable/disable user accounts</li>
+        <li>Configure system settings (retention, formats)</li>
+        <li>View all cases, tasks, evidence across system</li>
+        <li>Change case status (OPEN, CLOSED, ARCHIVED)</li>
+        <li>Override any RBAC restriction</li>
+        <li>Monitor system-wide activity via Dashboard</li>
+        <li>Upload case/task documents</li>
+        <li>Upload final forensic reports</li>
+        <li>Delete final reports</li>
+      </ul>
+    </div>
+
+    <div class="role-card rc-cm">
+      <h4><span class="role-icon">&#128196;</span> CASE MANAGER</h4>
+      <p><strong>Purpose:</strong> Manages the lifecycle of forensic cases from creation to closure.</p>
+      <ul>
+        <li>Create new cases (set name, classification, type, priority)</li>
+        <li>Edit case details (background, location, justification)</li>
+        <li>Upload case documents (COC, letters, forms, memos)</li>
+        <li>Check/uncheck document checklist items</li>
+        <li>Create tasks within cases</li>
+        <li>Assign tasks to investigators</li>
+        <li>Monitor task progress and status</li>
+        <li>Upload evidence and evidence documents</li>
+        <li>Upload final forensic reports</li>
+        <li>Change case status (OPEN, PENDING)</li>
+        <li>Close cases (with reason)</li>
+        <li>Link/unlink related cases</li>
+        <li>View case history and audit trail</li>
+        <li>Request authorization from Authoriser</li>
+      </ul>
+    </div>
+
+    <div class="role-card rc-inv">
+      <h4><span class="role-icon">&#128270;</span> INVESTIGATOR</h4>
+      <p><strong>Purpose:</strong> Performs the actual forensic investigation work.</p>
+      <ul>
+        <li>View assigned tasks</li>
+        <li>Upload evidence (photos, devices, media)</li>
+        <li>Upload evidence documents (exam results, reports)</li>
+        <li>Add task notes with findings</li>
+        <li>Change task status (PROGRESS, COMPLETE)</li>
+        <li>Check in/check out evidence (chain of custody)</li>
+        <li>View case details for assigned cases</li>
+        <li>Upload documents to tasks</li>
+        <li>Record evidence retention dates</li>
+      </ul>
+    </div>
+
+    <div class="role-card rc-qa">
+      <h4><span class="role-icon">&#10003;</span> QA (Quality Assurance)</h4>
+      <p><strong>Purpose:</strong> Reviews investigation quality before delivery.</p>
+      <ul>
+        <li>View assigned tasks for QA review</li>
+        <li>Review task notes and findings</li>
+        <li>Verify evidence integrity</li>
+        <li>Approve or return tasks for revision</li>
+        <li>Add QA comments to tasks</li>
+        <li>Change task status to QA/DELIVERY</li>
+        <li>View case details</li>
+      </ul>
+    </div>
+
+    <div class="role-card rc-auth">
+      <h4><span class="role-icon">&#9989;</span> AUTHORISER</h4>
+      <p><strong>Purpose:</strong> Authorizes or rejects case closure and final reports.</p>
+      <ul>
+        <li>Review case findings and evidence</li>
+        <li>Authorize case closure</li>
+        <li>Reject case (with reason) - returns to OPEN</li>
+        <li>View all case details, tasks, evidence</li>
+        <li>View case history and audit trail</li>
+        <li>Cannot create cases or tasks</li>
+        <li>Cannot modify evidence</li>
+      </ul>
+    </div>
+
+    <div class="role-card rc-req">
+      <h4><span class="role-icon">&#9993;</span> REQUESTER</h4>
+      <p><strong>Purpose:</strong> Submits investigation requests and receives final reports.</p>
+      <ul>
+        <li>Create new cases (investigation requests)</li>
+        <li>Provide case background and justification</li>
+        <li>View own case details</li>
+        <li>Download final forensic reports</li>
+        <li>Cannot create tasks</li>
+        <li>Cannot upload evidence</li>
+        <li>Cannot modify other users' cases</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 5: PERMISSION MATRIX -->
+<div class="section">
+  <h2>5. Complete Permission Matrix</h2>
+  <p>Detailed API-level permissions for each role across all resources.</p>
+
+  <table class="perm-table">
+    <tr>
+      <th>Resource / Action</th>
+      <th>ADMIN</th>
+      <th>CASE_MANAGER</th>
+      <th>INVESTIGATOR</th>
+      <th>QA</th>
+      <th>AUTHORISER</th>
+      <th>REQUESTER</th>
+    </tr>
+    <tr><td colspan="7" style="background:#e8eaf6;font-weight:700;color:#1a237e;">USER MANAGEMENT</td></tr>
+    <tr><td>List all users</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td></tr>
+    <tr><td>Create user</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td></tr>
+    <tr><td>Edit any user</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td></tr>
+    <tr><td>View own profile</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td></tr>
+    <tr><td>Change own password</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td></tr>
+
+    <tr><td colspan="7" style="background:#e8eaf6;font-weight:700;color:#1a237e;">CASE MANAGEMENT</td></tr>
+    <tr><td>Create case</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-yes">&#10003;</td></tr>
+    <tr><td>Edit case details</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td></tr>
+    <tr><td>View all cases</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-owner">Assigned only</td><td class="perm-owner">Assigned only</td><td class="perm-yes">&#10003;</td><td class="perm-owner">Own only</td></tr>
+    <tr><td>Change case status</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td></tr>
+    <tr><td>Close case</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td></tr>
+    <tr><td>Authorize case</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#10007;</td></tr>
+    <tr><td>Link/unlink cases</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td></tr>
+    <tr><td>View case history</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-owner">Assigned only</td><td class="perm-owner">Assigned only</td><td class="perm-yes">&#10003;</td><td class="perm-owner">Own only</td></tr>
+
+    <tr><td colspan="7" style="background:#e8eaf6;font-weight:700;color:#1a237e;">CASE DOCUMENTS</td></tr>
+    <tr><td>Upload case document</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td></tr>
+    <tr><td>View case documents</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-owner">Assigned only</td><td class="perm-owner">Assigned only</td><td class="perm-yes">&#10003;</td><td class="perm-owner">Own only</td></tr>
+
+    <tr><td colspan="7" style="background:#e8eaf6;font-weight:700;color:#1a237e;">TASK MANAGEMENT</td></tr>
+    <tr><td>Create task</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td></tr>
+    <tr><td>Edit task</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td></tr>
+    <tr><td>View tasks</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-owner">Assigned only</td><td class="perm-owner">Assigned only</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#10007;</td></tr>
+    <tr><td>Change task status</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td></tr>
+    <tr><td>Add task notes</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td></tr>
+    <tr><td>Upload task document</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td></tr>
+
+    <tr><td colspan="7" style="background:#e8eaf6;font-weight:700;color:#1a237e;">EVIDENCE MANAGEMENT</td></tr>
+    <tr><td>Upload evidence</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td></tr>
+    <tr><td>Edit evidence</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td></tr>
+    <tr><td>Change evidence status</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td></tr>
+    <tr><td>Check in/out evidence</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td></tr>
+    <tr><td>Upload evidence photo</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td></tr>
+    <tr><td>Upload evidence document</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td></tr>
+
+    <tr><td colspan="7" style="background:#e8eaf6;font-weight:700;color:#1a237e;">FINAL REPORTS</td></tr>
+    <tr><td>Upload final report</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td></tr>
+    <tr><td>View final reports</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-owner">Assigned only</td><td class="perm-owner">Assigned only</td><td class="perm-yes">&#10003;</td><td class="perm-owner">Own only</td></tr>
+    <tr><td>Delete final report</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td><td class="perm-no">&#10007;</td></tr>
+
+    <tr><td colspan="7" style="background:#e8eaf6;font-weight:700;color:#1a237e;">REPORTS & ANALYTICS</td></tr>
+    <tr><td>View dashboard</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td></tr>
+    <tr><td>Advanced search</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td></tr>
+    <tr><td>Forensic quiz</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td></tr>
+  </table>
+</div>
+
+<!-- SECTION 6: STEP-BY-STEP SCENARIO -->
+<div class="section">
+  <h2>6. Step-by-Step Scenario</h2>
+  <p>Here is a realistic scenario showing how a corporate data breach investigation flows through the system:</p>
+
+  <h3>Phase 1: System Setup (One-time)</h3>
+  <ol>
+    <li><strong>Admin</strong> logs in with admin/admin123</li>
+    <li><strong>Admin</strong> creates departments: Forensics, Cybercrime, Operations</li>
+    <li><strong>Admin</strong> creates teams: Digital Forensics, Cybercrime Unit, Intelligence</li>
+    <li><strong>Admin</strong> creates user accounts for each team member with appropriate roles</li>
+    <li><strong>Admin</strong> configures system settings (retention period, date format, etc.)</li>
+  </ol>
+
+  <h3>Phase 2: Case Initiation</h3>
+  <ol start="6">
+    <li><strong>Requester</strong> (or Case Manager) submits an investigation request with background info</li>
+    <li><strong>Case Manager</strong> reviews the request and creates a formal case:
+      <ul>
+        <li>Sets classification (Confidential, Secret, etc.)</li>
+        <li>Sets type (Incident Response, Fraud Investigation, etc.)</li>
+        <li>Sets priority (Critical, High, Normal, Low)</li>
+        <li>Sets deadline and location</li>
+        <li>Uploads Chain of Custody form, agency letter, authority letter</li>
+        <li>Checks document checklist items as documents are received</li>
+      </ul>
+    </li>
+  </ol>
+
+  <h3>Phase 3: Task Assignment</h3>
+  <ol start="8">
+    <li><strong>Case Manager</strong> creates tasks for the case:
+      <ul>
+        <li>"Email Log Extraction" - assign to John (Investigator)</li>
+        <li>"Disk Forensics" - assign to Priya (Investigator)</li>
+        <li>"Network Traffic Analysis" - assign to Ankit (Investigator)</li>
+      </ul>
+    </li>
+    <li><strong>Case Manager</strong> sets case status to OPEN</li>
+  </ol>
+
+  <h3>Phase 4: Investigation</h3>
+  <ol start="10">
+    <li><strong>Investigator</strong> (John) logs in and sees assigned tasks</li>
+    <li><strong>Investigator</strong> (John) uploads evidence:
+      <ul>
+        <li>USB drive found at scene (photo + bag number)</li>
+        <li>Forensic image of server disk</li>
+      </ul>
+    </li>
+    <li><strong>Investigator</strong> (John) performs examination and adds task notes:
+      <ul>
+        <li>"Recovered 3 email accounts from compromised server"</li>
+        <li>"Found C2 communication to IP 192.168.1.100"</li>
+      </ul>
+    </li>
+    <li><strong>Investigator</strong> (John) uploads examination documents:
+      <ul>
+        <li>Email extraction report (PDF)</li>
+        <li>Network capture analysis (PCAP summary)</li>
+      </ul>
+    </li>
+    <li><strong>Investigator</strong> (John) sets task status to COMPLETE</li>
+  </ol>
+
+  <h3>Phase 5: Quality Assurance</h3>
+  <ol start="14">
+    <li><strong>QA</strong> (Mike) reviews John's completed task</li>
+    <li><strong>QA</strong> verifies evidence integrity and chain of custody</li>
+    <li><strong>QA</strong> approves the task or returns it for revision</li>
+  </ol>
+
+  <h3>Phase 6: Report & Closure</h3>
+  <ol start="17">
+    <li><strong>Case Manager</strong> reviews all completed tasks</li>
+    <li><strong>Case Manager</strong> uploads the Final Forensic Investigation Report</li>
+    <li><strong>Case Manager</strong> requests authorization from Authoriser</li>
+    <li><strong>Authoriser</strong> (David) reviews the case, findings, and final report</li>
+    <li><strong>Authoriser</strong> AUTHORIZES the case closure</li>
+    <li><strong>Case Manager</strong> sets case status to CLOSED</li>
+    <li><strong>Requester</strong> receives notification and downloads the final report</li>
+  </ol>
+</div>
+
+<!-- SECTION 7: API ENDPOINTS BY ROLE -->
+<div class="section">
+  <h2>7. API Endpoint Summary</h2>
+  <table class="perm-table">
+    <tr><th>Endpoint</th><th>Method</th><th>Required Role</th><th>Description</th></tr>
+    <tr><td>/api/auth/login</td><td>POST</td><td>Public</td><td>Login, returns JWT</td></tr>
+    <tr><td>/api/dashboard</td><td>GET</td><td>Any authenticated</td><td>Dashboard statistics</td></tr>
+    <tr><td>/api/cases</td><td>GET</td><td>CM, Admin, Requester (own)</td><td>List cases</td></tr>
+    <tr><td>/api/cases</td><td>POST</td><td>CM, Admin, Requester</td><td>Create case</td></tr>
+    <tr><td>/api/cases/{id}/status</td><td>PUT</td><td>CM, Admin</td><td>Change case status</td></tr>
+    <tr><td>/api/cases/{id}/close</td><td>PUT</td><td>CM, Admin</td><td>Close case</td></tr>
+    <tr><td>/api/cases/{id}/authorize</td><td>PUT</td><td>Authoriser, Admin</td><td>Authorize case</td></tr>
+    <tr><td>/api/cases/{id}/tasks</td><td>POST</td><td>CM, Admin</td><td>Create task in case</td></tr>
+    <tr><td>/api/cases/{id}/evidence</td><td>GET</td><td>CM, Admin, Inv (assigned)</td><td>List evidence for case</td></tr>
+    <tr><td>/api/tasks/case/{id}</td><td>GET</td><td>CM, Admin, Inv/QA (assigned)</td><td>List tasks for case</td></tr>
+    <tr><td>/api/tasks/{id}</td><td>PUT</td><td>CM, Admin, Inv/QA (assigned)</td><td>Update task</td></tr>
+    <tr><td>/api/evidence</td><td>GET</td><td>CM, Admin, Inv</td><td>List all evidence</td></tr>
+    <tr><td>/api/evidence/{id}</td><td>PUT</td><td>CM, Admin, Inv</td><td>Update evidence</td></tr>
+    <tr><td>/api/evidence/{id}/photo</td><td>POST</td><td>CM, Admin, Inv</td><td>Upload evidence photo</td></tr>
+    <tr><td>/api/evidence/{id}/document</td><td>POST</td><td>CM, Admin, Inv</td><td>Upload evidence doc</td></tr>
+    <tr><td>/api/uploads/case/{id}</td><td>POST</td><td>CM, Admin</td><td>Upload case document</td></tr>
+    <tr><td>/api/uploads/case/{id}/final-report</td><td>POST</td><td>CM, Admin</td><td>Upload final report</td></tr>
+    <tr><td>/api/uploads/final-report/{id}</td><td>DELETE</td><td>CM, Admin</td><td>Delete final report</td></tr>
+    <tr><td>/api/users</td><td>GET</td><td>Admin only</td><td>List all users</td></tr>
+    <tr><td>/api/users</td><td>POST</td><td>Admin only</td><td>Create user</td></tr>
+    <tr><td>/api/reports/*</td><td>GET</td><td>Any authenticated</td><td>Generate reports</td></tr>
+  </table>
+</div>
+
+<!-- SECTION 8: SECURITY RULES -->
+<div class="section">
+  <h2>8. Security Enforcement Rules</h2>
+  <ul>
+    <li><strong>JWT Authentication:</strong> All API endpoints (except login) require a valid JWT token with HMAC-SHA256 signature verification</li>
+    <li><strong>Token Expiry:</strong> JWT tokens expire after 1 hour; users must re-authenticate</li>
+    <li><strong>Brute Force Protection:</strong> Account locks after 5 failed login attempts</li>
+    <li><strong>Password Policy:</strong> Minimum 8 characters, BCrypt cost 12</li>
+    <li><strong>Input Sanitization:</strong> XSS prevention at service layer (script tags, event handlers stripped)</li>
+    <li><strong>File Upload Security:</strong> Whitelist of 30+ safe extensions, blocklist of 15+ dangerous extensions</li>
+    <li><strong>IDOR Prevention:</strong> userId derived from JWT token, not request body</li>
+    <li><strong>CORS:</strong> Restricted to localhost:4200 only, limited headers</li>
+    <li><strong>Security Headers:</strong> CSP, HSTS, X-Content-Type-Options, X-Frame-Options: DENY</li>
+    <li><strong>Frontend RBAC:</strong> Navbar hides/shows links based on selected role; guards protect routes</li>
+    <li><strong>Backend RBAC:</strong> RoleHelper checks roles at every controller endpoint; unauthorized returns HTTP 403</li>
+  </ul>
+</div>
+
+</div>
+
+<div class="footer">
+  <p>JENE-DFCMS Workflow & RBAC Guide | Generated: 29 June 2026 | Classification: CONFIDENTIAL</p>
+  <p>Author: Sukhvinder Chhoker | Contact: chhokersukhvinder@gmail.com | +917576069781</p>
+  <p>Powered by Raksha Cyber Agency</p>
+</div>
+
+</body>
+</html>
