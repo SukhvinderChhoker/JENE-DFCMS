@@ -75,16 +75,12 @@ public class DataInitializer implements CommandLineRunner {
         CasePriority pHigh = savePriority("High", "#FF9933", false);
         CasePriority pCritical = savePriority("Critical", "#CC0000", false);
 
-        saveEvidenceType("SATA Hard Drive");
-        saveEvidenceType("IDE Hard Drive");
-        saveEvidenceType("Mobile Phone");
-        saveEvidenceType("Smart Phone");
-        saveEvidenceType("Tablet");
-        saveEvidenceType("USB Media");
+        saveEvidenceType("PC");
         saveEvidenceType("Laptop");
-        saveEvidenceType("Server");
-        saveEvidenceType("CD");
-        saveEvidenceType("DVD");
+        saveEvidenceType("Ext HDD/SSD");
+        saveEvidenceType("Mobile");
+        saveEvidenceType("Smart Device");
+        saveEvidenceType("OM");
 
         TaskCategory commsCat = saveCategory("Communications Retrieval");
         TaskCategory internetCat = saveCategory("Internet Logs");
@@ -113,10 +109,10 @@ public class DataInitializer implements CommandLineRunner {
         User auth1 = createUser("david.auth", "pass1234", "David", "Wilson", "david@jene-dfcms.local", mgmtTeam, "AUTHORISER");
         User inv3 = createUser("ankit.inv", "pass1234", "Ankit", "Patel", "ankit@jene-dfcms.local", intelTeam, "INVESTIGATOR");
 
-        EvidenceType hdType = evidenceTypeRepository.findByEvidenceType("Smart Phone").orElse(null);
-        EvidenceType usbType = evidenceTypeRepository.findByEvidenceType("USB Media").orElse(null);
+        EvidenceType smartDeviceType = evidenceTypeRepository.findByEvidenceType("Smart Device").orElse(null);
+        EvidenceType mobileType = evidenceTypeRepository.findByEvidenceType("Mobile").orElse(null);
         EvidenceType laptopType = evidenceTypeRepository.findByEvidenceType("Laptop").orElse(null);
-        EvidenceType serverType = evidenceTypeRepository.findByEvidenceType("Server").orElse(null);
+        EvidenceType pcType = evidenceTypeRepository.findByEvidenceType("PC").orElse(null);
 
         Case c1 = createCase("CF-2026-001", "Corporate Data Breach Investigation", "Unauthorized access detected in corporate network. Multiple employee credentials compromised. Server logs indicate lateral movement from initial entry point on June 15, 2026.", "HQ Building, Floor 3 - Server Room", ccConf, ctIncident, pCritical, admin);
         c1.setCocReceived(true);
@@ -180,12 +176,12 @@ public class DataInitializer implements CommandLineRunner {
         createTask("DDoS Log Analysis", ttLog, c6, inv3, "CREATED", "Analyze CloudFlare and AWS WAF logs");
         createTask("Network Forensics", ttNetwork, c6, inv1, "QUEUED", "Packet capture analysis for attack signatures");
 
-        createEvidence("Smart Phone", hdType, c1, inv1, "Samsung Galaxy S24 belonging to IT admin. Found in desk drawer.", "EVD-001", "Evidence Locker A", "ACTIVE");
-        createEvidence("USB Media", usbType, c1, inv2, "SanDisk 64GB USB drive. Found connected to compromised server.", "EVD-002", "Evidence Locker A", "ACTIVE");
+        createEvidence("Smart Device", smartDeviceType, c1, inv1, "Samsung Galaxy S24 belonging to IT admin. Found in desk drawer.", "EVD-001", "Evidence Locker A", "ACTIVE");
+        createEvidence("Ext HDD/SSD", pcType, c1, inv2, "SanDisk 64GB USB drive. Found connected to compromised server.", "EVD-002", "Evidence Locker A", "ACTIVE");
         createEvidence("Laptop", laptopType, c2, inv2, "Dell Latitude laptop from finance department. Contains email client data.", "EVD-003", "Evidence Locker B", "ACTIVE");
-        createEvidence("Server", serverType, c3, inv1, "Dell PowerEdge R740 - Marketing server. Drives removed for forensic imaging.", "EVD-004", "Evidence Locker A", "ACTIVE");
-        createEvidence("Smart Phone", hdType, c4, inv2, "iPhone 15 Pro - company issued. Location data shows last active in hotel.", "EVD-005", "Evidence Locker B", "INACTIVE");
-        createEvidence("USB Media", usbType, c5, inv1, "Kingston 128GB USB drive. Recovered from engineering workstation.", "EVD-006", "Evidence Locker A", "ACTIVE");
+        createEvidence("PC", pcType, c3, inv1, "Dell PowerEdge R740 - Marketing server. Drives removed for forensic imaging.", "EVD-004", "Evidence Locker A", "ACTIVE");
+        createEvidence("Mobile", mobileType, c4, inv2, "iPhone 15 Pro - company issued. Location data shows last active in hotel.", "EVD-005", "Evidence Locker B", "INACTIVE");
+        createEvidence("Ext HDD/SSD", pcType, c5, inv1, "Kingston 128GB USB drive. Recovered from engineering workstation.", "EVD-006", "Evidence Locker A", "ACTIVE");
         createEvidence("Laptop", laptopType, c5, inv3, "ThinkPad X1 Carbon. Secondary device used for data staging.", "EVD-007", "Evidence Locker B", "ACTIVE");
 
         System.out.println("=== JENE-DFCMS Seed Data Loaded ===");

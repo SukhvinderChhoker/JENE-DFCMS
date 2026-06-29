@@ -7,12 +7,26 @@ export interface Evidence {
   qrCode: boolean;
   comment?: string;
   originator?: string;
+  originatorUnit?: string;
   evidenceBagNumber?: string;
   location: string;
   currentStatus: string;
   dateAdded: string;
   photoUrl?: string;
   photoFileName?: string;
+
+  dateOfInduction?: string;
+  makeModelNo?: string;
+  manufacturerName?: string;
+  serialNumber?: string;
+  deviceLocked?: boolean;
+  depositorName?: string;
+  depositorContact?: string;
+  evidenceDescription?: string;
+  osType?: string;
+  storageCapacity?: string;
+  conditionAtReceipt?: string;
+  sealedStatus?: boolean;
 }
 
 export interface ChainOfCustody {

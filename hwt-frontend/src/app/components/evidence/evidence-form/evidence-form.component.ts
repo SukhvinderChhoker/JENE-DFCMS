@@ -17,7 +17,13 @@ export class EvidenceFormComponent implements OnInit {
   cases: Case[] = [];
   submitting = false;
 
-  evidenceTypes = ['DIGITAL', 'PHYSICAL', 'DOCUMENT', 'OTHER'];
+  evidenceTypes = ['PC', 'Laptop', 'Ext HDD/SSD', 'Mobile', 'Smart Device', 'OM'];
+  originators = ['Army', 'Navy', 'AirForce', 'HQ IDS', 'Others'];
+  osTypes = ['Windows', 'Linux', 'macOS', 'Android', 'iOS', 'Other', 'N/A'];
+  conditionOptions = ['Good', 'Fair', 'Poor', 'Damaged', 'Scratched', 'Water Damaged', 'Cracked'];
+  yesNoOptions = ['Yes', 'No'];
+
+  showOriginatorOther = false;
 
   selectedPhoto: File | null = null;
   photoPreview: string | null = null;
@@ -35,12 +41,25 @@ export class EvidenceFormComponent implements OnInit {
   ) {
     this.form = this.fb.group({
       reference: ['', Validators.required],
-      type: ['DIGITAL', Validators.required],
+      type: ['PC', Validators.required],
       comment: [''],
       originator: [''],
+      originatorUnit: [''],
       evidenceBagNumber: [''],
       location: ['', Validators.required],
-      caseId: ['']
+      caseId: [''],
+      dateOfInduction: [''],
+      makeModelNo: [''],
+      manufacturerName: [''],
+      serialNumber: [''],
+      deviceLocked: [''],
+      depositorName: [''],
+      depositorContact: [''],
+      evidenceDescription: [''],
+      osType: [''],
+      storageCapacity: [''],
+      conditionAtReceipt: [''],
+      sealedStatus: ['']
     });
   }
 
@@ -57,6 +76,10 @@ export class EvidenceFormComponent implements OnInit {
       this.loadEvidence();
       this.loadDocuments();
     }
+
+    this.form.get('originator')?.valueChanges.subscribe(val => {
+      this.showOriginatorOther = val === 'Others';
+    });
   }
 
   loadCases(): void {
@@ -73,10 +96,26 @@ export class EvidenceFormComponent implements OnInit {
           type: data.type,
           comment: data.comment,
           originator: data.originator,
+          originatorUnit: data.originatorUnit,
           evidenceBagNumber: data.evidenceBagNumber,
           location: data.location,
-          caseId: data.caseId
+          caseId: data.caseId,
+          dateOfInduction: data.dateOfInduction || '',
+          makeModelNo: data.makeModelNo,
+          manufacturerName: data.manufacturerName,
+          serialNumber: data.serialNumber,
+          deviceLocked: data.deviceLocked !== null && data.deviceLocked !== undefined ? (data.deviceLocked ? 'Yes' : 'No') : '',
+          depositorName: data.depositorName,
+          depositorContact: data.depositorContact,
+          evidenceDescription: data.evidenceDescription,
+          osType: data.osType,
+          storageCapacity: data.storageCapacity,
+          conditionAtReceipt: data.conditionAtReceipt,
+          sealedStatus: data.sealedStatus !== null && data.sealedStatus !== undefined ? (data.sealedStatus ? 'Yes' : 'No') : ''
         });
+        if (data.originator === 'Others') {
+          this.showOriginatorOther = true;
+        }
         if (data.photoUrl) {
           this.photoPreview = 'http://localhost:8080' + data.photoUrl;
         }
@@ -122,7 +161,15 @@ export class EvidenceFormComponent implements OnInit {
   onSubmit(): void {
     if (this.form.valid) {
       this.submitting = true;
-      const data = this.form.value;
+      const data: any = { ...this.form.value };
+
+      if (data.deviceLocked === 'Yes') data.deviceLocked = true;
+      else if (data.deviceLocked === 'No') data.deviceLocked = false;
+      else data.deviceLocked = null;
+
+      if (data.sealedStatus === 'Yes') data.sealedStatus = true;
+      else if (data.sealedStatus === 'No') data.sealedStatus = false;
+      else data.sealedStatus = null;
 
       if (this.isEdit) {
         this.evidenceService.update(this.evidenceId, data).subscribe({

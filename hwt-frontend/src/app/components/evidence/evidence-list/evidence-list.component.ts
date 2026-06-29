@@ -12,10 +12,12 @@ export class EvidenceListComponent implements OnInit {
   loading = true;
 
   typeIcons: { [key: string]: string } = {
-    'DIGITAL': 'computer',
-    'PHYSICAL': 'inventory_2',
-    'DOCUMENT': 'description',
-    'OTHER': 'category'
+    'PC': 'computer',
+    'Laptop': 'laptop',
+    'Ext HDD/SSD': 'storage',
+    'Mobile': 'smartphone',
+    'Smart Device': 'devices_other',
+    'OM': 'dns'
   };
 
   constructor(private evidenceService: EvidenceService) {}

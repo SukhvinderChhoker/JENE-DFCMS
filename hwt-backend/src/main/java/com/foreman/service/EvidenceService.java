@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -96,12 +97,30 @@ public class EvidenceService {
 
         evidence.setComment(sanitizeUtil.sanitize(dto.getComment()));
         evidence.setOriginator(sanitizeUtil.sanitize(dto.getOriginator()));
+        evidence.setOriginatorUnit(sanitizeUtil.sanitize(dto.getOriginatorUnit()));
         evidence.setEvidenceBagNumber(sanitizeUtil.sanitize(dto.getEvidenceBagNumber()));
         evidence.setLocation(sanitizeUtil.sanitize(dto.getLocation()));
         evidence.setQrCode(dto.isQrCode());
         evidence.setQrCodeText(dto.getQrCodeText());
         evidence.setCurrentStatus(EvidenceStatus.INACTIVE);
         evidence.setDateAdded(LocalDateTime.now());
+
+        if (dto.getDateOfInduction() != null && !dto.getDateOfInduction().isEmpty()) {
+            try {
+                evidence.setDateOfInduction(LocalDate.parse(dto.getDateOfInduction()));
+            } catch (Exception ignored) {}
+        }
+        evidence.setMakeModelNo(sanitizeUtil.sanitize(dto.getMakeModelNo()));
+        evidence.setManufacturerName(sanitizeUtil.sanitize(dto.getManufacturerName()));
+        evidence.setSerialNumber(sanitizeUtil.sanitize(dto.getSerialNumber()));
+        evidence.setDeviceLocked(dto.getDeviceLocked());
+        evidence.setDepositorName(sanitizeUtil.sanitize(dto.getDepositorName()));
+        evidence.setDepositorContact(sanitizeUtil.sanitize(dto.getDepositorContact()));
+        evidence.setEvidenceDescription(sanitizeUtil.sanitize(dto.getEvidenceDescription()));
+        evidence.setOsType(sanitizeUtil.sanitize(dto.getOsType()));
+        evidence.setStorageCapacity(sanitizeUtil.sanitize(dto.getStorageCapacity()));
+        evidence.setConditionAtReceipt(sanitizeUtil.sanitize(dto.getConditionAtReceipt()));
+        evidence.setSealedStatus(dto.getSealedStatus());
 
         if (dto.getType() != null) {
             evidenceTypeRepository.findByEvidenceType(dto.getType())
@@ -134,10 +153,28 @@ public class EvidenceService {
 
         evidence.setComment(sanitizeUtil.sanitize(dto.getComment()));
         evidence.setOriginator(sanitizeUtil.sanitize(dto.getOriginator()));
+        evidence.setOriginatorUnit(sanitizeUtil.sanitize(dto.getOriginatorUnit()));
         evidence.setEvidenceBagNumber(sanitizeUtil.sanitize(dto.getEvidenceBagNumber()));
         evidence.setLocation(sanitizeUtil.sanitize(dto.getLocation()));
         evidence.setQrCode(dto.isQrCode());
         evidence.setQrCodeText(dto.getQrCodeText());
+
+        if (dto.getDateOfInduction() != null && !dto.getDateOfInduction().isEmpty()) {
+            try {
+                evidence.setDateOfInduction(LocalDate.parse(dto.getDateOfInduction()));
+            } catch (Exception ignored) {}
+        }
+        evidence.setMakeModelNo(sanitizeUtil.sanitize(dto.getMakeModelNo()));
+        evidence.setManufacturerName(sanitizeUtil.sanitize(dto.getManufacturerName()));
+        evidence.setSerialNumber(sanitizeUtil.sanitize(dto.getSerialNumber()));
+        evidence.setDeviceLocked(dto.getDeviceLocked());
+        evidence.setDepositorName(sanitizeUtil.sanitize(dto.getDepositorName()));
+        evidence.setDepositorContact(sanitizeUtil.sanitize(dto.getDepositorContact()));
+        evidence.setEvidenceDescription(sanitizeUtil.sanitize(dto.getEvidenceDescription()));
+        evidence.setOsType(sanitizeUtil.sanitize(dto.getOsType()));
+        evidence.setStorageCapacity(sanitizeUtil.sanitize(dto.getStorageCapacity()));
+        evidence.setConditionAtReceipt(sanitizeUtil.sanitize(dto.getConditionAtReceipt()));
+        evidence.setSealedStatus(dto.getSealedStatus());
 
         if (dto.getType() != null) {
             evidenceTypeRepository.findByEvidenceType(dto.getType())
@@ -346,6 +383,7 @@ public class EvidenceService {
         dto.setQrCode(evidence.isQrCode());
         dto.setComment(evidence.getComment());
         dto.setOriginator(evidence.getOriginator());
+        dto.setOriginatorUnit(evidence.getOriginatorUnit());
         dto.setEvidenceBagNumber(evidence.getEvidenceBagNumber());
         dto.setLocation(evidence.getLocation());
         dto.setCurrentStatus(evidence.getCurrentStatus());
@@ -360,6 +398,21 @@ public class EvidenceService {
 
         dto.setPhotoUrl(evidence.getPhotoUrl());
         dto.setPhotoFileName(evidence.getPhotoFileName());
+
+        if (evidence.getDateOfInduction() != null) {
+            dto.setDateOfInduction(evidence.getDateOfInduction().toString());
+        }
+        dto.setMakeModelNo(evidence.getMakeModelNo());
+        dto.setManufacturerName(evidence.getManufacturerName());
+        dto.setSerialNumber(evidence.getSerialNumber());
+        dto.setDeviceLocked(evidence.getDeviceLocked());
+        dto.setDepositorName(evidence.getDepositorName());
+        dto.setDepositorContact(evidence.getDepositorContact());
+        dto.setEvidenceDescription(evidence.getEvidenceDescription());
+        dto.setOsType(evidence.getOsType());
+        dto.setStorageCapacity(evidence.getStorageCapacity());
+        dto.setConditionAtReceipt(evidence.getConditionAtReceipt());
+        dto.setSealedStatus(evidence.getSealedStatus());
 
         return dto;
     }

@@ -23,13 +23,34 @@
       <div class="info-row"><span class="label">Reference</span><span>{{ evidence.reference }}</span></div>
       <div class="info-row"><span class="label">Type</span><span>{{ evidence.type }}</span></div>
       <div class="info-row"><span class="label">Status</span><span class="status-badge" [ngClass]="getStatusClass(evidence.currentStatus)">{{ evidence.currentStatus }}</span></div>
-      <div class="info-row"><span class="label">Location</span><span>{{ evidence.location }}</span></div>
+      <div class="info-row"><span class="label">Storage Location</span><span>{{ evidence.location }}</span></div>
+      <div class="info-row"><span class="label">Date of Induction</span><span>{{ evidence.dateOfInduction | date:'mediumDate' || '-' }}</span></div>
+      <div class="info-row"><span class="label">Description</span><span>{{ evidence.evidenceDescription || '-' }}</span></div>
       <div class="info-row"><span class="label">QR Code</span><span>{{ evidence.qrCode ? 'Yes' : 'No' }}</span></div>
       <div class="info-row"><span class="label">Bag Number</span><span>{{ evidence.evidenceBagNumber || '-' }}</span></div>
-      <div class="info-row"><span class="label">Originator</span><span>{{ evidence.originator || '-' }}</span></div>
       <div class="info-row"><span class="label">Case</span><span>{{ evidence.caseName || '-' }}</span></div>
       <div class="info-row"><span class="label">Date Added</span><span>{{ evidence.dateAdded | date:'medium' }}</span></div>
-      <div class="info-row" *ngIf="evidence.comment"><span class="label">Comment</span><span>{{ evidence.comment }}</span></div>
+      <div class="info-row" *ngIf="evidence.comment"><span class="label">Comments</span><span>{{ evidence.comment }}</span></div>
+    </div>
+
+    <div class="detail-card">
+      <h3>Device Details</h3>
+      <div class="info-row"><span class="label">Manufacturer</span><span>{{ evidence.manufacturerName || '-' }}</span></div>
+      <div class="info-row"><span class="label">Make / Model</span><span>{{ evidence.makeModelNo || '-' }}</span></div>
+      <div class="info-row"><span class="label">Serial Number</span><span>{{ evidence.serialNumber || '-' }}</span></div>
+      <div class="info-row"><span class="label">OS Type</span><span>{{ evidence.osType || '-' }}</span></div>
+      <div class="info-row"><span class="label">Storage Capacity</span><span>{{ evidence.storageCapacity || '-' }}</span></div>
+      <div class="info-row"><span class="label">Device Locked</span><span>{{ evidence.deviceLocked === true ? 'Yes' : (evidence.deviceLocked === false ? 'No' : '-') }}</span></div>
+      <div class="info-row"><span class="label">Condition at Receipt</span><span>{{ evidence.conditionAtReceipt || '-' }}</span></div>
+      <div class="info-row"><span class="label">Sealed Status</span><span>{{ evidence.sealedStatus === true ? 'Sealed' : (evidence.sealedStatus === false ? 'Unsealed' : '-') }}</span></div>
+    </div>
+
+    <div class="detail-card">
+      <h3>Originator & Custody Details</h3>
+      <div class="info-row"><span class="label">Originator</span><span>{{ evidence.originator || '-' }}</span></div>
+      <div class="info-row" *ngIf="evidence.originatorUnit"><span class="label">Unit Name</span><span>{{ evidence.originatorUnit }}</span></div>
+      <div class="info-row"><span class="label">Depositor Name</span><span>{{ evidence.depositorName || '-' }}</span></div>
+      <div class="info-row"><span class="label">Depositor Contact</span><span>{{ evidence.depositorContact || '-' }}</span></div>
     </div>
 
     <div class="detail-card">

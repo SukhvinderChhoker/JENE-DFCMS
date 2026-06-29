@@ -7,51 +7,147 @@
   </div>
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-card">
-    <div class="form-grid">
-      <div class="form-group">
-        <label for="reference">Reference *</label>
-        <input type="text" id="reference" formControlName="reference" placeholder="Enter reference">
-        <div class="error" *ngIf="form.get('reference')?.touched && form.get('reference')?.invalid">
-          Reference is required
+    <div class="form-section">
+      <h3>Basic Information</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="reference">Reference *</label>
+          <input type="text" id="reference" formControlName="reference" placeholder="Enter reference">
+          <div class="error" *ngIf="form.get('reference')?.touched && form.get('reference')?.invalid">
+            Reference is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="type">Type (Artefact Category) *</label>
+          <select id="type" formControlName="type">
+            <option *ngFor="let t of evidenceTypes" [value]="t">{{ t }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="location">Storage Location *</label>
+          <input type="text" id="location" formControlName="location" placeholder="e.g. Evidence Locker A">
+          <div class="error" *ngIf="form.get('location')?.touched && form.get('location')?.invalid">
+            Location is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="dateOfInduction">Date of Induction</label>
+          <input type="date" id="dateOfInduction" formControlName="dateOfInduction">
+        </div>
+
+        <div class="form-group full-width">
+          <label for="evidenceDescription">Description of Artefact</label>
+          <textarea id="evidenceDescription" formControlName="evidenceDescription" rows="2" placeholder="Brief description of the evidence item..."></textarea>
         </div>
       </div>
+    </div>
 
-      <div class="form-group">
-        <label for="type">Type *</label>
-        <select id="type" formControlName="type">
-          <option *ngFor="let t of evidenceTypes" [value]="t">{{ t }}</option>
-        </select>
-      </div>
+    <div class="form-section">
+      <h3>Device Details</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="manufacturerName">Manufacturer Name</label>
+          <input type="text" id="manufacturerName" formControlName="manufacturerName" placeholder="e.g. Dell, Samsung, Apple">
+        </div>
 
-      <div class="form-group">
-        <label for="location">Location *</label>
-        <input type="text" id="location" formControlName="location" placeholder="Enter location">
-        <div class="error" *ngIf="form.get('location')?.touched && form.get('location')?.invalid">
-          Location is required
+        <div class="form-group">
+          <label for="makeModelNo">Make / Model No</label>
+          <input type="text" id="makeModelNo" formControlName="makeModelNo" placeholder="e.g. Dell Latitude 5520">
+        </div>
+
+        <div class="form-group">
+          <label for="serialNumber">Serial Number</label>
+          <input type="text" id="serialNumber" formControlName="serialNumber" placeholder="Enter serial number">
+        </div>
+
+        <div class="form-group">
+          <label for="osType">OS Type</label>
+          <select id="osType" formControlName="osType">
+            <option value="">-- Select --</option>
+            <option *ngFor="let os of osTypes" [value]="os">{{ os }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="storageCapacity">Storage Capacity</label>
+          <input type="text" id="storageCapacity" formControlName="storageCapacity" placeholder="e.g. 256GB, 1TB">
+        </div>
+
+        <div class="form-group">
+          <label for="deviceLocked">Device Locked?</label>
+          <select id="deviceLocked" formControlName="deviceLocked">
+            <option value="">-- Select --</option>
+            <option *ngFor="let opt of yesNoOptions" [value]="opt">{{ opt }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="conditionAtReceipt">Condition at Receipt</label>
+          <select id="conditionAtReceipt" formControlName="conditionAtReceipt">
+            <option value="">-- Select --</option>
+            <option *ngFor="let c of conditionOptions" [value]="c">{{ c }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="sealedStatus">Sealed / Unsealed</label>
+          <select id="sealedStatus" formControlName="sealedStatus">
+            <option value="">-- Select --</option>
+            <option *ngFor="let opt of yesNoOptions" [value]="opt">{{ opt }}</option>
+          </select>
         </div>
       </div>
+    </div>
 
-      <div class="form-group">
-        <label for="originator">Originator</label>
-        <input type="text" id="originator" formControlName="originator" placeholder="Enter originator">
+    <div class="form-section">
+      <h3>Originator & Custody</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="originator">Originator (Service/Unit)</label>
+          <select id="originator" formControlName="originator">
+            <option value="">-- Select --</option>
+            <option *ngFor="let o of originators" [value]="o">{{ o }}</option>
+          </select>
+        </div>
+
+        <div class="form-group" *ngIf="showOriginatorOther">
+          <label for="originatorUnit">Unit Name (if Others)</label>
+          <input type="text" id="originatorUnit" formControlName="originatorUnit" placeholder="Enter unit name">
+        </div>
+
+        <div class="form-group">
+          <label for="depositorName">Name of Person Depositing Artefact</label>
+          <input type="text" id="depositorName" formControlName="depositorName" placeholder="Full name">
+        </div>
+
+        <div class="form-group">
+          <label for="depositorContact">Contact Number of Depositor</label>
+          <input type="tel" id="depositorContact" formControlName="depositorContact" placeholder="e.g. +91-XXXXXXXXXX">
+        </div>
+
+        <div class="form-group">
+          <label for="evidenceBagNumber">Evidence Bag Number</label>
+          <input type="text" id="evidenceBagNumber" formControlName="evidenceBagNumber" placeholder="Enter bag number">
+        </div>
+
+        <div class="form-group">
+          <label for="caseId">Linked Case</label>
+          <select id="caseId" formControlName="caseId">
+            <option value="">No case</option>
+            <option *ngFor="let c of cases" [value]="c.id">{{ c.caseName }}</option>
+          </select>
+        </div>
       </div>
+    </div>
 
-      <div class="form-group">
-        <label for="evidenceBagNumber">Bag Number</label>
-        <input type="text" id="evidenceBagNumber" formControlName="evidenceBagNumber" placeholder="Enter bag number">
-      </div>
-
-      <div class="form-group">
-        <label for="caseId">Case</label>
-        <select id="caseId" formControlName="caseId">
-          <option value="">No case</option>
-          <option *ngFor="let c of cases" [value]="c.id">{{ c.caseName }}</option>
-        </select>
-      </div>
-
+    <div class="form-section">
+      <h3>Additional Notes</h3>
       <div class="form-group full-width">
-        <label for="comment">Comment</label>
-        <textarea id="comment" formControlName="comment" rows="3" placeholder="Enter comment..."></textarea>
+        <label for="comment">Comments / Observations</label>
+        <textarea id="comment" formControlName="comment" rows="3" placeholder="Any additional observations, notes, or instructions..."></textarea>
       </div>
     </div>
 
@@ -76,7 +172,7 @@
 
     <div class="upload-section">
       <h3>Supporting Documents</h3>
-      <p class="upload-desc">Upload case-related essential documents: seizure memos, warrants, consent forms, forensic tool logs, witness statements, reports, or any related files.</p>
+      <p class="upload-desc">Upload seizure memos, warrants, consent forms, forensic tool logs, witness statements, reports, or any related files.</p>
       <div class="doc-upload-area">
         <label class="upload-dropzone" for="docInput">
           <span class="material-icons">upload_file</span>
