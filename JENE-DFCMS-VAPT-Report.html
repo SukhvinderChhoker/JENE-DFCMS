@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JENE-DFCMS - VAPT Security Assessment Report</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; color: #333; line-height: 1.6; }
+
+  .report-header {
+    background: linear-gradient(135deg, #1a237e 0%, #0d47a1 50%, #01579b 100%);
+    color: white; padding: 50px 40px; text-align: center;
+  }
+  .report-header h1 { font-size: 32px; margin-bottom: 8px; letter-spacing: 1px; }
+  .report-header .subtitle { font-size: 16px; opacity: 0.9; margin-bottom: 20px; }
+  .report-header .meta { display: flex; justify-content: center; gap: 40px; font-size: 13px; opacity: 0.85; }
+  .report-header .meta span { display: flex; align-items: center; gap: 6px; }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 30px 20px; }
+
+  .section { background: white; border-radius: 10px; padding: 30px; margin-bottom: 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .section h2 { font-size: 20px; color: #1a237e; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #e8eaf6; }
+  .section h3 { font-size: 16px; color: #333; margin: 16px 0 10px; }
+
+  .exec-summary-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin: 20px 0; }
+  .stat-card { text-align: center; padding: 20px 12px; border-radius: 8px; color: white; }
+  .stat-card .count { font-size: 36px; font-weight: 700; }
+  .stat-card .label { font-size: 12px; opacity: 0.9; margin-top: 4px; }
+  .stat-critical { background: #c62828; }
+  .stat-high { background: #e65100; }
+  .stat-medium { background: #f9a825; }
+  .stat-low { background: #2e7d32; }
+  .stat-info { background: #1565c0; }
+
+  .risk-bar { display: flex; height: 12px; border-radius: 6px; overflow: hidden; margin: 20px 0; }
+  .risk-bar div { transition: width 0.3s; }
+
+  .score-section { text-align: center; padding: 20px; margin: 20px 0; background: #fff3e0; border-radius: 10px; border: 2px solid #ff6f00; }
+  .score-value { font-size: 64px; font-weight: 800; color: #c62828; }
+  .score-label { font-size: 14px; color: #666; margin-top: 4px; }
+
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th { background: #1a237e; color: white; padding: 10px 12px; text-align: left; font-weight: 500; }
+  td { padding: 10px 12px; border-bottom: 1px solid #eee; vertical-align: top; }
+  tr:hover { background: #f8f9fa; }
+
+  .severity { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; color: white; }
+  .sev-critical { background: #c62828; }
+  .sev-high { background: #e65100; }
+  .sev-medium { background: #f9a825; color: #333; }
+  .sev-low { background: #2e7d32; }
+  .sev-info { background: #1565c0; }
+
+  .vuln-card { border: 1px solid #e0e0e0; border-radius: 8px; margin: 16px 0; overflow: hidden; }
+  .vuln-header { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: #fafafa; border-bottom: 1px solid #eee; }
+  .vuln-header h4 { flex: 1; font-size: 14px; color: #333; }
+  .vuln-body { padding: 16px; }
+  .vuln-body p { font-size: 13px; color: #555; margin-bottom: 8px; }
+  .vuln-body .file-ref { font-family: 'Consolas', monospace; background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 12px; color: #c62828; }
+  .vuln-body code { font-family: 'Consolas', monospace; background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 12px; display: block; margin: 8px 0; white-space: pre-wrap; word-break: break-all; border: 1px solid #e0e0e0; }
+  .remediation { background: #e8f5e9; padding: 10px 14px; border-radius: 6px; margin-top: 10px; border-left: 3px solid #2e7d32; }
+  .remediation strong { color: #2e7d32; font-size: 12px; }
+
+  .owasp-mapping { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 16px 0; }
+  .owasp-item { padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 12px; }
+  .owasp-item .owasp-id { font-weight: 700; color: #1a237e; }
+  .owasp-item .owasp-count { float: right; font-weight: 700; }
+
+  .phase-table td:first-child { font-weight: 600; color: #1a237e; width: 180px; }
+
+  .footer { text-align: center; padding: 30px; color: #999; font-size: 12px; }
+
+  @media print { .container { padding: 10px; } .section { break-inside: avoid; } }
+</style>
+</head>
+<body>
+
+<div class="report-header">
+  <h1>VULNERABILITY ASSESSMENT &amp; PENETRATION TESTING REPORT</h1>
+  <div class="subtitle">JENE-DFCMS - Digital Forensic Case Management System</div>
+  <div class="meta">
+    <span>Assessment Date: 29 June 2026</span>
+    <span>Assessor: Automated Static Analysis (OWASP Top 10)</span>
+    <span>Version: 1.0</span>
+    <span>Classification: CONFIDENTIAL</span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- EXECUTIVE SUMMARY -->
+<div class="section">
+  <h2>1. Executive Summary</h2>
+  <p>This report presents the findings of a comprehensive Vulnerability Assessment performed on the JENE-DFCMS application through automated static code analysis. The assessment covered the full OWASP Top 10 2021 categories, authentication mechanisms, authorization/RBAC implementation, file upload security, API security, and configuration hardening.</p>
+
+  <div class="score-section">
+    <div class="score-value">3.2 / 10</div>
+    <div class="score-label">SECURITY SCORE (Critical issues require immediate remediation)</div>
+  </div>
+
+  <div class="exec-summary-grid">
+    <div class="stat-card stat-critical"><div class="count">6</div><div class="label">CRITICAL</div></div>
+    <div class="stat-card stat-high"><div class="count">9</div><div class="label">HIGH</div></div>
+    <div class="stat-card stat-medium"><div class="count">7</div><div class="label">MEDIUM</div></div>
+    <div class="stat-card stat-low"><div class="count">7</div><div class="label">LOW</div></div>
+    <div class="stat-card stat-info"><div class="count">3</div><div class="label">INFO</div></div>
+  </div>
+
+  <div class="risk-bar">
+    <div class="stat-critical" style="width: 22%"></div>
+    <div class="stat-high" style="width: 33%"></div>
+    <div class="stat-medium" style="width: 26%"></div>
+    <div class="stat-low" style="width: 19%"></div>
+  </div>
+
+  <p><strong>Risk Rating:</strong> <span class="severity sev-critical">CRITICAL</span> - The application contains multiple critical vulnerabilities that could lead to full system compromise, unauthorized data access, and complete authentication bypass. Immediate remediation is required before any production deployment.</p>
+</div>
+
+<!-- OWASP TOP 10 MAPPING -->
+<div class="section">
+  <h2>2. OWASP Top 10 (2021) Mapping</h2>
+  <div class="owasp-mapping">
+    <div class="owasp-item"><span class="owasp-id">A01:2021 - Broken Access Control</span><span class="owasp-count sev-critical">9 vulns</span></div>
+    <div class="owasp-item"><span class="owasp-id">A02:2021 - Cryptographic Failures</span><span class="owasp-count sev-critical">3 vulns</span></div>
+    <div class="owasp-item"><span class="owasp-id">A03:2021 - Injection</span><span class="owasp-count sev-high">2 vulns</span></div>
+    <div class="owasp-item"><span class="owasp-id">A04:2021 - Insecure Design</span><span class="owasp-count sev-high">4 vulns</span></div>
+    <div class="owasp-item"><span class="owasp-id">A05:2021 - Security Misconfiguration</span><span class="owasp-count sev-critical">5 vulns</span></div>
+    <div class="owasp-item"><span class="owasp-id">A06:2021 - Vulnerable Components</span><span class="owasp-count sev-info">1 vuln</span></div>
+    <div class="owasp-item"><span class="owasp-id">A07:2021 - Auth Failures</span><span class="owasp-count sev-high">4 vulns</span></div>
+    <div class="owasp-item"><span class="owasp-id">A08:2021 - Data Integrity Failures</span><span class="owasp-count sev-high">2 vulns</span></div>
+    <div class="owasp-item"><span class="owasp-id">A09:2021 - Logging Failures</span><span class="owasp-count sev-low">2 vulns</span></div>
+  </div>
+</div>
+
+<!-- METHODOLOGY -->
+<div class="section">
+  <h2>3. Assessment Methodology</h2>
+  <table class="phase-table">
+    <tr><td>Scope</td><td>Full source code analysis of Spring Boot 3.2.0 backend + Angular 17 frontend</td></tr>
+    <tr><td>Technique</td><td>Automated static code analysis with manual review of critical components</td></tr>
+    <tr><td>Standards</td><td>OWASP Top 10 (2021), OWASP ASVS 4.0, CWE/SANS Top 25</td></tr>
+    <tr><td>Components Tested</td><td>Authentication, JWT, RBAC, API Endpoints, File Upload, Configuration, Database, Frontend</td></tr>
+    <tr><td>Files Analyzed</td><td>80+ Java files, 60+ TypeScript/CSS/HTML files, configuration files</td></tr>
+    <tr><td>Tools</td><td>Static analysis, pattern matching, code review, dependency analysis</td></tr>
+  </table>
+</div>
+
+<!-- CRITICAL FINDINGS -->
+<div class="section">
+  <h2>4. Critical Findings (Immediate Action Required)</h2>
+
+  <div class="vuln-card">
+    <div class="vuln-header">
+      <span class="severity sev-critical">CRITICAL</span>
+      <h4>C1: JWT Token Signature Not Verified - Full Authentication Bypass</h4>
+    </div>
+    <div class="vuln-body">
+      <p><strong>OWASP:</strong> A08:2021 - Data Integrity Failures</p>
+      <p><strong>CWE:</strong> CWE-345 (Insufficient Verification of Data Authenticity)</p>
+      <p><strong>File:</strong> <span class="file-ref">RoleHelper.java:29-36</span></p>
+      <p>The <code>extractUsernameFromToken()</code> method in RoleHelper manually decodes the JWT payload using Base64 <strong>without verifying the HMAC signature</strong>. This means any attacker can craft a JWT token with any username (including admin) and the system will accept it as valid.</p>
+      <code>String[] parts = token.split("\\.");
+String payload = new String(java.util.Base64.getUrlDecoder().decode(parts[1]));
+// NO SIGNATURE VERIFICATION</code>
+      <p><strong>Impact:</strong> Complete authentication bypass. Attacker can impersonate any user including administrators. Full system compromise.</p>
+      <div class="remediation"><strong>Remediation:</strong> Use JwtUtil.extractUsername() which already performs signature verification. Replace manual Base64 parsing with the existing JWT library validation. Never parse JWTs manually.</div>
+    </div>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-header">
+      <span class="severity sev-critical">CRITICAL</span>
+      <h4>C2: Hardcoded JWT Secret in Source Control</h4>
+    </div>
+    <div class="vuln-body">
+      <p><strong>OWASP:</strong> A02:2021 - Cryptographic Failures</p>
+      <p><strong>CWE:</strong> CWE-798 (Use of Hard-coded Credentials)</p>
+      <p><strong>File:</strong> <span class="file-ref">application.properties:15</span></p>
+      <p>The JWT signing secret <code>jwt.secret=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970</code> is hardcoded and committed to the public GitHub repository. Anyone with access can forge valid JWT tokens.</p>
+      <p><strong>Impact:</strong> Anyone with repository access can forge tokens for any user, bypassing all authentication and authorization.</p>
+      <div class="remediation"><strong>Remediation:</strong> Move to environment variable: <code>jwt.secret=${JWT_SECRET}</code>. Generate a new 256-bit random secret. Rotate immediately. Use a secrets manager (Vault, AWS SSM) in production.</div>
+    </div>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-header">
+      <span class="severity sev-critical">CRITICAL</span>
+      <h4>C3: H2 Database Console Exposed - Unauthenticated DB Access</h4>
+    </div>
+    <div class="vuln-body">
+      <p><strong>OWASP:</strong> A05:2021 - Security Misconfiguration</p>
+      <p><strong>CWE:</strong> CWE-200 (Exposure of Sensitive Information)</p>
+      <p><strong>Files:</strong> <span class="file-ref">application.properties:12-13</span>, <span class="file-ref">SecurityConfig.java:39,45</span></p>
+      <p>The H2 console is enabled, accessible at <code>/h2-console</code> without authentication, and framed with sameOrigin headers. The database has an empty password. This provides direct SQL access to the entire database including user credentials.</p>
+      <p><strong>Impact:</strong> Full unauthenticated database takeover. Read/drop all data including passwords, cases, evidence.</p>
+      <div class="remediation"><strong>Remediation:</strong> Disable in production: <code>spring.h2.console.enabled=false</code>. Gate with Spring profile: <code>@Profile("dev")</code>. Remove permitAll for /h2-console/**. Set a strong database password.</div>
+    </div>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-header">
+      <span class="severity sev-critical">CRITICAL</span>
+      <h4>C4: Hardcoded Default Password for All Registrations</h4>
+    </div>
+    <div class="vuln-body">
+      <p><strong>OWASP:</strong> A07:2021 - Identification and Authentication Failures</p>
+      <p><strong>CWE:</strong> CWE-798 (Use of Hard-coded Credentials)</p>
+      <p><strong>File:</strong> <span class="file-ref">AuthService.java:66</span></p>
+      <p>Every newly registered user receives the password <code>password123</code> regardless of what they enter. The registration password is completely ignored.</p>
+      <code>passwordEncoder.encode("password123") // Always used</code>
+      <p><strong>Impact:</strong> All user accounts have the same known password. Mass account compromise.</p>
+      <div class="remediation"><strong>Remediation:</strong> Use the user-supplied password: <code>passwordEncoder.encode(dto.getPassword())</code>. Enforce minimum password policy (8+ chars, mixed case, numbers, symbols).</div>
+    </div>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-header">
+      <span class="severity sev-critical">CRITICAL</span>
+      <h4>C5: Reports &amp; Dashboard Endpoints - Zero Authentication</h4>
+    </div>
+    <div class="vuln-body">
+      <p><strong>OWASP:</strong> A01:2021 - Broken Access Control</p>
+      <p><strong>CWE:</strong> CWE-306 (Missing Authentication for Critical Function)</p>
+      <p><strong>Files:</strong> <span class="file-ref">ReportController.java:19-42</span>, <span class="file-ref">DashboardController.java:16-19</span></p>
+      <p>All report endpoints (dashboard stats, case reports, activity logs) and the dashboard endpoint have <strong>no authentication or authorization checks</strong>. Any unauthenticated user can access all case data and activity logs.</p>
+      <p><strong>Impact:</strong> Unauthenticated access to all case reports, dashboard statistics, and activity logs.</p>
+      <div class="remediation"><strong>Remediation:</strong> Add requireAuth(request) and appropriate role checks to every endpoint in ReportController and DashboardController.</div>
+    </div>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-header">
+      <span class="severity sev-critical">CRITICAL</span>
+      <h4>C6: Password Change - No Ownership Check + Hardcoded Bypass</h4>
+    </div>
+    <div class="vuln-body">
+      <p><strong>OWASP:</strong> A01:2021 - Broken Access Control</p>
+      <p><strong>CWE:</strong> CWE-625 (Permissive Password Match) + CWE-862 (Missing Authorization)</p>
+      <p><strong>File:</strong> <span class="file-ref">UserController.java:71-80</span></p>
+      <p>Any authenticated user can change any other user's password by passing their ID. If oldPassword is not provided, it defaults to <code>"admin123"</code>.</p>
+      <code>if (oldPassword == null) oldPassword = "admin123"; // HARDCODED BYPASS</code>
+      <p><strong>Impact:</strong> Any user can take over any account including admin. Complete privilege escalation.</p>
+      <div class="remediation"><strong>Remediation:</strong> Verify user.getId().equals(id) or require admin role. Remove hardcoded default password. Always require the old password.</div>
+    </div>
+  </div>
+</div>
+
+<!-- HIGH FINDINGS -->
+<div class="section">
+  <h2>5. High Severity Findings</h2>
+
+  <div class="vuln-card">
+    <div class="vuln-header">
+      <span class="severity sev-high">HIGH</span>
+      <h4>H1: No Brute Force Protection on Login</h4>
+    </div>
+    <div class="vuln-body">
+      <p><strong>CWE:</strong> CWE-307 (Improper Restriction of Excessive Authentication Attempts)</p>
+      <p><strong>File:</strong> <span class="file-ref">AuthController.java:18-21</span></p>
+      <p>No rate limiting, account lockout, or CAPTCHA on login endpoint. Unlimited password guessing attempts are possible. The User model has a <code>lockedOut</code> field but it is never used.</p>
+      <div class="remediation"><strong>Remediation:</strong> Implement failed login tracking, lock accounts after 5 failures. Add rate limiting (e.g., Bucket4j). Implement CAPTCHA after 3 failures.</div>
+    </div>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-header">
+      <span class="severity sev-high">HIGH</span>
+      <h4>H2: No JWT Token Revocation Mechanism</h4>
+    </div>
+    <div class="vuln-body">
+      <p><strong>CWE:</strong> CWE-613 (Insufficient Session Expiration)</p>
+      <p><strong>File:</strong> <span class="file-ref">JwtUtil.java:36-43</span>, <span class="file-ref">auth.service.ts:32-37</span></p>
+      <p>JWTs are valid for 24 hours with no revocation capability. Stolen tokens remain valid. Logout only removes the token from localStorage client-side.</p>
+      <div class="remediation"><strong>Remediation:</strong> Implement token blacklist (Redis-backed). Use short-lived access tokens (15min) + refresh tokens. Check blacklist in JwtAuthFilter.</div>
+    </div>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-header">
+      <span class="severity sev-high">HIGH</span>
+      <h4>H3: Unrestricted File Upload - No Type Validation</h4>
+    </div>
+    <div class="vuln-body">
+      <p><strong>CWE:</strong> CWE-434 (Unrestricted Upload of File with Dangerous Type)</p>
+      <p><strong>Files:</strong> <span class="file-ref">FileUploadController.java:60-64</span>, <span class="file-ref">EvidenceService.java:238-249</span></p>
+      <p>No file type whitelist, no MIME validation, no content/magic byte validation. Accepts any file type including .jsp, .war, .exe, .sh. Could lead to Remote Code Execution if uploads directory is served.</p>
+      <div class="remediation"><strong>Remediation:</strong> Implement strict file type whitelist. Validate MIME type AND magic bytes. Use <code>Files.probeContentType()</code>. Reject executables.</div>
+    </div>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-header">
+      <span class="severity sev-high">HIGH</span>
+      <h4>H4: All Uploads Served Without Authentication</h4>
+    </div>
+    <div class="vuln-body">
+      <p><strong>CWE:</strong> CWE-306 (Missing Authentication for Critical Function)</p>
+      <p><strong>File:</strong> <span class="file-ref">SecurityConfig.java:40</span></p>
+      <p><code>/uploads/**</code> is permitAll(). Evidence photos, case documents, and task documents are accessible to anyone without authentication via predictable URLs.</p>
+      <div class="remediation"><strong>Remediation:</strong> Remove permitAll() for /uploads/**. Serve files through an authenticated controller with access control. Use signed URLs for temporary access.</div>
+    </div>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-header">
+      <span class="severity sev-high">HIGH</span>
+      <h4>H5: userId Parameter Manipulation (8 Endpoints)</h4>
+    </div>
+    <div class="vuln-body">
+      <p><strong>CWE:</strong> CWE-639 (Authorization Bypass Through User-Controlled Key)</p>
+      <p><strong>Files:</strong> <span class="file-ref">CaseController.java</span>, <span class="file-ref">TaskController.java</span>, <span class="file-ref">EvidenceController.java</span></p>
+      <p>8 endpoints accept <code>userId</code> from the request body/params instead of deriving it from the JWT. Any user can impersonate any other user. Some default to userId=1 (admin).</p>
+      <div class="remediation"><strong>Remediation:</strong> Remove userId from all request inputs. Always derive from the authenticated JWT token: <code>user.getId()</code>.</div>
+    </div>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-header">
+      <span class="severity sev-high">HIGH</span>
+      <h4>H6: IDOR - Insecure Direct Object References on Cases</h4>
+    </div>
+    <div class="vuln-body">
+      <p><strong>CWE:</strong> CWE-639 (Authorization Bypass Through User-Controlled Key)</p>
+      <p><strong>File:</strong> <span class="file-ref">CaseController.java:57-131</span></p>
+      <p>Any authenticated user can access any case by ID. No ownership or assignment verification. Same applies to case history, tasks, and evidence.</p>
+      <div class="remediation"><strong>Remediation:</strong> Verify the user has a UserCaseRole for the requested case, or allow only admin/case manager access.</div>
+    </div>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-header">
+      <span class="severity sev-high">HIGH</span>
+      <h4>H7: Missing Case Status/Close Authorization</h4>
+    </div>
+    <div class="vuln-body">
+      <p><strong>CWE:</strong> CWE-862 (Missing Authorization)</p>
+      <p><strong>File:</strong> <span class="file-ref">CaseController.java:82-98</span></p>
+      <p>The case status change and close endpoints have no authentication or role checks. userId is taken from the request body.</p>
+      <div class="remediation"><strong>Remediation:</strong> Add requireAuth and role checks. Use authenticated user ID from JWT.</div>
+    </div>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-header">
+      <span class="severity sev-high">HIGH</span>
+      <h4>H8: Stored XSS via Unsanitized User Input</h4>
+    </div>
+    <div class="vuln-body">
+      <p><strong>CWE:</strong> CWE-79 (Cross-site Scripting - Stored)</p>
+      <p><strong>Files:</strong> <span class="file-ref">CaseService.java:81-90</span>, <span class="file-ref">EvidenceService.java:82-87</span>, <span class="file-ref">FileUploadController.java:70</span></p>
+      <p>User-supplied fields (caseName, background, justification, fileTitle) are stored without sanitization. Angular auto-escapes <code>{{ }}</code> but any future API consumer or admin panel using innerHTML would be vulnerable.</p>
+      <div class="remediation"><strong>Remediation:</strong> Implement server-side input sanitization. Strip HTML tags and event handlers. Use a SanitizeUtil library.</div>
+    </div>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-header">
+      <span class="severity sev-high">HIGH</span>
+      <h4>H9: CORS Allows Credentials with Wildcard Headers</h4>
+    </div>
+    <div class="vuln-body">
+      <p><strong>CWE:</strong> CWE-942 (Permissive Cross-domain Policy)</p>
+      <p><strong>File:</strong> <span class="file-ref">SecurityConfig.java:55</span></p>
+      <p><code>setAllowedHeaders(List.of("*"))</code> with <code>setAllowCredentials(true)</code> allows any origin to send any headers including Authorization.</p>
+      <div class="remediation"><strong>Remediation:</strong> Restrict to: <code>List.of("Authorization", "Content-Type")</code></div>
+    </div>
+  </div>
+</div>
+
+<!-- MEDIUM FINDINGS -->
+<div class="section">
+  <h2>6. Medium Severity Findings</h2>
+
+  <div class="vuln-card">
+    <div class="vuln-header">
+      <span class="severity sev-medium">MEDIUM</span>
+      <h4>M1: CSRF Protection Disabled</h4>
+    </div>
+    <div class="vuln-body">
+      <p><strong>CWE:</strong> CWE-352 (Cross-Site Request Forgery)</p>
+      <p><strong>File:</strong> <span class="file-ref">SecurityConfig.java:35</span></p>
+      <p>CSRF is globally disabled. While JWT Bearer tokens partially mitigate this, cookie-based attacks remain possible.</p>
+      <div class="remediation"><strong>Remediation:</strong> If using JWT Bearer exclusively, document the rationale. Otherwise implement CSRF tokens for state-changing operations.</div>
+    </div>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-header">
+      <span class="severity sev-medium">MEDIUM</span>
+      <h4>M2: IDOR on Tasks, Evidence, and Users</h4>
+    </div>
+    <div class="vuln-body">
+      <p><strong>CWE:</strong> CWE-639 (Authorization Bypass Through User-Controlled Key)</p>
+      <p><strong>Files:</strong> <span class="file-ref">TaskController.java:33-43</span>, <span class="file-ref">EvidenceController.java:36-46</span>, <span class="file-ref">UserController.java:38-69</span></p>
+      <p>Any authenticated user can view any task, any evidence item, list all users, and view any user's details (PII exposure).</p>
+      <div class="remediation"><strong>Remediation:</strong> Filter by user's assigned cases. Restrict user listing to admin roles. Verify case membership for tasks/evidence.</div>
+    </div>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-header">
+      <span class="severity sev-medium">MEDIUM</span>
+      <h4>M3: File Upload Endpoints Missing Role Checks</h4>
+    </div>
+    <div class="vuln-body">
+      <p><strong>CWE:</strong> CWE-862 (Missing Authorization)</p>
+      <p><strong>File:</strong> <span class="file-ref">FileUploadController.java:45-137</span></p>
+      <p>Case and task file upload endpoints only call requireAuth() with no role checks. Any authenticated user can upload files to any case/task.</p>
+      <div class="remediation"><strong>Remediation:</strong> Add role checks (canManageCases, canManageEvidence). Verify user has access to the target case/task.</div>
+    </div>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-header">
+      <span class="severity sev-medium">MEDIUM</span>
+      <h4>M4: Task Note Author ID Spoofing</h4>
+    </div>
+    <div class="vuln-body">
+      <p><strong>CWE:</strong> CWE-639 (Authorization Bypass Through User-Controlled Key)</p>
+      <p><strong>File:</strong> <span class="file-ref">TaskController.java:116-129</span></p>
+      <p>The authorId for task notes is taken from the request body, allowing attribution of notes to other users.</p>
+      <div class="remediation"><strong>Remediation:</strong> Always use user.getId() for the author. Never accept authorId from client.</div>
+    </div>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-header">
+      <span class="severity sev-medium">MEDIUM</span>
+      <h4>M5: No HTTPS Enforcement</h4>
+    </div>
+    <div class="vuln-body">
+      <p><strong>CWE:</strong> CWE-319 (Cleartext Transmission of Sensitive Information)</p>
+      <p><strong>File:</strong> <span class="file-ref">application.properties:1</span></p>
+      <p>No SSL/TLS configuration. JWT tokens transmitted in plaintext over HTTP.</p>
+      <div class="remediation"><strong>Remediation:</strong> Configure SSL or terminate TLS at a reverse proxy/load balancer. Enforce HSTS.</div>
+    </div>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-header">
+      <span class="severity sev-medium">MEDIUM</span>
+      <h4>M6: Error Messages Leak Implementation Details</h4>
+    </div>
+    <div class="vuln-body">
+      <p><strong>CWE:</strong> CWE-209 (Generation of Error Message Containing Sensitive Information)</p>
+      <p><strong>Files:</strong> <span class="file-ref">FileUploadController.java:90</span>, <span class="file-ref">EvidenceService.java:273</span></p>
+      <p>Raw IO exception messages returned to clients, revealing file system paths and OS information.</p>
+      <div class="remediation"><strong>Remediation:</strong> Return generic error messages. Log detailed exceptions server-side only.</div>
+    </div>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-header">
+      <span class="severity sev-medium">MEDIUM</span>
+      <h4>M7: Open Registration Without Rate Limiting</h4>
+    </div>
+    <div class="vuln-body">
+      <p><strong>CWE:</strong> CWE-799 (Improper Control of Interaction Frequency)</p>
+      <p><strong>File:</strong> <span class="file-ref">SecurityConfig.java:38</span>, <span class="file-ref">AuthController.java:24-27</span></p>
+      <p>/api/auth/register is permitAll() with no input validation, rate limiting, or email verification. Allows mass account creation.</p>
+      <div class="remediation"><strong>Remediation:</strong> Add input validation (DTO annotations), email verification, rate limiting.</div>
+    </div>
+  </div>
+</div>
+
+<!-- LOW & INFO FINDINGS -->
+<div class="section">
+  <h2>7. Low &amp; Informational Findings</h2>
+
+  <table>
+    <thead>
+      <tr><th>ID</th><th>Severity</th><th>Title</th><th>File</th><th>Remediation</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>L1</td><td><span class="severity sev-low">LOW</span></td><td>No Password Complexity Policy</td><td>AuthService.java:66</td><td>Enforce 8+ chars, mixed case, numbers, symbols</td></tr>
+      <tr><td>L2</td><td><span class="severity sev-low">LOW</span></td><td>Error Messages Leak User Existence</td><td>AuthService.java:44</td><td>Use generic "Invalid credentials" for all failures</td></tr>
+      <tr><td>L3</td><td><span class="severity sev-low">LOW</span></td><td>Missing Security Headers (CSP, HSTS)</td><td>SecurityConfig.java:45</td><td>Add CSP, HSTS, X-Content-Type-Options, X-XSS-Protection</td></tr>
+      <tr><td>L4</td><td><span class="severity sev-low">LOW</span></td><td>Token Stored in localStorage</td><td>auth.service.ts:25</td><td>Consider httpOnly cookies for token storage</td></tr>
+      <tr><td>L5</td><td><span class="severity sev-low">LOW</span></td><td>Client-Side Role Manipulation via localStorage</td><td>auth.service.ts:80-120</td><td>Ensure all server-side checks use JWT claims, not client values</td></tr>
+      <tr><td>L6</td><td><span class="severity sev-low">LOW</span></td><td>BCrypt Default Cost Factor (10)</td><td>SecurityConfig.java:65</td><td>Increase to 12-14 for security-sensitive apps</td></tr>
+      <tr><td>L7</td><td><span class="severity sev-low">LOW</span></td><td>Frontend Hardcoded Backend URL (HTTP)</td><td>auth.service.ts:11</td><td>Use environment config, enforce HTTPS</td></tr>
+      <tr><td>I1</td><td><span class="severity sev-info">INFO</span></td><td>Empty Database Password</td><td>application.properties:6</td><td>Set strong password via environment variable</td></tr>
+      <tr><td>I2</td><td><span class="severity sev-info">INFO</span></td><td>ddl-auto=update in Production</td><td>application.properties:9</td><td>Use validate or Flyway/Liquibase migrations</td></tr>
+      <tr><td>I3</td><td><span class="severity sev-info">INFO</span></td><td>UserDTO Used for Both Input/Output</td><td>AuthController.java:25</td><td>Create separate RegisterRequest and UserResponse DTOs</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- REMEDIATION PRIORITY -->
+<div class="section">
+  <h2>8. Remediation Priority Matrix</h2>
+  <table>
+    <thead>
+      <tr><th>Priority</th><th>Findings</th><th>Effort</th><th>Impact</th></tr>
+    </thead>
+    <tbody>
+      <tr><td style="color:#c62828;font-weight:700">P0 - Immediate</td><td>C1 (JWT bypass), C2 (hardcoded secret), C3 (H2 console)</td><td>1-2 days</td><td>Prevents full system compromise</td></tr>
+      <tr><td style="color:#e65100;font-weight:700">P1 - This Sprint</td><td>C4 (default password), C5 (no auth on reports), C6 (password change bypass)</td><td>2-3 days</td><td>Prevents account takeover</td></tr>
+      <tr><td style="color:#e65100;font-weight:700">P1 - This Sprint</td><td>H1-H9 (brute force, file upload, IDOR, XSS, CORS)</td><td>3-5 days</td><td>Prevents data breach &amp; RCE</td></tr>
+      <tr><td style="color:#f9a825;font-weight:700">P2 - Next Sprint</td><td>M1-M7 (CSRF, IDOR, rate limiting, HTTPS)</td><td>3-5 days</td><td>Defense in depth</td></tr>
+      <tr><td style="color:#2e7d32;font-weight:700">P3 - Backlog</td><td>L1-L7, I1-I3 (headers, password policy, logging)</td><td>2-3 days</td><td>Security hardening</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- TOP 10 IMMEDIATE FIXES -->
+<div class="section">
+  <h2>9. Top 10 Immediate Fixes (Quick Wins)</h2>
+  <table>
+    <thead><tr><th>#</th><th>Fix</th><th>File to Change</th><th>Time</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Use JwtUtil in RoleHelper (fix JWT bypass)</td><td>RoleHelper.java:29</td><td>15 min</td></tr>
+      <tr><td>2</td><td>Move JWT secret to env var</td><td>application.properties:15</td><td>10 min</td></tr>
+      <tr><td>3</td><td>Disable H2 console</td><td>application.properties:12</td><td>5 min</td></tr>
+      <tr><td>4</td><td>Fix default password in AuthService</td><td>AuthService.java:66</td><td>5 min</td></tr>
+      <tr><td>5</td><td>Add requireAuth to ReportController</td><td>ReportController.java</td><td>15 min</td></tr>
+      <tr><td>6</td><td>Add requireAuth to DashboardController</td><td>DashboardController.java</td><td>10 min</td></tr>
+      <tr><td>7</td><td>Fix password change ownership check</td><td>UserController.java:71</td><td>15 min</td></tr>
+      <tr><td>8</td><td>Remove hardcoded admin123 fallback</td><td>UserController.java:77</td><td>5 min</td></tr>
+      <tr><td>9</td><td>Derive userId from JWT (8 endpoints)</td><td>Case/Task/Evidence Controllers</td><td>1 hr</td></tr>
+      <tr><td>10</td><td>Add file type whitelist to uploads</td><td>FileUploadController.java</td><td>30 min</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- COMPLIANCE NOTES -->
+<div class="section">
+  <h2>10. Compliance &amp; Standards Mapping</h2>
+  <table>
+    <thead><tr><th>Standard</th><th>Requirement</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>OWASP Top 10 2021</td><td>A01 - Broken Access Control</td><td><span class="severity sev-critical">FAIL</span> 9 issues</td></tr>
+      <tr><td>OWASP Top 10 2021</td><td>A02 - Cryptographic Failures</td><td><span class="severity sev-critical">FAIL</span> 3 issues</td></tr>
+      <tr><td>OWASP Top 10 2021</td><td>A05 - Security Misconfiguration</td><td><span class="severity sev-critical">FAIL</span> 5 issues</td></tr>
+      <tr><td>OWASP Top 10 2021</td><td>A07 - Auth Failures</td><td><span class="severity sev-high">FAIL</span> 4 issues</td></tr>
+      <tr><td>PCI DSS 4.0</td><td>Req 8: Strong Authentication</td><td><span class="severity sev-high">FAIL</span></td></tr>
+      <tr><td>PCI DSS 4.0</td><td>Req 6: Secure Systems</td><td><span class="severity sev-critical">FAIL</span></td></tr>
+      <tr><td>ISO 27001</td><td>A.9: Access Control</td><td><span class="severity sev-high">FAIL</span></td></tr>
+      <tr><td>GDPR</td><td>Art 32: Security of Processing</td><td><span class="severity sev-medium">PARTIAL</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <h2>11. Appendix - Tools &amp; References</h2>
+  <table>
+    <tr><td>Assessment Type</td><td>Static Application Security Testing (SAST) via code review</td></tr>
+    <tr><td>OWASP References</td><td>https://owasp.org/Top10/, https://owasp.org/www-project-application-security-verification-standard/</td></tr>
+    <tr><td>CWE References</td><td>https://cwe.mitre.org/top25/archive/2023/2023_top25_list.html</td></tr>
+    <tr><td>Spring Security</td><td>https://docs.spring.io/spring-security/reference/</td></tr>
+  </table>
+</div>
+
+</div>
+
+<div class="footer">
+  JENE-DFCMS VAPT Report | Generated: 29 June 2026 | Author: Sukhvinder Chhoker | Classification: CONFIDENTIAL<br>
+  This report is intended for authorized recipients only. Do not distribute without written permission.
+</div>
+
+</body>
+</html>
