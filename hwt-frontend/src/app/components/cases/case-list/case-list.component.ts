@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CaseService } from '../../../services/case.service';
+import { AuthService } from '../../../services/auth.service';
 import { Case } from '../../../models/case.model';
 
 @Component({
@@ -13,6 +14,11 @@ export class CaseListComponent implements OnInit {
   activeFilter = 'all';
   loading = true;
 
+  showImportModal = false;
+  importFile: File | null = null;
+  importing = false;
+  importResult: any = null;
+
   filters = [
     { key: 'all', label: 'All' },
     { key: 'OPEN', label: 'Open' },
@@ -22,7 +28,10 @@ export class CaseListComponent implements OnInit {
     { key: 'ARCHIVED', label: 'Archived' }
   ];
 
-  constructor(private caseService: CaseService) {}
+  constructor(
+    private caseService: CaseService,
+    public authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.loadCases();
@@ -66,5 +75,47 @@ export class CaseListComponent implements OnInit {
 
   trackById(index: number, item: Case): number {
     return item.id;
+  }
+
+  openImportModal(): void {
+    this.showImportModal = true;
+    this.importFile = null;
+    this.importResult = null;
+  }
+
+  closeImportModal(): void {
+    this.showImportModal = false;
+    this.importFile = null;
+    this.importResult = null;
+  }
+
+  onImportFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.importFile = input.files[0];
+      this.importResult = null;
+    }
+  }
+
+  downloadTemplate(): void {
+    window.open(this.caseService.downloadTemplate(), '_blank');
+  }
+
+  importCases(): void {
+    if (!this.importFile) return;
+    this.importing = true;
+    this.caseService.importCases(this.importFile).subscribe({
+      next: (result) => {
+        this.importResult = result;
+        this.importing = false;
+        if (result.successCount > 0) {
+          this.loadCases();
+        }
+      },
+      error: (err) => {
+        this.importResult = { errorCount: 1, successCount: 0, results: [{ success: false, error: err.error?.error || 'Import failed' }] };
+        this.importing = false;
+      }
+    });
   }
 }
